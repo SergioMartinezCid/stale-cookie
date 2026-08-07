@@ -14,10 +14,72 @@
   "popupNoScanYet": {
     "message": "Aún no se ha realizado ningún análisis."
   },
+  "popupScanning": {
+    "message": "Analizando…"
+  },
+  "sectionStale": {
+    "message": "Obsoletas ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "sectionUnknown": {
+    "message": "Sin visitas registradas ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "summaryFreshProtected": {
+    "message": "Recientes: $FRESH$ · Protegidos: $PROTECTED$",
+    "placeholders": {
+      "fresh": { "content": "$1" },
+      "protected": { "content": "$2" }
+    }
+  },
+  "cookieCount": {
+    "message": "$COUNT$ cookies",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "lastVisit": {
+    "message": "última visita $DATE$",
+    "placeholders": { "date": { "content": "$1" } }
+  },
+  "partitionedBadge": {
+    "message": "particionada"
+  },
+  "partitionedUnder": {
+    "message": "Particionada bajo $SITE$",
+    "placeholders": { "site": { "content": "$1" } }
+  },
+  "protectButton": {
+    "message": "Proteger"
+  },
+  "deleteButton": {
+    "message": "Eliminar seleccionadas ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "deletedToast": {
+    "message": "Se eliminaron $COUNT$ cookies.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "emptyState": {
+    "message": "No se encontraron cookies."
+  },
   "optionsTitle": {
     "message": "Ajustes de Stale Cookie"
   },
-  "optionsComingSoon": {
-    "message": "Los ajustes aparecerán aquí a medida que se implementen las funciones."
+  "optionsThresholdLabel": {
+    "message": "Considerar un sitio obsoleto tras este número de días sin visitas:"
+  },
+  "optionsWhitelistTitle": {
+    "message": "Sitios protegidos"
+  },
+  "optionsWhitelistHint": {
+    "message": "Las cookies de estos sitios nunca se eliminan."
+  },
+  "optionsAdd": {
+    "message": "Añadir"
+  },
+  "optionsRemove": {
+    "message": "Quitar"
+  },
+  "optionsSaved": {
+    "message": "Guardado"
   }
 }

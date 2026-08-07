@@ -19,6 +19,7 @@
     "url": "git+https://github.com/SergioMartinezCid/stale-cookie.git"
   },
   "dependencies": {
+    "tldts": "^7.4.10",
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {

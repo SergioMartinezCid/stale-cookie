@@ -10,11 +10,60 @@
         font-family: system-ui, sans-serif;
         font-size: 14px;
       }
+      section {
+        margin-bottom: 24px;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      #threshold {
+        width: 5em;
+      }
+      ul {
+        list-style: none;
+        margin: 8px 0;
+        padding: 0;
+        max-width: 360px;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 4px 0;
+        border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+      }
+      .hint {
+        opacity: 0.7;
+        font-size: 13px;
+      }
+      #saved {
+        opacity: 0.7;
+        font-size: 13px;
+        visibility: hidden;
+      }
     </style>
   </head>
   <body>
     <h1 data-i18n="optionsTitle"></h1>
-    <p data-i18n="optionsComingSoon"></p>
+    <section>
+      <label>
+        <span data-i18n="optionsThresholdLabel"></span>
+        <input type="number" id="threshold" min="1" max="3650" />
+      </label>
+    </section>
+    <section>
+      <h2 data-i18n="optionsWhitelistTitle"></h2>
+      <p class="hint" data-i18n="optionsWhitelistHint"></p>
+      <form id="whitelist-form">
+        <input type="text" id="whitelist-input" placeholder="example.com" />
+        <button type="submit" data-i18n="optionsAdd"></button>
+      </form>
+      <ul id="whitelist"></ul>
+    </section>
+    <p id="saved" data-i18n="optionsSaved"></p>
     <script src="options.js"></script>
   </body>
 </html>

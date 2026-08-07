@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  classifyLastVisit,
-  normalizeCookieDomain,
-} from '../src/core/staleness';
+import { classifyLastVisit } from '../src/core/staleness';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const NOW = 1_800_000_000_000;
@@ -22,15 +19,5 @@ describe('classifyLastVisit', () => {
 
   it('returns unknown when there is no recorded visit', () => {
     expect(classifyLastVisit(undefined, NOW, 30 * DAY_MS)).toBe('unknown');
-  });
-});
-
-describe('normalizeCookieDomain', () => {
-  it('strips the leading dot of domain cookies', () => {
-    expect(normalizeCookieDomain('.example.com')).toBe('example.com');
-  });
-
-  it('leaves host-only cookie domains untouched', () => {
-    expect(normalizeCookieDomain('example.com')).toBe('example.com');
   });
 });

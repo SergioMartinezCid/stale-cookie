@@ -19,12 +19,91 @@
     "message": "No scan run yet.",
     "description": "Placeholder status shown in the popup before the first scan."
   },
+  "popupScanning": {
+    "message": "Scanning…",
+    "description": "Status shown while a scan is in progress."
+  },
+  "sectionStale": {
+    "message": "Stale ($COUNT$)",
+    "description": "Heading of the list of stale sites; $COUNT$ is the number of sites.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "sectionUnknown": {
+    "message": "No visit recorded ($COUNT$)",
+    "description": "Heading of the list of sites with no recorded visit; unchecked by default.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "summaryFreshProtected": {
+    "message": "Fresh: $FRESH$ · Protected: $PROTECTED$",
+    "description": "Summary line for sites that are not shown in the lists.",
+    "placeholders": {
+      "fresh": { "content": "$1" },
+      "protected": { "content": "$2" }
+    }
+  },
+  "cookieCount": {
+    "message": "$COUNT$ cookies",
+    "description": "Number of cookies in a site group.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "lastVisit": {
+    "message": "last visit $DATE$",
+    "description": "Last visit date of a site, shown next to the cookie count.",
+    "placeholders": { "date": { "content": "$1" } }
+  },
+  "partitionedBadge": {
+    "message": "partitioned",
+    "description": "Badge on third-party cookies partitioned under another site."
+  },
+  "partitionedUnder": {
+    "message": "Partitioned under $SITE$",
+    "description": "Tooltip explaining which top-level site a partitioned cookie belongs to.",
+    "placeholders": { "site": { "content": "$1" } }
+  },
+  "protectButton": {
+    "message": "Protect",
+    "description": "Per-site button that adds the site to the whitelist."
+  },
+  "deleteButton": {
+    "message": "Delete selected ($COUNT$)",
+    "description": "Button that deletes the selected cookies; $COUNT$ is the cookie count.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "deletedToast": {
+    "message": "Deleted $COUNT$ cookies.",
+    "description": "Status shown after deletion.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "emptyState": {
+    "message": "No cookies found.",
+    "description": "Status shown when a scan finds no cookies at all."
+  },
   "optionsTitle": {
     "message": "Stale Cookie settings",
     "description": "Heading of the options page."
   },
-  "optionsComingSoon": {
-    "message": "Settings will appear here as features are implemented.",
-    "description": "Placeholder text on the options page."
+  "optionsThresholdLabel": {
+    "message": "Consider a site stale after this many days without a visit:",
+    "description": "Label of the staleness threshold input."
+  },
+  "optionsWhitelistTitle": {
+    "message": "Protected sites",
+    "description": "Heading of the whitelist section."
+  },
+  "optionsWhitelistHint": {
+    "message": "Cookies from these sites are never deleted.",
+    "description": "Explanation under the whitelist heading."
+  },
+  "optionsAdd": {
+    "message": "Add",
+    "description": "Button that adds a domain to the whitelist."
+  },
+  "optionsRemove": {
+    "message": "Remove",
+    "description": "Button that removes a domain from the whitelist."
+  },
+  "optionsSaved": {
+    "message": "Saved",
+    "description": "Brief confirmation after settings are stored."
   }
 }

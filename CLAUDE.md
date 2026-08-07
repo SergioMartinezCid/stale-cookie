@@ -40,6 +40,16 @@ Rule: **per-site deletion only where the browser APIs allow it; data types that 
 - **Permissions**: permissions the core always needs are requested at install (no point deferring them); feature-specific permissions go behind optional runtime requests (`permissions.request`) when the user enables the feature.
 - **Testing**: unit tests for the core logic (pure functions with mocked `browser.*` APIs) + integration tests against real seeded throwaway browser profiles. Never test deletion logic against a real profile. TDD only if explicitly requested.
 
+### Implementation decisions (v0.1)
+
+- **PSL/eTLD+1**: `tldts` (bundles the Public Suffix List, works offline).
+- **Partitioned cookies** (CHIPS/`partitionKey`): staleness is judged by visits to the **partition top-level site**, not the cookie's own domain — the cookie is only ever sent while visiting that site. They are separate groups with a "partitioned" badge in the UI.
+- **Container enumeration**: via `contextualIdentities.query()` (permission added) — `cookies.getAllCookieStores()` only lists stores with open tabs, which would miss closed containers. The private-browsing store is excluded: its cookies are session-only.
+- **Cookie enumeration**: per store with `partitionKey: {}` (matches partitioned + unpartitioned) and `firstPartyDomain: null` (matches all when first-party isolation is on; needs a cast, typings only allow string).
+- **Default threshold**: 90 days (conservative — deleting cookies logs people out).
+- **Action log**: `storage.local`, capped at 200 entries.
+- v0.1 does all work in the popup (no background messaging); acceptable while scans are fast, revisit for scheduled cleaning.
+
 ### Verified API constraints (2026-08-07)
 
 - Neither Firefox nor Chrome exposes cookie creation/last-accessed time to extensions. `cookies.Cookie` has `expirationDate` as its only time field. Firefox tracks `lastAccessed`/`creationTime` internally (`nsICookie` / `moz_cookies`) but drops them at the WebExtensions boundary (`ext-cookies.js` `convertCookie`). Staleness must therefore be derived from history, not from the cookies themselves.

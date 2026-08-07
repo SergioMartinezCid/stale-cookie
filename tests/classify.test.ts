@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest';
+import { classifyGroups } from '../src/core/classify';
+import { groupCookies, type ScannableCookie } from '../src/core/grouping';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const NOW = 1_800_000_000_000;
+
+function cookie(domain: string, overrides: Partial<ScannableCookie> = {}): ScannableCookie {
+  return { name: 'sid', domain, path: '/', secure: true, storeId: 'firefox-default', ...overrides };
+}
+
+describe('classifyGroups', () => {
+  const options = { now: NOW, thresholdMs: 30 * DAY_MS, whitelist: ['bank.com'] };
+
+  it('classifies fresh, stale and unknown by last visit of the visit domain', () => {
+    const groups = groupCookies([cookie('fresh.com'), cookie('old.com'), cookie('never.com')]);
+    const lastVisit = new Map([
+      ['fresh.com', NOW - 1 * DAY_MS],
+      ['old.com', NOW - 90 * DAY_MS],
+    ]);
+    const verdicts = Object.fromEntries(
+      classifyGroups(groups, lastVisit, options).map((g) => [g.registrableDomain, g.verdict]),
+    );
+    expect(verdicts).toEqual({ 'fresh.com': 'fresh', 'old.com': 'stale', 'never.com': 'unknown' });
+  });
+
+  it('whitelists by registrable domain regardless of staleness, case-insensitively', () => {
+    const groups = groupCookies([cookie('.Bank.com')]);
+    const [result] = classifyGroups(groups, new Map(), options);
+    expect(result?.verdict).toBe('whitelisted');
+  });
+
+  it('judges partitioned cookies by the partition top-level site visits', () => {
+    const groups = groupCookies([
+      cookie('.tracker.com', { partitionKey: { topLevelSite: 'https://news.site.com' } }),
+    ]);
+    const lastVisit = new Map([['site.com', NOW - 1 * DAY_MS]]);
+    const [result] = classifyGroups(groups, lastVisit, options);
+    expect(result?.verdict).toBe('fresh');
+  });
+});

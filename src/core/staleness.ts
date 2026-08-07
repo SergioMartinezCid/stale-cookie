@@ -25,25 +25,3 @@ export function classifyLastVisit(
   if (lastVisitTime === undefined) return 'unknown';
   return now - lastVisitTime > thresholdMs ? 'stale' : 'fresh';
 }
-
-/**
- * Normalize a cookie's domain attribute to a bare hostname:
- * strips the leading dot of domain cookies (".example.com" → "example.com").
- */
-export function normalizeCookieDomain(cookieDomain: string): string {
-  return cookieDomain.startsWith('.') ? cookieDomain.slice(1) : cookieDomain;
-}
-
-/**
- * Registrable domain (eTLD+1) of a hostname — the unit visits are matched at.
- *
- * TODO: this must use the Public Suffix List (bundled — extensions have no
- * built-in PSL API). The naive last-two-labels fallback below is WRONG for
- * multi-label suffixes like `co.uk` and must be replaced before any deletion
- * logic ships.
- */
-export function getRegistrableDomain(hostname: string): string {
-  const labels = hostname.split('.').filter(Boolean);
-  if (labels.length <= 2) return labels.join('.');
-  return labels.slice(-2).join('.');
-}
