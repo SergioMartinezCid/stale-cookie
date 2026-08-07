@@ -86,6 +86,14 @@
     "message": "Consider a site stale after this many days without a visit:",
     "description": "Label of the staleness threshold input."
   },
+  "optionsKeepUnknownLabel": {
+    "message": "Never preselect cookies from sites with no recorded visit",
+    "description": "Checkbox that stops never-visited sites from being preselected for deletion."
+  },
+  "optionsKeepUnknownHint": {
+    "message": "When off, these cookies are preselected for deletion — unless the scan finds no visit data at all, in which case nothing is preselected. You can always change the selection before deleting.",
+    "description": "Explanation under the never-visited checkbox."
+  },
   "optionsWhitelistTitle": {
     "message": "Protected sites",
     "description": "Heading of the whitelist section."

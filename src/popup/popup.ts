@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
 import { scanCookies, deleteCookieGroups, type ScanOutcome } from '../ext/scanner';
-import { loadSettings, addToWhitelist } from '../ext/settings';
-import type { ClassifiedGroup } from '../core/classify';
+import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
+import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 
 localizePage();
 
@@ -16,6 +16,7 @@ const results = el<HTMLDivElement>('results');
 const footer = el<HTMLDivElement>('footer');
 
 let outcome: ScanOutcome | undefined;
+let settings: Settings | undefined;
 const selected = new Set<string>(); // group keys chosen for deletion
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
@@ -93,10 +94,14 @@ function renderResults(): void {
     String(whitelisted.length),
   ]);
 
+  const preselectUnknown = shouldPreselectUnknown(
+    outcome.groups,
+    settings?.keepNeverVisited ?? false,
+  );
   const staleList = el<HTMLUListElement>('stale-list');
   const unknownList = el<HTMLUListElement>('unknown-list');
   staleList.replaceChildren(...stale.map((g) => renderRow(g, true)));
-  unknownList.replaceChildren(...unknown.map((g) => renderRow(g, false)));
+  unknownList.replaceChildren(...unknown.map((g) => renderRow(g, preselectUnknown)));
 
   results.hidden = false;
   footer.hidden = false;
@@ -118,7 +123,8 @@ async function runScan(): Promise<void> {
   scanButton.disabled = true;
   status.textContent = msg('popupScanning');
   try {
-    outcome = await scanCookies(await loadSettings());
+    settings = await loadSettings();
+    outcome = await scanCookies(settings);
     renderResults();
   } finally {
     scanButton.disabled = false;

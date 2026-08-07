@@ -67,6 +67,12 @@
   "optionsThresholdLabel": {
     "message": "Considerar un sitio obsoleto tras este número de días sin visitas:"
   },
+  "optionsKeepUnknownLabel": {
+    "message": "No preseleccionar nunca las cookies de sitios sin visitas registradas"
+  },
+  "optionsKeepUnknownHint": {
+    "message": "Si está desactivado, estas cookies se preseleccionan para eliminar, salvo que el análisis no encuentre ningún dato de visitas, en cuyo caso no se preselecciona nada. Siempre puedes cambiar la selección antes de eliminar."
+  },
   "optionsWhitelistTitle": {
     "message": "Sitios protegidos"
   },

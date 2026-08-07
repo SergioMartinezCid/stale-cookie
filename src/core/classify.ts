@@ -38,3 +38,16 @@ export function classifyGroups(
     return { ...group, verdict, lastVisitTime };
   });
 }
+
+/**
+ * Whether never-visited groups should be preselected for deletion.
+ * A scan where NOTHING has a recorded visit (fresh install, wiped history)
+ * carries no signal, so nothing is preselected regardless of the setting.
+ */
+export function shouldPreselectUnknown(
+  groups: readonly ClassifiedGroup[],
+  keepNeverVisited: boolean,
+): boolean {
+  if (keepNeverVisited) return false;
+  return groups.some((group) => group.lastVisitTime !== undefined);
+}

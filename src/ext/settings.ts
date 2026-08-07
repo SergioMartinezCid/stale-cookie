@@ -6,11 +6,14 @@ export interface Settings {
   cookieThresholdDays: number;
   /** Protected registrable domains — never deleted. */
   whitelist: string[];
+  /** Never preselect never-visited sites for deletion. */
+  keepNeverVisited: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   cookieThresholdDays: 90,
   whitelist: [],
+  keepNeverVisited: false,
 };
 
 export async function loadSettings(): Promise<Settings> {

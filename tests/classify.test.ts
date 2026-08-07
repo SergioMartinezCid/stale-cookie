@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyGroups } from '../src/core/classify';
+import { classifyGroups, shouldPreselectUnknown } from '../src/core/classify';
 import { groupCookies, type ScannableCookie } from '../src/core/grouping';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -37,5 +37,33 @@ describe('classifyGroups', () => {
     const lastVisit = new Map([['site.com', NOW - 1 * DAY_MS]]);
     const [result] = classifyGroups(groups, lastVisit, options);
     expect(result?.verdict).toBe('fresh');
+  });
+});
+
+describe('shouldPreselectUnknown', () => {
+  const mixed = () =>
+    classifyGroups(
+      groupCookies([cookie('visited.com'), cookie('never.com')]),
+      new Map([['visited.com', NOW - 1 * DAY_MS]]),
+      { now: NOW, thresholdMs: 30 * DAY_MS, whitelist: [] },
+    );
+
+  const allUnknown = () =>
+    classifyGroups(groupCookies([cookie('a.com'), cookie('b.com')]), new Map(), {
+      now: NOW,
+      thresholdMs: 30 * DAY_MS,
+      whitelist: [],
+    });
+
+  it('preselects never-visited sites when other sites do have visits', () => {
+    expect(shouldPreselectUnknown(mixed(), false)).toBe(true);
+  });
+
+  it('does not preselect anything when no site has any recorded visit', () => {
+    expect(shouldPreselectUnknown(allUnknown(), false)).toBe(false);
+  });
+
+  it('never preselects when the keep-never-visited setting is on', () => {
+    expect(shouldPreselectUnknown(mixed(), true)).toBe(false);
   });
 });

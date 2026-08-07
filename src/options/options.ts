@@ -13,6 +13,7 @@ const msg = (key: string) => browser.i18n.getMessage(key);
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 const threshold = el<HTMLInputElement>('threshold');
+const keepUnknown = el<HTMLInputElement>('keep-unknown');
 const whitelistForm = el<HTMLFormElement>('whitelist-form');
 const whitelistInput = el<HTMLInputElement>('whitelist-input');
 const whitelistList = el<HTMLUListElement>('whitelist');
@@ -61,6 +62,11 @@ threshold.addEventListener('change', async () => {
   }
 });
 
+keepUnknown.addEventListener('change', async () => {
+  settings.keepNeverVisited = keepUnknown.checked;
+  await persist();
+});
+
 whitelistForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const domain = normalizeWhitelistEntry(whitelistInput.value);
@@ -77,5 +83,6 @@ whitelistForm.addEventListener('submit', async (event) => {
 void loadSettings().then((loaded) => {
   settings = loaded;
   threshold.value = String(settings.cookieThresholdDays);
+  keepUnknown.checked = settings.keepNeverVisited;
   renderWhitelist();
 });

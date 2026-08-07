@@ -23,18 +23,20 @@ Rule: **per-site deletion only where the browser APIs allow it; data types that 
 - **Cleaning modes**: both automatic (scheduled) and manual are configurable. In manual mode, the extension reminds the user to clean after a configurable time has passed.
 - **Preview**: cleaning always shows what will be deleted before committing (at minimum in manual mode).
 - **Whitelist**: manual, explicit "never touch" list only. No auto-detection of protected sites.
+- **Never-visited data** (no recorded visit at all): if the scan finds **no visit data for anything** (fresh install, wiped history), that's no signal — no-op, nothing preselected. If some sites have visits and others don't, never-visited sites are **preselected for deletion by default**; a setting flips them to never-preselected. Preselection only — the user can always override checkboxes in the preview.
+- **Reminder (manual mode)**: badge on the toolbar icon by default; system notification as optional secondary (both can be enabled). The reminder timer resets on last clean; a "skip this reminder" button dismisses and resets the timer without cleaning.
+- **Action log export**: JSONL or plain txt. Low priority — no major support commitment is planned for the extension.
 - **Firefox containers**: handled. `containerA:example.com` and `containerB:example.com` are treated as separate entries (enumerate cookies per `storeId`/partition, never only the default store).
-- **Browser profiles**: only handle data of the current profile. Config is importable/exportable; per-profile config with optional sharing of the same config across profiles is desired but **to be refined**.
+- **Browser profiles**: classic local profiles (about:profiles), not Firefox's newer profile-management feature. Extensions and their storage are per-profile in both Firefox and Chrome, so "current profile only" is automatic. Config is importable/exportable; sharing config across profiles happens via that export/import (no sync service — the no-network rule forbids it).
 - **UI surface**: toolbar icon/popup for routine cleaning (also serves as the reminder vehicle in manual mode) + an options page for configuration.
 
-### Open questions
+### Scope notes
 
-- What to do with data that has no recorded visit at all (pre-install cookies, third-party cookies of never-visited sites): **to be decided**. "Unknown" is ambiguous between stale and important.
-- Exact model for per-profile config sharing.
+- **v1.0 scope**: everything specified in this file as of 2026-08-07, unless stated otherwise later.
 
 ## Technical decisions
 
-- **Manifest V3**, targeting the cross-browser WebExtensions common subset. **Standing instruction: as implementation advances, flag MV3 limitations to the user as they are encountered**, so they can decide whether splitting into MV2 (Firefox) / MV3 (Chrome) builds makes sense.
+- **Manifest V3**, targeting the cross-browser WebExtensions common subset. **Standing instruction: as implementation advances, flag MV3 limitations to the user as they are encountered.** The decision on whether to split into MV2 (Firefox) / MV3 (Chrome) builds stays deferred but **must be made before v1.0**.
 - **Stack**: TypeScript, a light bundler, `webextension-polyfill` (promise-based `browser.*` everywhere).
 - **Last-visited source**: `browser.history`, combined with the extension's own local log of actions it took (e.g. recording when the extension itself deleted history entries, so later logic can distinguish "extension-deleted" from "never visited").
 - **Permissions**: permissions the core always needs are requested at install (no point deferring them); feature-specific permissions go behind optional runtime requests (`permissions.request`) when the user enables the feature.
