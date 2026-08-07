@@ -1,0 +1,23 @@
+{
+  "extensionName": {
+    "message": "Stale Cookie"
+  },
+  "extensionDescription": {
+    "message": "Limpia los datos de navegación obsoletos de los sitios que ya no visitas."
+  },
+  "popupTitle": {
+    "message": "Stale Cookie"
+  },
+  "popupScanButton": {
+    "message": "Buscar cookies obsoletas"
+  },
+  "popupNoScanYet": {
+    "message": "Aún no se ha realizado ningún análisis."
+  },
+  "optionsTitle": {
+    "message": "Ajustes de Stale Cookie"
+  },
+  "optionsComingSoon": {
+    "message": "Los ajustes aparecerán aquí a medida que se implementen las funciones."
+  }
+}

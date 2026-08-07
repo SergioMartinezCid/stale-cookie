@@ -1,0 +1,31 @@
+{
+  "name": "stale-cookie",
+  "version": "0.1.0",
+  "description": "Browser extension that clears stale browser data from sites you no longer visit.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start:firefox": "web-ext run --source-dir dist",
+    "lint:ext": "web-ext lint --source-dir dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SergioMartinezCid/stale-cookie.git"
+  },
+  "dependencies": {
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/webextension-polyfill": "^0.12.5",
+    "esbuild": "^0.28.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10",
+    "web-ext": "^10.6.0"
+  }
+}

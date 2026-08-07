@@ -1,0 +1,30 @@
+{
+  "extensionName": {
+    "message": "Stale Cookie",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Clears stale browser data from sites you no longer visit.",
+    "description": "Description of the extension shown in the add-on store and manager."
+  },
+  "popupTitle": {
+    "message": "Stale Cookie",
+    "description": "Heading of the toolbar popup."
+  },
+  "popupScanButton": {
+    "message": "Scan for stale cookies",
+    "description": "Button in the popup that starts a scan (preview, nothing is deleted)."
+  },
+  "popupNoScanYet": {
+    "message": "No scan run yet.",
+    "description": "Placeholder status shown in the popup before the first scan."
+  },
+  "optionsTitle": {
+    "message": "Stale Cookie settings",
+    "description": "Heading of the options page."
+  },
+  "optionsComingSoon": {
+    "message": "Settings will appear here as features are implemented.",
+    "description": "Placeholder text on the options page."
+  }
+}
