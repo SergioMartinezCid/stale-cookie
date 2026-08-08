@@ -221,6 +221,34 @@
     "message": "When off, these cookies are preselected for deletion — unless the scan finds no visit data at all, in which case nothing is preselected. You can always change the selection before deleting.",
     "description": "Explanation under the never-visited checkbox."
   },
+  "optionsConfigTitle": {
+    "message": "Import / export settings",
+    "description": "Heading of the settings import/export section."
+  },
+  "optionsConfigHint": {
+    "message": "Save your settings to a JSON file, or load one exported from another profile. The file never leaves your computer.",
+    "description": "Explanation under the import/export heading."
+  },
+  "optionsExportButton": {
+    "message": "Export settings",
+    "description": "Button that downloads the current settings as a JSON file."
+  },
+  "optionsImportButton": {
+    "message": "Import settings…",
+    "description": "Button that opens a file picker to load a settings export."
+  },
+  "optionsImportInvalid": {
+    "message": "This file is not a Stale Cookie settings export.",
+    "description": "Error shown when the imported file cannot be parsed as a settings export."
+  },
+  "optionsImportDone": {
+    "message": "Settings imported.",
+    "description": "Status after a successful settings import."
+  },
+  "optionsImportPermissionNote": {
+    "message": "Some imported options need browser permissions and were turned off — re-enable them above to grant access.",
+    "description": "Appended to the import status when permission-gated options were disabled because their permission is missing in this profile."
+  },
   "optionsWhitelistTitle": {
     "message": "Protected sites",
     "description": "Heading of the whitelist section."

@@ -169,6 +169,27 @@
   "optionsKeepUnknownHint": {
     "message": "Si está desactivado, estas cookies se preseleccionan para eliminar, salvo que el análisis no encuentre ningún dato de visitas, en cuyo caso no se preselecciona nada. Siempre puedes cambiar la selección antes de eliminar."
   },
+  "optionsConfigTitle": {
+    "message": "Importar / exportar ajustes"
+  },
+  "optionsConfigHint": {
+    "message": "Guarda tus ajustes en un archivo JSON o carga uno exportado desde otro perfil. El archivo nunca sale de tu equipo."
+  },
+  "optionsExportButton": {
+    "message": "Exportar ajustes"
+  },
+  "optionsImportButton": {
+    "message": "Importar ajustes…"
+  },
+  "optionsImportInvalid": {
+    "message": "Este archivo no es una exportación de ajustes de Stale Cookie."
+  },
+  "optionsImportDone": {
+    "message": "Ajustes importados."
+  },
+  "optionsImportPermissionNote": {
+    "message": "Algunas opciones importadas necesitan permisos del navegador y se han desactivado; vuelve a activarlas arriba para conceder el acceso."
+  },
   "optionsWhitelistTitle": {
     "message": "Sitios protegidos"
   },

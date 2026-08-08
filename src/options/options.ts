@@ -7,6 +7,7 @@ import {
   type Settings,
 } from '../ext/settings';
 import { requestBrowsingDataPermission, runGlobalClear } from '../ext/globalClear';
+import { parseSettingsImport, serializeSettings } from '../core/settings';
 
 localizePage();
 
@@ -35,6 +36,10 @@ const globalCache = el<HTMLInputElement>('global-cache');
 const globalFormData = el<HTMLInputElement>('global-form-data');
 const globalClearButton = el<HTMLButtonElement>('global-clear');
 const globalStatus = el<HTMLParagraphElement>('global-status');
+const exportConfig = el<HTMLButtonElement>('export-config');
+const importConfig = el<HTMLButtonElement>('import-config');
+const importFile = el<HTMLInputElement>('import-file');
+const configStatus = el<HTMLParagraphElement>('config-status');
 const saved = el<HTMLParagraphElement>('saved');
 
 let settings: Settings;
@@ -214,8 +219,50 @@ globalClearButton.addEventListener('click', async () => {
   globalStatus.textContent = msg('optionsGlobalDone');
 });
 
-void loadSettings().then((loaded) => {
-  settings = loaded;
+exportConfig.addEventListener('click', () => {
+  configStatus.textContent = '';
+  const blob = new Blob([serializeSettings(settings)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `stale-cookie-settings-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+});
+
+importConfig.addEventListener('click', () => importFile.click());
+
+importFile.addEventListener('change', async () => {
+  configStatus.textContent = '';
+  const file = importFile.files?.[0];
+  importFile.value = '';
+  if (!file) return;
+  const imported = parseSettingsImport(await file.text());
+  if (!imported) {
+    configStatus.textContent = msg('optionsImportInvalid');
+    return;
+  }
+  // Permissions can't travel with the file — permission-gated features
+  // arrive off, and re-enabling them here triggers the request.
+  let downgraded = false;
+  for (const [key, permission] of [
+    ['clearDownloads', 'downloads'],
+    ['reminderNotification', 'notifications'],
+  ] as const) {
+    if (imported[key] && !(await browser.permissions.contains({ permissions: [permission] }))) {
+      imported[key] = false;
+      downgraded = true;
+    }
+  }
+  settings = imported;
+  await saveSettings(settings);
+  applySettingsToUi();
+  configStatus.textContent = downgraded
+    ? `${msg('optionsImportDone')} ${msg('optionsImportPermissionNote')}`
+    : msg('optionsImportDone');
+});
+
+function applySettingsToUi(): void {
   cookieThreshold.value = String(settings.cookieThresholdDays);
   historyThreshold.value = String(settings.historyThresholdDays);
   downloadThreshold.value = String(settings.downloadThresholdDays);
@@ -231,4 +278,9 @@ void loadSettings().then((loaded) => {
   updateGlobalClearEnabled();
   updateThresholdWarning();
   updateReminderEnabled();
+}
+
+void loadSettings().then((loaded) => {
+  settings = loaded;
+  applySettingsToUi();
 });
