@@ -234,8 +234,8 @@
     "description": "Button that downloads the current settings as a JSON file."
   },
   "optionsImportButton": {
-    "message": "Import settings…",
-    "description": "Button that opens a file picker to load a settings export."
+    "message": "Import settings:",
+    "description": "Label of the file input that loads a settings export."
   },
   "optionsImportInvalid": {
     "message": "This file is not a Stale Cookie settings export.",

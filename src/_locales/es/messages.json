@@ -179,7 +179,7 @@
     "message": "Exportar ajustes"
   },
   "optionsImportButton": {
-    "message": "Importar ajustes…"
+    "message": "Importar ajustes:"
   },
   "optionsImportInvalid": {
     "message": "Este archivo no es una exportación de ajustes de Stale Cookie."

@@ -37,7 +37,6 @@ const globalFormData = el<HTMLInputElement>('global-form-data');
 const globalClearButton = el<HTMLButtonElement>('global-clear');
 const globalStatus = el<HTMLParagraphElement>('global-status');
 const exportConfig = el<HTMLButtonElement>('export-config');
-const importConfig = el<HTMLButtonElement>('import-config');
 const importFile = el<HTMLInputElement>('import-file');
 const configStatus = el<HTMLParagraphElement>('config-status');
 const saved = el<HTMLParagraphElement>('saved');
@@ -229,8 +228,6 @@ exportConfig.addEventListener('click', () => {
   link.click();
   URL.revokeObjectURL(url);
 });
-
-importConfig.addEventListener('click', () => importFile.click());
 
 importFile.addEventListener('change', async () => {
   configStatus.textContent = '';

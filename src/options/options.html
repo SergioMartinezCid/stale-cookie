@@ -67,6 +67,9 @@
         color: #c05000;
         font-size: 13px;
       }
+      .import-row {
+        margin-top: 8px;
+      }
     </style>
   </head>
   <body>
@@ -180,8 +183,10 @@
       <h2 data-i18n="optionsConfigTitle"></h2>
       <p class="hint" data-i18n="optionsConfigHint"></p>
       <button id="export-config" data-i18n="optionsExportButton"></button>
-      <button id="import-config" data-i18n="optionsImportButton"></button>
-      <input type="file" id="import-file" accept=".json,application/json" hidden />
+      <label class="import-row"
+        ><span data-i18n="optionsImportButton"></span
+        ><input type="file" id="import-file" accept=".json,application/json"
+      /></label>
       <p id="config-status" class="hint"></p>
     </section>
 
