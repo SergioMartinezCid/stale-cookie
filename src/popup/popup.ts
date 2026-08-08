@@ -3,6 +3,7 @@ import { localizePage } from '../ui/i18n';
 import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
 import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
+import { getSnapshot, restoreSnapshot } from '../ext/snapshot';
 import { installErrorCapture, recordError } from '../ext/errorLog';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 import { buildSiteRows, type SiteRow } from '../core/rows';
@@ -15,6 +16,7 @@ const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as
 
 const scanButton = el<HTMLButtonElement>('scan');
 const skipButton = el<HTMLButtonElement>('skip');
+const undoButton = el<HTMLButtonElement>('undo');
 const deleteButton = el<HTMLButtonElement>('delete');
 const confirmBox = el<HTMLDivElement>('confirm');
 const confirmText = el<HTMLSpanElement>('confirm-text');
@@ -164,6 +166,21 @@ function closeConfirm(): void {
   deleteButton.hidden = false;
 }
 
+/**
+ * Undo is offered whenever a snapshot of the last deletion exists — also on
+ * popup open, so an automatic clean (no preview) can still be undone until
+ * the browser closes or the next deletion replaces the snapshot.
+ */
+async function updateUndoButton(): Promise<void> {
+  const snapshot = await getSnapshot();
+  if (snapshot && snapshot.cookies.length > 0) {
+    undoButton.textContent = msg('popupUndoButton', [String(snapshot.cookies.length)]);
+    undoButton.hidden = false;
+  } else {
+    undoButton.hidden = true;
+  }
+}
+
 async function runScan(): Promise<void> {
   scanButton.disabled = true;
   status.textContent = msg('popupScanning');
@@ -203,6 +220,22 @@ deleteButton.addEventListener('click', () => {
 
 confirmCancel.addEventListener('click', closeConfirm);
 
+undoButton.addEventListener('click', async () => {
+  undoButton.disabled = true;
+  try {
+    const restored = await restoreSnapshot();
+    status.textContent = msg('popupRestoredToast', [String(restored)]);
+  } catch (error) {
+    recordError('popup', error);
+    status.textContent = msg('popupFailed');
+  } finally {
+    undoButton.disabled = false;
+  }
+  await updateUndoButton();
+  // The restored cookies are still stale — rescan so the preview is honest.
+  if (outcome) await runScan();
+});
+
 confirmDelete.addEventListener('click', async () => {
   confirmDelete.disabled = true;
   try {
@@ -217,6 +250,7 @@ confirmDelete.addEventListener('click', async () => {
     confirmDelete.disabled = false;
   }
   closeConfirm();
+  await updateUndoButton();
   // Cleaning starts a new reminder cycle.
   await resetReminderTimer();
   skipButton.hidden = true;
@@ -227,3 +261,5 @@ confirmDelete.addEventListener('click', async () => {
 void loadSettings().then(async (loaded) => {
   skipButton.hidden = !(await reminderDue(loaded));
 });
+
+void updateUndoButton();

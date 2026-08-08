@@ -92,8 +92,8 @@
     "placeholders": { "count": { "content": "$1" } }
   },
   "popupDeleteConfirm": {
-    "message": "Delete the selected data ($COUNT$ items)? This cannot be undone.",
-    "description": "Inline confirmation message shown before deleting the selected preview rows.",
+    "message": "Delete the selected data ($COUNT$ items)? Cookies can be restored for the next 24 hours while the browser stays open; deleted history and downloads cannot be recovered.",
+    "description": "Inline confirmation message shown before deleting the selected preview rows. Must stay faithful to the undo bounds: cookie snapshot expires after 24 h or on browser close, one deletion deep; history/downloads are never restorable.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "popupConfirmDeleteButton": {
@@ -107,6 +107,16 @@
   "popupFailed": {
     "message": "Something went wrong. Details are in the error log (Settings → Logs).",
     "description": "Status shown in the popup when a scan or deletion fails unexpectedly."
+  },
+  "popupUndoButton": {
+    "message": "Restore deleted cookies ($COUNT$)",
+    "description": "Button that undoes the last deletion by re-creating the snapshotted cookies. Cookies only — history and downloads cannot be restored.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "popupRestoredToast": {
+    "message": "Restored $COUNT$ cookies.",
+    "description": "Status shown after an undo finished.",
+    "placeholders": { "count": { "content": "$1" } }
   },
   "deletedToast": {
     "message": "Deleted $COUNT$ cookies.",
@@ -298,6 +308,14 @@
   "logDeletedDownloads": {
     "message": "Deleted $COUNT$ download entries from $SITES$ sites.",
     "description": "Action log line for a download history deletion.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logRestoredCookies": {
+    "message": "Restored $COUNT$ cookies to $SITES$ sites.",
+    "description": "Action log line for an undo (cookie restore).",
     "placeholders": {
       "count": { "content": "$1" },
       "sites": { "content": "$2" }

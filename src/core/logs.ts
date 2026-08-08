@@ -31,6 +31,11 @@ export type ActionLogEntry =
       at: number;
       type: 'global-clear';
       dataTypes: string[];
+    }
+  | {
+      at: number;
+      type: 'restore-cookies';
+      restored: Array<{ domain: string; storeId: string; count: number }>;
     };
 
 export type ErrorContext = 'popup' | 'options' | 'background';
@@ -120,6 +125,11 @@ function anonymizeAction(entry: ActionLogEntry, anonymizer: Anonymizer): ActionL
       return {
         ...entry,
         deleted: entry.deleted.map((d) => ({ ...d, domain: anonymizer.site(d.domain) })),
+      };
+    case 'restore-cookies':
+      return {
+        ...entry,
+        restored: entry.restored.map((r) => ({ ...r, domain: anonymizer.site(r.domain) })),
       };
   }
 }

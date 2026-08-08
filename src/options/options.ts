@@ -290,6 +290,11 @@ function actionSummary(entry: ActionLogEntry): string {
     );
     return msg('logGlobalClear', [names.join(', ')]);
   }
+  if (entry.type === 'restore-cookies') {
+    const count = entry.restored.reduce((n, r) => n + r.count, 0);
+    const sites = new Set(entry.restored.map((r) => r.domain)).size;
+    return msg('logRestoredCookies', [String(count), String(sites)]);
+  }
   const count = entry.deleted.reduce((n, d) => n + d.count, 0);
   const sites = new Set(entry.deleted.map((d) => d.domain)).size;
   const key =

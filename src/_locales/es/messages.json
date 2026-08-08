@@ -72,7 +72,7 @@
     "placeholders": { "count": { "content": "$1" } }
   },
   "popupDeleteConfirm": {
-    "message": "¿Eliminar los datos seleccionados ($COUNT$ elementos)? Esta acción no se puede deshacer.",
+    "message": "¿Eliminar los datos seleccionados ($COUNT$ elementos)? Las cookies podrán restaurarse durante las próximas 24 horas mientras el navegador siga abierto; el historial y las descargas eliminados no se pueden recuperar.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "popupConfirmDeleteButton": {
@@ -83,6 +83,14 @@
   },
   "popupFailed": {
     "message": "Algo ha salido mal. Los detalles están en el registro de errores (Ajustes → Registros)."
+  },
+  "popupUndoButton": {
+    "message": "Restaurar cookies eliminadas ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "popupRestoredToast": {
+    "message": "Se restauraron $COUNT$ cookies.",
+    "placeholders": { "count": { "content": "$1" } }
   },
   "deletedToast": {
     "message": "Se eliminaron $COUNT$ cookies.",
@@ -229,6 +237,13 @@
   },
   "logDeletedDownloads": {
     "message": "Se eliminaron $COUNT$ entradas de descargas de $SITES$ sitios.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logRestoredCookies": {
+    "message": "Se restauraron $COUNT$ cookies en $SITES$ sitios.",
     "placeholders": {
       "count": { "content": "$1" },
       "sites": { "content": "$2" }

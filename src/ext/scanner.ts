@@ -8,6 +8,7 @@ import {
 import { classifyGroups, type ClassifiedGroup } from '../core/classify';
 import { cookieRemovalDetails } from '../core/removal';
 import { appendActionLog } from './actionLog';
+import { saveSnapshot } from './snapshot';
 import type { Settings } from './settings';
 
 export interface ScanOutcome {
@@ -159,6 +160,11 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
 /** Delete every item of the given groups. Returns the number removed. */
 export async function deleteGroups(groups: readonly ClassifiedGroup[]): Promise<number> {
   let removed = 0;
+
+  // Undo snapshot, taken before anything is removed. The group objects hold
+  // full cookies.getAll() results at runtime, so every field needed to
+  // re-create them travels along.
+  await saveSnapshot(groups.filter((g) => g.kind === 'cookies').flatMap((g) => g.cookies));
 
   const cookieLog: Array<{ domain: string; storeId: string; count: number }> = [];
   const historyLog: Array<{ domain: string; count: number }> = [];

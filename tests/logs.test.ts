@@ -144,6 +144,24 @@ describe('serializeLogs', () => {
     );
   });
 
+  it('pseudonymizes restore-cookies entries', () => {
+    const restore: ActionLogEntry[] = [
+      {
+        at: 0,
+        type: 'restore-cookies',
+        restored: [{ domain: 'old-bank.com', storeId: 'firefox-default', count: 2 }],
+      },
+    ];
+    const lines = parse(
+      serializeLogs({ actions: restore, errors: [], version: '0.1.0', exportedAt: 0, anonymize: true }),
+    );
+    expect(lines[1]).toMatchObject({
+      kind: 'action',
+      type: 'restore-cookies',
+      restored: [{ domain: 'site-1.example', storeId: 'firefox-default', count: 2 }],
+    });
+  });
+
   it('leaves global-clear entries untouched by anonymization', () => {
     const lines = parse(
       serializeLogs({ actions, errors: [], version: '0.1.0', exportedAt: 0, anonymize: true }),
