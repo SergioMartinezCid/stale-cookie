@@ -14,6 +14,7 @@ Rule: **per-site deletion where the browser APIs allow it.** Data types that can
 
 - **v0.1**: manual cleaning of cookies only, with preview before deletion and a manual whitelist. Build up from there.
 - **v1.0**: first published version, covering most of the decisions in this file.
+- **UI review pass before v1.0** (decided 2026-08-08): once the feature set stabilizes, a dedicated pass to make the popup and options page usable and aesthetically pleasing — layout, spacing, typography, color/dark-mode, control grouping, empty/loading states. Must happen **before the Chrome port and before publishing**; until then the UI is deliberately functional-only.
 - Undo (e.g. snapshotting cookies before deletion) is a secondary/later feature; preview is the required safety mechanism.
 
 ## Product decisions
