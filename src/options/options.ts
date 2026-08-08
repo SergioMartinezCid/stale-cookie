@@ -21,6 +21,9 @@ const clearDownloads = el<HTMLInputElement>('clear-downloads');
 const permissionNote = el<HTMLParagraphElement>('permission-note');
 const thresholdWarning = el<HTMLParagraphElement>('threshold-warning');
 const keepUnknown = el<HTMLInputElement>('keep-unknown');
+const autoClean = el<HTMLInputElement>('auto-clean');
+const autoCleanDays = el<HTMLInputElement>('auto-clean-days');
+const reminderAutoNote = el<HTMLParagraphElement>('reminder-auto-note');
 const reminderDays = el<HTMLInputElement>('reminder-days');
 const reminderBadge = el<HTMLInputElement>('reminder-badge');
 const reminderNotification = el<HTMLInputElement>('reminder-notification');
@@ -121,6 +124,31 @@ keepUnknown.addEventListener('change', async () => {
   await persist();
 });
 
+/** While auto-clean is on, the manual reminder is off — gray its controls out. */
+function updateReminderEnabled(): void {
+  const auto = settings.autoCleanEnabled;
+  reminderDays.disabled = auto;
+  reminderBadge.disabled = auto;
+  reminderNotification.disabled = auto;
+  reminderAutoNote.hidden = !auto;
+}
+
+autoClean.addEventListener('change', async () => {
+  settings.autoCleanEnabled = autoClean.checked;
+  updateReminderEnabled();
+  await persist();
+});
+
+autoCleanDays.addEventListener('change', async () => {
+  const days = Number(autoCleanDays.value);
+  if (Number.isInteger(days) && days >= 1) {
+    settings.autoCleanDays = days;
+    await persist();
+  } else {
+    autoCleanDays.value = String(settings.autoCleanDays);
+  }
+});
+
 reminderDays.addEventListener('change', async () => {
   const days = Number(reminderDays.value);
   if (Number.isInteger(days) && days >= 1) {
@@ -194,10 +222,13 @@ void loadSettings().then((loaded) => {
   clearHistory.checked = settings.clearHistory;
   clearDownloads.checked = settings.clearDownloads;
   keepUnknown.checked = settings.keepNeverVisited;
+  autoClean.checked = settings.autoCleanEnabled;
+  autoCleanDays.value = String(settings.autoCleanDays);
   reminderDays.value = String(settings.reminderDays);
   reminderBadge.checked = settings.reminderBadge;
   reminderNotification.checked = settings.reminderNotification;
   renderWhitelist();
   updateGlobalClearEnabled();
   updateThresholdWarning();
+  updateReminderEnabled();
 });

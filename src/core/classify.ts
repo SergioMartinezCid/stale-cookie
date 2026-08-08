@@ -64,3 +64,18 @@ export function shouldPreselectUnknown(
   if (keepNeverVisited) return false;
   return groups.some((group) => group.lastVisitTime !== undefined);
 }
+
+/**
+ * What an automatic (scheduled) run deletes: exactly what a manual preview
+ * would have pre-checked — stale groups, plus never-visited groups under the
+ * same policy as preselection. Whitelisted and fresh groups are never touched.
+ */
+export function selectForAutoClean<T extends ClassifiableGroup>(
+  groups: readonly Classified<T>[],
+  keepNeverVisited: boolean,
+): Classified<T>[] {
+  const includeUnknown = shouldPreselectUnknown(groups, keepNeverVisited);
+  return groups.filter(
+    (group) => group.verdict === 'stale' || (includeUnknown && group.verdict === 'unknown'),
+  );
+}

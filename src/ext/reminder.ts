@@ -15,6 +15,8 @@ const BASE_KEY = 'reminderBase';
 const NOTIFIED_KEY = 'reminderNotifiedAt';
 
 function reminderActive(settings: Settings): boolean {
+  // Automatic cleaning makes the manual-mode reminder redundant.
+  if (settings.autoCleanEnabled) return false;
   return settings.reminderBadge || settings.reminderNotification;
 }
 

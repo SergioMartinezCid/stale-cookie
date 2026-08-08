@@ -136,6 +136,26 @@
     "message": "Cookies are set to outlive browsing history. Once a site's history is deleted, its remaining cookies will show as \"no visit recorded\" in later scans.",
     "description": "Warning shown when the cookie threshold is larger than the history threshold."
   },
+  "optionsAutoTitle": {
+    "message": "Automatic cleaning",
+    "description": "Heading of the automatic (scheduled) cleaning section."
+  },
+  "optionsAutoHint": {
+    "message": "Cleans in the background without a preview: stale data is deleted, protected sites are never touched, and sites with no recorded visit follow the setting above. Everything deleted is recorded in the action log.",
+    "description": "Explanation under the automatic cleaning heading."
+  },
+  "optionsAutoEnableLabel": {
+    "message": "Clean automatically on a schedule",
+    "description": "Checkbox that enables automatic cleaning."
+  },
+  "optionsAutoDaysLabel": {
+    "message": "Clean every:",
+    "description": "Label of the automatic cleaning interval input."
+  },
+  "optionsReminderAutoNote": {
+    "message": "Automatic cleaning is on, so the manual cleaning reminder is disabled.",
+    "description": "Note shown over the grayed-out reminder controls while automatic cleaning is enabled."
+  },
   "optionsReminderTitle": {
     "message": "Cleaning reminder",
     "description": "Heading of the reminder section on the options page."

@@ -16,6 +16,10 @@ export interface Settings {
   whitelist: string[];
   /** Never preselect never-visited sites for deletion. */
   keepNeverVisited: boolean;
+  /** Clean automatically on a schedule (background, no preview). */
+  autoCleanEnabled: boolean;
+  /** Days between automatic cleans. */
+  autoCleanDays: number;
   /** Days after the last clean (or skip) before the reminder fires. */
   reminderDays: number;
   /** Reminder vehicle: badge on the toolbar icon (default). */
@@ -34,6 +38,8 @@ export const DEFAULT_SETTINGS: Settings = {
   clearDownloads: false,
   whitelist: [],
   keepNeverVisited: false,
+  autoCleanEnabled: false,
+  autoCleanDays: 7,
   reminderDays: 30,
   reminderBadge: true,
   reminderNotification: false,

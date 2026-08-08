@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyGroups, shouldPreselectUnknown } from '../src/core/classify';
+import { classifyGroups, selectForAutoClean, shouldPreselectUnknown } from '../src/core/classify';
 import { groupCookies, type ScannableCookie } from '../src/core/grouping';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -73,5 +73,43 @@ describe('shouldPreselectUnknown', () => {
 
   it('never preselects when the keep-never-visited setting is on', () => {
     expect(shouldPreselectUnknown(mixed(), true)).toBe(false);
+  });
+});
+
+describe('selectForAutoClean', () => {
+  const options = { now: NOW, thresholdMs: 30 * DAY_MS, whitelist: ['bank.com'] };
+
+  const classified = () =>
+    classifyGroups(
+      groupCookies([
+        cookie('fresh.com'),
+        cookie('old.com'),
+        cookie('never.com'),
+        cookie('bank.com'),
+      ]),
+      new Map([
+        ['fresh.com', NOW - 1 * DAY_MS],
+        ['old.com', NOW - 90 * DAY_MS],
+      ]),
+      options,
+    );
+
+  it('selects stale and (mixed scan) never-visited groups, never fresh or whitelisted', () => {
+    const domains = selectForAutoClean(classified(), false).map((g) => g.registrableDomain);
+    expect(domains.sort()).toEqual(['never.com', 'old.com']);
+  });
+
+  it('leaves never-visited groups alone when the keep setting is on', () => {
+    const domains = selectForAutoClean(classified(), true).map((g) => g.registrableDomain);
+    expect(domains).toEqual(['old.com']);
+  });
+
+  it('selects nothing from a scan with no visit data at all', () => {
+    const allUnknown = classifyGroups(
+      groupCookies([cookie('a.com'), cookie('b.com')]),
+      new Map(),
+      { now: NOW, thresholdMs: 30 * DAY_MS, whitelist: [] },
+    );
+    expect(selectForAutoClean(allUnknown, false)).toEqual([]);
   });
 });

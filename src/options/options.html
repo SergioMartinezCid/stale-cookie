@@ -114,7 +114,24 @@
     </section>
 
     <section>
+      <h2 data-i18n="optionsAutoTitle"></h2>
+      <p class="hint" data-i18n="optionsAutoHint"></p>
+      <label
+        ><input type="checkbox" id="auto-clean" /><span data-i18n="optionsAutoEnableLabel"></span
+      ></label>
+      <div class="type-row">
+        <span data-i18n="optionsAutoDaysLabel"></span>
+        <label
+          ><input type="number" id="auto-clean-days" min="1" max="3650" /><span
+            data-i18n="optionsDaysLabel"
+          ></span
+        ></label>
+      </div>
+    </section>
+
+    <section id="reminder-section">
       <h2 data-i18n="optionsReminderTitle"></h2>
+      <p class="hint" id="reminder-auto-note" hidden data-i18n="optionsReminderAutoNote"></p>
       <div class="type-row">
         <span data-i18n="optionsReminderDaysLabel"></span>
         <label

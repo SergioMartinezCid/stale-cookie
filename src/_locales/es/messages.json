@@ -105,6 +105,21 @@
   "optionsThresholdWarning": {
     "message": "Las cookies están configuradas para durar más que el historial. Cuando se borre el historial de un sitio, sus cookies restantes aparecerán como «sin visitas registradas» en análisis posteriores."
   },
+  "optionsAutoTitle": {
+    "message": "Limpieza automática"
+  },
+  "optionsAutoHint": {
+    "message": "Limpia en segundo plano sin vista previa: se eliminan los datos obsoletos, los sitios protegidos nunca se tocan y los sitios sin visitas registradas siguen el ajuste de arriba. Todo lo eliminado queda registrado en el historial de acciones."
+  },
+  "optionsAutoEnableLabel": {
+    "message": "Limpiar automáticamente de forma periódica"
+  },
+  "optionsAutoDaysLabel": {
+    "message": "Limpiar cada:"
+  },
+  "optionsReminderAutoNote": {
+    "message": "La limpieza automática está activada, así que el recordatorio de limpieza manual está desactivado."
+  },
   "optionsReminderTitle": {
     "message": "Recordatorio de limpieza"
   },
