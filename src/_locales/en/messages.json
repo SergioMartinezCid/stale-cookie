@@ -93,8 +93,16 @@
   },
   "popupDeleteConfirm": {
     "message": "Delete the selected data ($COUNT$ items)? This cannot be undone.",
-    "description": "Confirmation dialog shown before deleting the selected preview rows.",
+    "description": "Inline confirmation message shown before deleting the selected preview rows.",
     "placeholders": { "count": { "content": "$1" } }
+  },
+  "popupConfirmDeleteButton": {
+    "message": "Yes, delete",
+    "description": "Button that confirms the pending deletion."
+  },
+  "popupCancel": {
+    "message": "Cancel",
+    "description": "Button that dismisses the pending deletion confirmation."
   },
   "deletedToast": {
     "message": "Deleted $COUNT$ cookies.",

@@ -14,6 +14,10 @@ const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as
 const scanButton = el<HTMLButtonElement>('scan');
 const skipButton = el<HTMLButtonElement>('skip');
 const deleteButton = el<HTMLButtonElement>('delete');
+const confirmBox = el<HTMLDivElement>('confirm');
+const confirmText = el<HTMLSpanElement>('confirm-text');
+const confirmDelete = el<HTMLButtonElement>('confirm-delete');
+const confirmCancel = el<HTMLButtonElement>('confirm-cancel');
 const status = el<HTMLParagraphElement>('status');
 const results = el<HTMLDivElement>('results');
 const footer = el<HTMLDivElement>('footer');
@@ -147,9 +151,15 @@ function selectedDeletable(): ClassifiedGroup[] {
 }
 
 function updateDeleteButton(): void {
+  closeConfirm(); // selection changed — a pending confirmation is stale
   const count = selectedDeletable().reduce((n, g) => n + itemCount(g), 0);
   deleteButton.textContent = msg('deleteButton', [String(count)]);
   deleteButton.disabled = count === 0;
+}
+
+function closeConfirm(): void {
+  confirmBox.hidden = true;
+  deleteButton.hidden = false;
 }
 
 async function runScan(): Promise<void> {
@@ -176,13 +186,26 @@ skipButton.addEventListener('click', async () => {
   skipButton.hidden = true;
 });
 
-deleteButton.addEventListener('click', async () => {
-  const groups = selectedDeletable();
-  const count = groups.reduce((n, g) => n + itemCount(g), 0);
-  if (!window.confirm(msg('popupDeleteConfirm', [String(count)]))) return;
-  deleteButton.disabled = true;
-  const removed = await deleteGroups(groups);
-  status.textContent = msg('deletedToast', [String(removed)]);
+// Native dialogs don't render their message over popup panels on Firefox,
+// so the confirmation is inline: Delete swaps to a message + confirm/cancel.
+deleteButton.addEventListener('click', () => {
+  const count = selectedDeletable().reduce((n, g) => n + itemCount(g), 0);
+  confirmText.textContent = msg('popupDeleteConfirm', [String(count)]);
+  deleteButton.hidden = true;
+  confirmBox.hidden = false;
+});
+
+confirmCancel.addEventListener('click', closeConfirm);
+
+confirmDelete.addEventListener('click', async () => {
+  confirmDelete.disabled = true;
+  try {
+    const removed = await deleteGroups(selectedDeletable());
+    status.textContent = msg('deletedToast', [String(removed)]);
+  } finally {
+    confirmDelete.disabled = false;
+  }
+  closeConfirm();
   // Cleaning starts a new reminder cycle.
   await resetReminderTimer();
   skipButton.hidden = true;

@@ -80,6 +80,22 @@
       #footer[hidden] {
         display: none;
       }
+      #confirm {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+      #confirm[hidden] {
+        display: none;
+      }
+      #confirm-text {
+        flex-basis: 100%;
+        color: #c05000;
+      }
+      #confirm-delete {
+        color: #d70022;
+      }
       #status {
         margin: 8px 0 0;
         opacity: 0.7;
@@ -110,6 +126,11 @@
     </div>
     <div id="footer" hidden>
       <button id="delete"></button>
+      <div id="confirm" hidden>
+        <span id="confirm-text"></span>
+        <button id="confirm-delete" data-i18n="popupConfirmDeleteButton"></button>
+        <button id="confirm-cancel" data-i18n="popupCancel"></button>
+      </div>
     </div>
     <script src="popup.js"></script>
   </body>
