@@ -11,6 +11,12 @@
   "popupOptionsButton": {
     "message": "Ajustes"
   },
+  "popupSkipReminder": {
+    "message": "Omitir este recordatorio"
+  },
+  "reminderNotificationMessage": {
+    "message": "Es hora de limpiar los datos de navegación obsoletos. Abre Stale Cookie para revisarlos y eliminarlos."
+  },
   "popupScanButton": {
     "message": "Buscar cookies obsoletas"
   },
@@ -98,6 +104,18 @@
   },
   "optionsThresholdWarning": {
     "message": "Las cookies están configuradas para durar más que el historial. Cuando se borre el historial de un sitio, sus cookies restantes aparecerán como «sin visitas registradas» en análisis posteriores."
+  },
+  "optionsReminderTitle": {
+    "message": "Recordatorio de limpieza"
+  },
+  "optionsReminderDaysLabel": {
+    "message": "Recuérdame limpiar tras este tiempo sin limpiar:"
+  },
+  "optionsReminderBadgeLabel": {
+    "message": "Insignia en el icono de la barra de herramientas"
+  },
+  "optionsReminderNotificationLabel": {
+    "message": "Notificación del sistema"
   },
   "optionsGlobalTitle": {
     "message": "Limpieza global"

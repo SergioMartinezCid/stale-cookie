@@ -4,8 +4,8 @@
   "description": "__MSG_extensionDescription__",
   "version": "0.1.0",
   "default_locale": "en",
-  "permissions": ["cookies", "history", "storage", "contextualIdentities"],
-  "optional_permissions": ["downloads", "browsingData"],
+  "permissions": ["cookies", "history", "storage", "contextualIdentities", "alarms"],
+  "optional_permissions": ["downloads", "browsingData", "notifications"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "scripts": ["background/index.js"]

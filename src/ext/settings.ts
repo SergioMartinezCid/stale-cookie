@@ -16,6 +16,12 @@ export interface Settings {
   whitelist: string[];
   /** Never preselect never-visited sites for deletion. */
   keepNeverVisited: boolean;
+  /** Days after the last clean (or skip) before the reminder fires. */
+  reminderDays: number;
+  /** Reminder vehicle: badge on the toolbar icon (default). */
+  reminderBadge: boolean;
+  /** Reminder vehicle: system notification (needs the optional "notifications" permission). */
+  reminderNotification: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -28,6 +34,9 @@ export const DEFAULT_SETTINGS: Settings = {
   clearDownloads: false,
   whitelist: [],
   keepNeverVisited: false,
+  reminderDays: 30,
+  reminderBadge: true,
+  reminderNotification: false,
 };
 
 export async function loadSettings(): Promise<Settings> {

@@ -114,6 +114,29 @@
     </section>
 
     <section>
+      <h2 data-i18n="optionsReminderTitle"></h2>
+      <div class="type-row">
+        <span data-i18n="optionsReminderDaysLabel"></span>
+        <label
+          ><input type="number" id="reminder-days" min="1" max="3650" /><span
+            data-i18n="optionsDaysLabel"
+          ></span
+        ></label>
+      </div>
+      <label
+        ><input type="checkbox" id="reminder-badge" /><span
+          data-i18n="optionsReminderBadgeLabel"
+        ></span
+      ></label>
+      <label
+        ><input type="checkbox" id="reminder-notification" /><span
+          data-i18n="optionsReminderNotificationLabel"
+        ></span
+      ></label>
+      <p class="hint" id="reminder-permission-note" hidden data-i18n="optionsPermissionDenied"></p>
+    </section>
+
+    <section>
       <h2 data-i18n="optionsWhitelistTitle"></h2>
       <p class="hint" data-i18n="optionsWhitelistHint"></p>
       <form id="whitelist-form">

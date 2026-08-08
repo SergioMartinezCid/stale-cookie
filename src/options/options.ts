@@ -21,6 +21,10 @@ const clearDownloads = el<HTMLInputElement>('clear-downloads');
 const permissionNote = el<HTMLParagraphElement>('permission-note');
 const thresholdWarning = el<HTMLParagraphElement>('threshold-warning');
 const keepUnknown = el<HTMLInputElement>('keep-unknown');
+const reminderDays = el<HTMLInputElement>('reminder-days');
+const reminderBadge = el<HTMLInputElement>('reminder-badge');
+const reminderNotification = el<HTMLInputElement>('reminder-notification');
+const reminderPermissionNote = el<HTMLParagraphElement>('reminder-permission-note');
 const whitelistForm = el<HTMLFormElement>('whitelist-form');
 const whitelistInput = el<HTMLInputElement>('whitelist-input');
 const whitelistList = el<HTMLUListElement>('whitelist');
@@ -117,6 +121,36 @@ keepUnknown.addEventListener('change', async () => {
   await persist();
 });
 
+reminderDays.addEventListener('change', async () => {
+  const days = Number(reminderDays.value);
+  if (Number.isInteger(days) && days >= 1) {
+    settings.reminderDays = days;
+    await persist();
+  } else {
+    reminderDays.value = String(settings.reminderDays);
+  }
+});
+
+reminderBadge.addEventListener('change', async () => {
+  settings.reminderBadge = reminderBadge.checked;
+  await persist();
+});
+
+reminderNotification.addEventListener('change', async () => {
+  reminderPermissionNote.hidden = true;
+  if (reminderNotification.checked) {
+    // Optional permission, requested only when the feature is enabled.
+    const granted = await browser.permissions.request({ permissions: ['notifications'] });
+    if (!granted) {
+      reminderNotification.checked = false;
+      reminderPermissionNote.hidden = false;
+      return;
+    }
+  }
+  settings.reminderNotification = reminderNotification.checked;
+  await persist();
+});
+
 whitelistForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const domain = normalizeWhitelistEntry(whitelistInput.value);
@@ -160,6 +194,9 @@ void loadSettings().then((loaded) => {
   clearHistory.checked = settings.clearHistory;
   clearDownloads.checked = settings.clearDownloads;
   keepUnknown.checked = settings.keepNeverVisited;
+  reminderDays.value = String(settings.reminderDays);
+  reminderBadge.checked = settings.reminderBadge;
+  reminderNotification.checked = settings.reminderNotification;
   renderWhitelist();
   updateGlobalClearEnabled();
   updateThresholdWarning();

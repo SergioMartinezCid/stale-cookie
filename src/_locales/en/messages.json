@@ -15,6 +15,14 @@
     "message": "Settings",
     "description": "Button in the popup header that opens the options page."
   },
+  "popupSkipReminder": {
+    "message": "Skip this reminder",
+    "description": "Button shown while a cleaning reminder is due; dismisses it and restarts the timer without cleaning."
+  },
+  "reminderNotificationMessage": {
+    "message": "Time to clean stale browsing data. Open Stale Cookie to review and delete.",
+    "description": "Body of the optional system notification reminding the user to clean."
+  },
   "popupScanButton": {
     "message": "Scan for stale cookies",
     "description": "Button in the popup that starts a scan (preview, nothing is deleted)."
@@ -127,6 +135,22 @@
   "optionsThresholdWarning": {
     "message": "Cookies are set to outlive browsing history. Once a site's history is deleted, its remaining cookies will show as \"no visit recorded\" in later scans.",
     "description": "Warning shown when the cookie threshold is larger than the history threshold."
+  },
+  "optionsReminderTitle": {
+    "message": "Cleaning reminder",
+    "description": "Heading of the reminder section on the options page."
+  },
+  "optionsReminderDaysLabel": {
+    "message": "Remind me to clean after this long without cleaning:",
+    "description": "Label of the reminder interval input."
+  },
+  "optionsReminderBadgeLabel": {
+    "message": "Badge on the toolbar icon",
+    "description": "Checkbox for the default reminder vehicle (toolbar badge)."
+  },
+  "optionsReminderNotificationLabel": {
+    "message": "System notification",
+    "description": "Checkbox for the optional secondary reminder vehicle (needs the notifications permission)."
   },
   "optionsGlobalTitle": {
     "message": "Global clear",

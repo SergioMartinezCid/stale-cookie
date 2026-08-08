@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
 import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
 import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
+import { reminderDue, resetReminderTimer } from '../ext/reminder';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 import { buildSiteRows, type SiteRow } from '../core/rows';
 
@@ -11,6 +12,7 @@ const msg = (key: string, subs?: string[]) => browser.i18n.getMessage(key, subs)
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 const scanButton = el<HTMLButtonElement>('scan');
+const skipButton = el<HTMLButtonElement>('skip');
 const deleteButton = el<HTMLButtonElement>('delete');
 const status = el<HTMLParagraphElement>('status');
 const results = el<HTMLDivElement>('results');
@@ -169,9 +171,22 @@ el<HTMLButtonElement>('options').addEventListener('click', () => {
 
 scanButton.addEventListener('click', () => void runScan());
 
+skipButton.addEventListener('click', async () => {
+  await resetReminderTimer();
+  skipButton.hidden = true;
+});
+
 deleteButton.addEventListener('click', async () => {
   deleteButton.disabled = true;
   const removed = await deleteGroups(selectedDeletable());
   status.textContent = msg('deletedToast', [String(removed)]);
+  // Cleaning starts a new reminder cycle.
+  await resetReminderTimer();
+  skipButton.hidden = true;
   await runScan();
+});
+
+// Offer "skip this reminder" only while a reminder is actually due.
+void loadSettings().then(async (loaded) => {
+  skipButton.hidden = !(await reminderDue(loaded));
 });
