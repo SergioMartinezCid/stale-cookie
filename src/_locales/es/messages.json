@@ -71,6 +71,10 @@
     "message": "Eliminar seleccionadas ($COUNT$)",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "popupDeleteConfirm": {
+    "message": "¿Eliminar los datos seleccionados ($COUNT$ elementos)? Esta acción no se puede deshacer.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
   "deletedToast": {
     "message": "Se eliminaron $COUNT$ cookies.",
     "placeholders": { "count": { "content": "$1" } }

@@ -177,8 +177,11 @@ skipButton.addEventListener('click', async () => {
 });
 
 deleteButton.addEventListener('click', async () => {
+  const groups = selectedDeletable();
+  const count = groups.reduce((n, g) => n + itemCount(g), 0);
+  if (!window.confirm(msg('popupDeleteConfirm', [String(count)]))) return;
   deleteButton.disabled = true;
-  const removed = await deleteGroups(selectedDeletable());
+  const removed = await deleteGroups(groups);
   status.textContent = msg('deletedToast', [String(removed)]);
   // Cleaning starts a new reminder cycle.
   await resetReminderTimer();

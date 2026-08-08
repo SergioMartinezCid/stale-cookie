@@ -91,6 +91,11 @@
     "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types.",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "popupDeleteConfirm": {
+    "message": "Delete the selected data ($COUNT$ items)? This cannot be undone.",
+    "description": "Confirmation dialog shown before deleting the selected preview rows.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
   "deletedToast": {
     "message": "Deleted $COUNT$ cookies.",
     "description": "Status shown after deletion.",
