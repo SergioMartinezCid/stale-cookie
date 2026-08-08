@@ -8,10 +8,14 @@ import {
 } from '../ext/settings';
 import { requestBrowsingDataPermission, runGlobalClear } from '../ext/globalClear';
 import { parseSettingsImport, serializeSettings } from '../core/settings';
+import { getActionLog, type ActionLogEntry } from '../ext/actionLog';
+import { getErrorLog, installErrorCapture } from '../ext/errorLog';
+import { serializeLogs, type ErrorLogEntry } from '../core/logs';
 
+installErrorCapture('options');
 localizePage();
 
-const msg = (key: string) => browser.i18n.getMessage(key);
+const msg = (key: string, subs?: string[]) => browser.i18n.getMessage(key, subs);
 const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
 const cookieThreshold = el<HTMLInputElement>('cookie-threshold');
@@ -39,6 +43,14 @@ const globalStatus = el<HTMLParagraphElement>('global-status');
 const exportConfig = el<HTMLButtonElement>('export-config');
 const importFile = el<HTMLInputElement>('import-file');
 const configStatus = el<HTMLParagraphElement>('config-status');
+const actionLogTitle = el<HTMLHeadingElement>('action-log-title');
+const actionLogList = el<HTMLUListElement>('action-log');
+const actionLogEmpty = el<HTMLParagraphElement>('action-log-empty');
+const errorLogTitle = el<HTMLHeadingElement>('error-log-title');
+const errorLogList = el<HTMLUListElement>('error-log');
+const errorLogEmpty = el<HTMLParagraphElement>('error-log-empty');
+const logsAnonymize = el<HTMLInputElement>('logs-anonymize');
+const exportLogs = el<HTMLButtonElement>('export-logs');
 const saved = el<HTMLParagraphElement>('saved');
 
 let settings: Settings;
@@ -218,15 +230,22 @@ globalClearButton.addEventListener('click', async () => {
   globalStatus.textContent = msg('optionsGlobalDone');
 });
 
-exportConfig.addEventListener('click', () => {
-  configStatus.textContent = '';
-  const blob = new Blob([serializeSettings(settings)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+function downloadFile(filename: string, content: string, type: string): void {
+  const url = URL.createObjectURL(new Blob([content], { type }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = `stale-cookie-settings-${new Date().toISOString().slice(0, 10)}.json`;
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+exportConfig.addEventListener('click', () => {
+  configStatus.textContent = '';
+  downloadFile(
+    `stale-cookie-settings-${new Date().toISOString().slice(0, 10)}.json`,
+    serializeSettings(settings),
+    'application/json',
+  );
 });
 
 importFile.addEventListener('change', async () => {
@@ -259,6 +278,78 @@ importFile.addEventListener('change', async () => {
     : msg('optionsImportDone');
 });
 
+const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
+function actionSummary(entry: ActionLogEntry): string {
+  if (entry.type === 'global-clear') {
+    const names = entry.dataTypes.map((t) =>
+      t === 'cache' ? msg('optionsGlobalCache') : msg('optionsGlobalFormData'),
+    );
+    return msg('logGlobalClear', [names.join(', ')]);
+  }
+  const count = entry.deleted.reduce((n, d) => n + d.count, 0);
+  const sites = new Set(entry.deleted.map((d) => d.domain)).size;
+  const key =
+    entry.type === 'delete-cookies'
+      ? 'logDeletedCookies'
+      : entry.type === 'delete-history'
+        ? 'logDeletedHistory'
+        : 'logDeletedDownloads';
+  return msg(key, [String(count), String(sites)]);
+}
+
+function logRow(at: number, text: string, tooltip?: string): HTMLLIElement {
+  const li = document.createElement('li');
+  const time = document.createElement('span');
+  time.className = 'log-time';
+  time.textContent = dateTimeFormat.format(at);
+  const body = document.createElement('span');
+  body.textContent = text;
+  if (tooltip) body.title = tooltip;
+  li.append(time, body);
+  return li;
+}
+
+/**
+ * The viewer shows real site names — it's the user's own local data.
+ * Anonymization applies only to the export, which is what leaves the machine.
+ */
+async function renderLogs(): Promise<void> {
+  const [actions, errors] = await Promise.all([getActionLog(), getErrorLog()]);
+  actionLogTitle.textContent = msg('optionsActionLogTitle', [String(actions.length)]);
+  errorLogTitle.textContent = msg('optionsErrorLogTitle', [String(errors.length)]);
+  actionLogList.replaceChildren(
+    ...[...actions].reverse().map((entry) => logRow(entry.at, actionSummary(entry))),
+  );
+  actionLogEmpty.hidden = actions.length > 0;
+  errorLogList.replaceChildren(
+    ...[...errors]
+      .reverse()
+      .map((entry: ErrorLogEntry) =>
+        logRow(entry.at, `[${entry.context}] ${entry.message}`, entry.stack),
+      ),
+  );
+  errorLogEmpty.hidden = errors.length > 0;
+}
+
+exportLogs.addEventListener('click', async () => {
+  const [actions, errors] = await Promise.all([getActionLog(), getErrorLog()]);
+  downloadFile(
+    `stale-cookie-logs-${new Date().toISOString().slice(0, 10)}.jsonl`,
+    serializeLogs({
+      actions,
+      errors,
+      version: browser.runtime.getManifest().version,
+      exportedAt: Date.now(),
+      anonymize: logsAnonymize.checked,
+    }),
+    'application/x-ndjson',
+  );
+});
+
 function applySettingsToUi(): void {
   cookieThreshold.value = String(settings.cookieThresholdDays);
   historyThreshold.value = String(settings.historyThresholdDays);
@@ -281,3 +372,5 @@ void loadSettings().then((loaded) => {
   settings = loaded;
   applySettingsToUi();
 });
+
+void renderLogs();

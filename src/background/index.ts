@@ -1,6 +1,9 @@
 import browser from 'webextension-polyfill';
 import { scheduleReminder, handleAlarm } from '../ext/reminder';
 import { scheduleAutoClean, handleAutoCleanAlarm } from '../ext/autoClean';
+import { installErrorCapture } from '../ext/errorLog';
+
+installErrorCapture('background');
 
 browser.runtime.onInstalled.addListener(() => {
   void scheduleReminder();

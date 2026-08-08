@@ -81,6 +81,9 @@
   "popupCancel": {
     "message": "Cancelar"
   },
+  "popupFailed": {
+    "message": "Algo ha salido mal. Los detalles están en el registro de errores (Ajustes → Registros)."
+  },
   "deletedToast": {
     "message": "Se eliminaron $COUNT$ cookies.",
     "placeholders": { "count": { "content": "$1" } }
@@ -189,6 +192,60 @@
   },
   "optionsImportPermissionNote": {
     "message": "Algunas opciones importadas necesitan permisos del navegador y se han desactivado; vuelve a activarlas arriba para conceder el acceso."
+  },
+  "optionsLogsTitle": {
+    "message": "Registros"
+  },
+  "optionsLogsHint": {
+    "message": "El registro de acciones guarda lo que la extensión ha eliminado. Los errores de esta sesión del navegador se guardan solo en memoria y desaparecen al cerrar el navegador. Nada de esto sale de tu equipo salvo que lo exportes."
+  },
+  "optionsActionLogTitle": {
+    "message": "Registro de acciones ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "optionsErrorLogTitle": {
+    "message": "Errores de esta sesión ($COUNT$)",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "optionsActionLogEmpty": {
+    "message": "Aún no hay nada registrado."
+  },
+  "optionsErrorLogEmpty": {
+    "message": "No ha habido errores en esta sesión."
+  },
+  "logDeletedCookies": {
+    "message": "Se eliminaron $COUNT$ cookies de $SITES$ sitios.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logDeletedHistory": {
+    "message": "Se eliminaron $COUNT$ entradas del historial de $SITES$ sitios.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logDeletedDownloads": {
+    "message": "Se eliminaron $COUNT$ entradas de descargas de $SITES$ sitios.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logGlobalClear": {
+    "message": "Limpieza global: $TYPES$.",
+    "placeholders": { "types": { "content": "$1" } }
+  },
+  "optionsLogsAnonymize": {
+    "message": "Anonimizar los sitios en la exportación"
+  },
+  "optionsLogsAnonymizeHint": {
+    "message": "Sustituye cada sitio por un marcador como site-1.example (el mismo sitio recibe siempre el mismo marcador) y elimina las URL de los mensajes de error. Recomendado al adjuntar registros a un informe de error."
+  },
+  "optionsLogsExportButton": {
+    "message": "Exportar registros"
   },
   "optionsWhitelistTitle": {
     "message": "Sitios protegidos"

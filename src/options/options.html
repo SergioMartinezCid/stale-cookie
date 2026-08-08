@@ -70,6 +70,29 @@
       .import-row {
         margin-top: 8px;
       }
+      .log-list {
+        max-width: none;
+        max-height: 180px;
+        overflow-y: auto;
+        font-size: 13px;
+      }
+      .log-list li {
+        justify-content: flex-start;
+      }
+      .log-list li span:last-child {
+        overflow-wrap: anywhere;
+      }
+      .log-time {
+        opacity: 0.7;
+        white-space: nowrap;
+      }
+      #export-logs {
+        margin-top: 8px;
+      }
+      h3 {
+        font-size: 14px;
+        margin: 16px 0 4px;
+      }
     </style>
   </head>
   <body>
@@ -188,6 +211,24 @@
         ><input type="file" id="import-file" accept=".json,application/json"
       /></label>
       <p id="config-status" class="hint"></p>
+    </section>
+
+    <section>
+      <h2 data-i18n="optionsLogsTitle"></h2>
+      <p class="hint" data-i18n="optionsLogsHint"></p>
+      <h3 id="action-log-title"></h3>
+      <ul id="action-log" class="log-list"></ul>
+      <p class="hint" id="action-log-empty" hidden data-i18n="optionsActionLogEmpty"></p>
+      <h3 id="error-log-title"></h3>
+      <ul id="error-log" class="log-list"></ul>
+      <p class="hint" id="error-log-empty" hidden data-i18n="optionsErrorLogEmpty"></p>
+      <label
+        ><input type="checkbox" id="logs-anonymize" checked /><span
+          data-i18n="optionsLogsAnonymize"
+        ></span
+      ></label>
+      <p class="hint" data-i18n="optionsLogsAnonymizeHint"></p>
+      <button id="export-logs" data-i18n="optionsLogsExportButton"></button>
     </section>
 
     <p id="saved" data-i18n="optionsSaved"></p>

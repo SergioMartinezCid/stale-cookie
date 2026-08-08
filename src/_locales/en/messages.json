@@ -104,6 +104,10 @@
     "message": "Cancel",
     "description": "Button that dismisses the pending deletion confirmation."
   },
+  "popupFailed": {
+    "message": "Something went wrong. Details are in the error log (Settings → Logs).",
+    "description": "Status shown in the popup when a scan or deletion fails unexpectedly."
+  },
   "deletedToast": {
     "message": "Deleted $COUNT$ cookies.",
     "description": "Status shown after deletion.",
@@ -248,6 +252,73 @@
   "optionsImportPermissionNote": {
     "message": "Some imported options need browser permissions and were turned off — re-enable them above to grant access.",
     "description": "Appended to the import status when permission-gated options were disabled because their permission is missing in this profile."
+  },
+  "optionsLogsTitle": {
+    "message": "Logs",
+    "description": "Heading of the logs section (action log + session error log)."
+  },
+  "optionsLogsHint": {
+    "message": "The action log records what the extension deleted. Errors from this browser session are kept in memory only and disappear when the browser closes. Nothing here leaves your computer unless you export it.",
+    "description": "Explanation under the logs heading."
+  },
+  "optionsActionLogTitle": {
+    "message": "Action log ($COUNT$)",
+    "description": "Subheading of the action log list; $COUNT$ is the number of entries.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "optionsErrorLogTitle": {
+    "message": "Errors this session ($COUNT$)",
+    "description": "Subheading of the session error list; $COUNT$ is the number of entries.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "optionsActionLogEmpty": {
+    "message": "Nothing recorded yet.",
+    "description": "Empty state of the action log list."
+  },
+  "optionsErrorLogEmpty": {
+    "message": "No errors this session.",
+    "description": "Empty state of the session error list."
+  },
+  "logDeletedCookies": {
+    "message": "Deleted $COUNT$ cookies from $SITES$ sites.",
+    "description": "Action log line for a cookie deletion.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logDeletedHistory": {
+    "message": "Deleted $COUNT$ history entries from $SITES$ sites.",
+    "description": "Action log line for a history deletion.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logDeletedDownloads": {
+    "message": "Deleted $COUNT$ download entries from $SITES$ sites.",
+    "description": "Action log line for a download history deletion.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
+  },
+  "logGlobalClear": {
+    "message": "Global clear: $TYPES$.",
+    "description": "Action log line for a global clear; $TYPES$ lists the cleared data types.",
+    "placeholders": { "types": { "content": "$1" } }
+  },
+  "optionsLogsAnonymize": {
+    "message": "Anonymize sites in the export",
+    "description": "Checkbox that pseudonymizes site names and strips URLs in the exported log file."
+  },
+  "optionsLogsAnonymizeHint": {
+    "message": "Replaces every site with a placeholder like site-1.example (the same site always gets the same placeholder) and strips URLs from error messages. Recommended when attaching logs to a bug report.",
+    "description": "Explanation under the anonymize checkbox."
+  },
+  "optionsLogsExportButton": {
+    "message": "Export logs",
+    "description": "Button that downloads both logs as a JSONL file."
   },
   "optionsWhitelistTitle": {
     "message": "Protected sites",

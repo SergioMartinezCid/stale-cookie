@@ -1,26 +1,7 @@
 import browser from 'webextension-polyfill';
+import type { ActionLogEntry } from '../core/logs';
 
-/**
- * Local log of destructive actions the extension performed. Never leaves
- * the browser; exists so the user can audit what was deleted. Deliberately
- * records no visit timestamps — deleted history stays deleted.
- */
-export type ActionLogEntry =
-  | {
-      at: number;
-      type: 'delete-cookies';
-      deleted: Array<{ domain: string; storeId: string; count: number }>;
-    }
-  | {
-      at: number;
-      type: 'delete-history' | 'delete-downloads';
-      deleted: Array<{ domain: string; count: number }>;
-    }
-  | {
-      at: number;
-      type: 'global-clear';
-      dataTypes: string[];
-    };
+export type { ActionLogEntry } from '../core/logs';
 
 const MAX_ENTRIES = 200;
 

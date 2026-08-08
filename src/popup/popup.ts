@@ -3,9 +3,11 @@ import { localizePage } from '../ui/i18n';
 import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
 import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
+import { installErrorCapture, recordError } from '../ext/errorLog';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 import { buildSiteRows, type SiteRow } from '../core/rows';
 
+installErrorCapture('popup');
 localizePage();
 
 const msg = (key: string, subs?: string[]) => browser.i18n.getMessage(key, subs);
@@ -169,6 +171,10 @@ async function runScan(): Promise<void> {
     settings = await loadSettings();
     outcome = await scan(settings);
     renderResults();
+  } catch (error) {
+    // A stuck "Scanning…" is unreportable — log it and say something failed.
+    recordError('popup', error);
+    status.textContent = msg('popupFailed');
   } finally {
     scanButton.disabled = false;
   }
@@ -202,6 +208,11 @@ confirmDelete.addEventListener('click', async () => {
   try {
     const removed = await deleteGroups(selectedDeletable());
     status.textContent = msg('deletedToast', [String(removed)]);
+  } catch (error) {
+    recordError('popup', error);
+    status.textContent = msg('popupFailed');
+    closeConfirm();
+    return; // a failed clean is no clean — leave the reminder cycle alone
   } finally {
     confirmDelete.disabled = false;
   }
