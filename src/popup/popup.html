@@ -31,6 +31,7 @@
       #results {
         max-height: 420px;
         overflow-y: auto;
+        overflow-x: hidden;
       }
       ul {
         list-style: none;
@@ -39,21 +40,25 @@
       }
       li {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        gap: 6px;
-        padding: 3px 0;
+        gap: 4px 6px;
+        padding: 4px 0;
         border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
       }
       li .domain {
         flex: 1;
+        min-width: 6em;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
       li .meta {
+        /* Full-width second line, aligned under the domain. */
+        flex-basis: 100%;
+        padding-left: 22px;
         opacity: 0.65;
         font-size: 11px;
-        white-space: nowrap;
       }
       .badge {
         font-size: 10px;
