@@ -11,6 +11,10 @@
     "message": "Stale Cookie",
     "description": "Heading of the toolbar popup."
   },
+  "popupOptionsButton": {
+    "message": "Settings",
+    "description": "Button in the popup header that opens the options page."
+  },
   "popupScanButton": {
     "message": "Scan for stale cookies",
     "description": "Button in the popup that starts a scan (preview, nothing is deleted)."
@@ -30,7 +34,7 @@
   },
   "sectionUnknown": {
     "message": "No visit recorded ($COUNT$)",
-    "description": "Heading of the list of sites with no recorded visit; unchecked by default.",
+    "description": "Heading of the list of sites with no recorded visit; preselection follows the never-visited policy.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "summaryFreshProtected": {
@@ -44,6 +48,16 @@
   "cookieCount": {
     "message": "$COUNT$ cookies",
     "description": "Number of cookies in a site group.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "historyCount": {
+    "message": "$COUNT$ history entries",
+    "description": "Number of history entries in a site group.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "downloadCount": {
+    "message": "$COUNT$ downloads",
+    "description": "Number of download history entries in a site group.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "lastVisit": {
@@ -66,7 +80,7 @@
   },
   "deleteButton": {
     "message": "Delete selected ($COUNT$)",
-    "description": "Button that deletes the selected cookies; $COUNT$ is the cookie count.",
+    "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "deletedToast": {
@@ -82,9 +96,65 @@
     "message": "Stale Cookie settings",
     "description": "Heading of the options page."
   },
-  "optionsThresholdLabel": {
-    "message": "Consider a site stale after this many days without a visit:",
-    "description": "Label of the staleness threshold input."
+  "optionsTypesTitle": {
+    "message": "Data types",
+    "description": "Heading of the data type / threshold section."
+  },
+  "optionsTypesHint": {
+    "message": "Checked types are included in the scan. A site's data counts as stale after this many days without a visit.",
+    "description": "Explanation under the data types heading."
+  },
+  "typeCookies": {
+    "message": "Cookies",
+    "description": "Data type row label: cookies (always cleaned, cannot be unchecked)."
+  },
+  "typeHistory": {
+    "message": "Browsing history",
+    "description": "Data type row label: browsing history."
+  },
+  "typeDownloads": {
+    "message": "Download history",
+    "description": "Data type row label: download history (the log, not the files)."
+  },
+  "optionsDaysLabel": {
+    "message": "days",
+    "description": "Unit shown after each staleness threshold input."
+  },
+  "optionsPermissionDenied": {
+    "message": "The browser permission was declined, so this stays off.",
+    "description": "Shown when the user declines an optional permission request."
+  },
+  "optionsThresholdWarning": {
+    "message": "Cookies are set to outlive browsing history. Once a site's history is deleted, its remaining cookies will show as \"no visit recorded\" in later scans.",
+    "description": "Warning shown when the cookie threshold is larger than the history threshold."
+  },
+  "optionsGlobalTitle": {
+    "message": "Global clear",
+    "description": "Heading of the global clear section."
+  },
+  "optionsGlobalHint": {
+    "message": "Cache and saved form data cannot be cleaned per site, so this clears ALL of it — every site, recently visited or not. There is no preview.",
+    "description": "Warning under the global clear heading."
+  },
+  "optionsGlobalCache": {
+    "message": "Cache",
+    "description": "Global clear checkbox: browser cache."
+  },
+  "optionsGlobalFormData": {
+    "message": "Saved form data",
+    "description": "Global clear checkbox: saved form autofill data."
+  },
+  "optionsGlobalButton": {
+    "message": "Clear now…",
+    "description": "Button that starts the global clear (first click arms a confirmation)."
+  },
+  "optionsGlobalConfirm": {
+    "message": "This will clear ALL selected data — every site, recently visited or not. Continue?",
+    "description": "Confirmation dialog shown before executing the global clear."
+  },
+  "optionsGlobalDone": {
+    "message": "Cleared.",
+    "description": "Status after a global clear finished."
   },
   "optionsKeepUnknownLabel": {
     "message": "Never preselect cookies from sites with no recorded visit",

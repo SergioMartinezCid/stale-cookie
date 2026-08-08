@@ -1,8 +1,9 @@
 import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
-import { scanCookies, deleteCookieGroups, type ScanOutcome } from '../ext/scanner';
+import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
 import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
+import { buildSiteRows, type SiteRow } from '../core/rows';
 
 localizePage();
 
@@ -17,51 +18,78 @@ const footer = el<HTMLDivElement>('footer');
 
 let outcome: ScanOutcome | undefined;
 let settings: Settings | undefined;
-const selected = new Set<string>(); // group keys chosen for deletion
+let rows: SiteRow[] = [];
+const selected = new Set<string>(); // row domains chosen for deletion
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 
-function renderRow(group: ClassifiedGroup, checked: boolean): HTMLLIElement {
+function itemCount(group: ClassifiedGroup): number {
+  switch (group.kind) {
+    case 'cookies':
+      return group.cookies.length;
+    case 'history':
+      return group.urls.length;
+    case 'downloads':
+      return group.downloadIds.length;
+  }
+}
+
+/** "12 cookies · 340 history entries · 2 downloads" for what the row would delete. */
+function countLabels(row: SiteRow): string[] {
+  const counts = { cookies: 0, history: 0, downloads: 0 };
+  for (const group of row.deletable) counts[group.kind] += itemCount(group);
+  const parts: string[] = [];
+  if (counts.cookies) parts.push(msg('cookieCount', [String(counts.cookies)]));
+  if (counts.history) parts.push(msg('historyCount', [String(counts.history)]));
+  if (counts.downloads) parts.push(msg('downloadCount', [String(counts.downloads)]));
+  return parts;
+}
+
+function addBadge(li: HTMLLIElement, text: string, title?: string): void {
+  const badge = document.createElement('span');
+  badge.className = 'badge';
+  badge.textContent = text;
+  if (title) badge.title = title;
+  li.append(badge);
+}
+
+function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   const li = document.createElement('li');
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.checked = checked;
-  if (checked) selected.add(group.key);
+  if (checked) selected.add(row.domain);
   checkbox.addEventListener('change', () => {
-    checkbox.checked ? selected.add(group.key) : selected.delete(group.key);
+    checkbox.checked ? selected.add(row.domain) : selected.delete(row.domain);
     updateDeleteButton();
   });
   li.append(checkbox);
 
   const domain = document.createElement('span');
   domain.className = 'domain';
-  domain.textContent = group.registrableDomain;
-  domain.title = group.partitionSite
-    ? msg('partitionedUnder', [group.partitionSite])
-    : group.registrableDomain;
+  domain.textContent = row.domain;
+  domain.title = row.domain;
   li.append(domain);
 
-  const containerName = outcome?.containerNames[group.storeId];
-  if (containerName) {
-    const badge = document.createElement('span');
-    badge.className = 'badge';
-    badge.textContent = containerName;
-    li.append(badge);
+  const containerBadges = new Set<string>();
+  let partitionedBadge: string | undefined;
+  for (const group of row.deletable) {
+    if (group.kind !== 'cookies') continue;
+    const containerName = outcome?.containerNames[group.storeId];
+    if (containerName) containerBadges.add(containerName);
+    if (group.partitionSite) partitionedBadge = group.partitionSite;
   }
-  if (group.partitionSite) {
-    const badge = document.createElement('span');
-    badge.className = 'badge';
-    badge.textContent = msg('partitionedBadge');
-    badge.title = msg('partitionedUnder', [group.partitionSite]);
-    li.append(badge);
+  for (const name of containerBadges) addBadge(li, name);
+  if (partitionedBadge) {
+    addBadge(li, msg('partitionedBadge'), msg('partitionedUnder', [row.domain]));
   }
 
   const meta = document.createElement('span');
   meta.className = 'meta';
-  const parts = [msg('cookieCount', [String(group.cookies.length)])];
-  if (group.lastVisitTime !== undefined) {
-    parts.push(msg('lastVisit', [dateFormat.format(group.lastVisitTime)]));
+  const parts = countLabels(row);
+  if (row.lastVisitTime !== undefined) {
+    parts.push(msg('lastVisit', [dateFormat.format(row.lastVisitTime)]));
   }
   meta.textContent = parts.join(' · ');
   li.append(meta);
@@ -70,7 +98,7 @@ function renderRow(group: ClassifiedGroup, checked: boolean): HTMLLIElement {
   protect.className = 'protect';
   protect.textContent = msg('protectButton');
   protect.addEventListener('click', async () => {
-    await addToWhitelist(group.registrableDomain);
+    await addToWhitelist(row.domain);
     await runScan();
   });
   li.append(protect);
@@ -81,17 +109,20 @@ function renderRow(group: ClassifiedGroup, checked: boolean): HTMLLIElement {
 function renderResults(): void {
   if (!outcome) return;
   selected.clear();
+  rows = buildSiteRows(outcome.groups);
 
-  const stale = outcome.groups.filter((g) => g.verdict === 'stale');
-  const unknown = outcome.groups.filter((g) => g.verdict === 'unknown');
-  const fresh = outcome.groups.filter((g) => g.verdict === 'fresh');
-  const whitelisted = outcome.groups.filter((g) => g.verdict === 'whitelisted');
+  const stale = rows.filter((r) => r.verdict === 'stale');
+  const unknown = rows.filter((r) => r.verdict === 'unknown');
+  const freshRows = rows.filter((r) => r.verdict === 'fresh');
+  const protectedDomains = new Set(
+    outcome.groups.filter((g) => g.verdict === 'whitelisted').map((g) => g.registrableDomain),
+  );
 
   el('stale-title').textContent = msg('sectionStale', [String(stale.length)]);
   el('unknown-title').textContent = msg('sectionUnknown', [String(unknown.length)]);
   el('summary').textContent = msg('summaryFreshProtected', [
-    String(fresh.length),
-    String(whitelisted.length),
+    String(freshRows.length),
+    String(protectedDomains.size),
   ]);
 
   const preselectUnknown = shouldPreselectUnknown(
@@ -100,8 +131,8 @@ function renderResults(): void {
   );
   const staleList = el<HTMLUListElement>('stale-list');
   const unknownList = el<HTMLUListElement>('unknown-list');
-  staleList.replaceChildren(...stale.map((g) => renderRow(g, true)));
-  unknownList.replaceChildren(...unknown.map((g) => renderRow(g, preselectUnknown)));
+  staleList.replaceChildren(...stale.map((r) => renderRow(r, true)));
+  unknownList.replaceChildren(...unknown.map((r) => renderRow(r, preselectUnknown)));
 
   results.hidden = false;
   footer.hidden = false;
@@ -109,14 +140,14 @@ function renderResults(): void {
   updateDeleteButton();
 }
 
-function updateDeleteButton(): void {
-  const count = selectedGroups().reduce((n, g) => n + g.cookies.length, 0);
-  deleteButton.textContent = msg('deleteButton', [String(count)]);
-  deleteButton.disabled = count === 0;
+function selectedDeletable(): ClassifiedGroup[] {
+  return rows.filter((r) => selected.has(r.domain)).flatMap((r) => r.deletable);
 }
 
-function selectedGroups(): ClassifiedGroup[] {
-  return outcome?.groups.filter((g) => selected.has(g.key)) ?? [];
+function updateDeleteButton(): void {
+  const count = selectedDeletable().reduce((n, g) => n + itemCount(g), 0);
+  deleteButton.textContent = msg('deleteButton', [String(count)]);
+  deleteButton.disabled = count === 0;
 }
 
 async function runScan(): Promise<void> {
@@ -124,18 +155,23 @@ async function runScan(): Promise<void> {
   status.textContent = msg('popupScanning');
   try {
     settings = await loadSettings();
-    outcome = await scanCookies(settings);
+    outcome = await scan(settings);
     renderResults();
   } finally {
     scanButton.disabled = false;
   }
 }
 
+el<HTMLButtonElement>('options').addEventListener('click', () => {
+  void browser.runtime.openOptionsPage();
+  window.close();
+});
+
 scanButton.addEventListener('click', () => void runScan());
 
 deleteButton.addEventListener('click', async () => {
   deleteButton.disabled = true;
-  const removed = await deleteCookieGroups(selectedGroups());
+  const removed = await deleteGroups(selectedDeletable());
   status.textContent = msg('deletedToast', [String(removed)]);
   await runScan();
 });

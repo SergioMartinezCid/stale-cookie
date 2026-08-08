@@ -1,12 +1,21 @@
 import { classifyLastVisit } from './staleness';
-import type { CookieGroup } from './grouping';
+import type { SiteGroup } from './grouping';
 
 export type GroupVerdict = 'whitelisted' | 'fresh' | 'stale' | 'unknown';
 
-export interface ClassifiedGroup extends CookieGroup {
+/** What classification needs from a group — any kind of site data qualifies. */
+export interface ClassifiableGroup {
+  registrableDomain: string;
+  visitDomain: string;
+}
+
+export type Classified<T extends ClassifiableGroup> = T & {
   verdict: GroupVerdict;
   lastVisitTime?: number;
-}
+};
+
+/** A classified group of any data kind — what the scan produces. */
+export type ClassifiedGroup = Classified<SiteGroup>;
 
 export interface ClassifyOptions {
   /** Current time, milliseconds since epoch. */
@@ -18,20 +27,24 @@ export interface ClassifyOptions {
 }
 
 /**
- * Attach a verdict to each cookie group. The whitelist protects by the
- * group's own registrable domain (what the user sees and typed), while
- * staleness is judged by visitDomain (the partition top-level site for
- * partitioned cookies).
+ * Attach a verdict to each group. The whitelist protects when either the
+ * group's own registrable domain or its visit domain is whitelisted — so
+ * protecting a site also covers the partitioned cookies living under it.
+ * Staleness is judged by visitDomain (the partition top-level site for
+ * partitioned cookies). Thresholds differ per data type — call once per kind.
  */
-export function classifyGroups(
-  groups: readonly CookieGroup[],
+export function classifyGroups<T extends ClassifiableGroup>(
+  groups: readonly T[],
   lastVisitByDomain: ReadonlyMap<string, number>,
   options: ClassifyOptions,
-): ClassifiedGroup[] {
+): Classified<T>[] {
   const whitelist = new Set(options.whitelist.map((d) => d.toLowerCase()));
   return groups.map((group) => {
     const lastVisitTime = lastVisitByDomain.get(group.visitDomain);
-    if (whitelist.has(group.registrableDomain.toLowerCase())) {
+    if (
+      whitelist.has(group.registrableDomain.toLowerCase()) ||
+      whitelist.has(group.visitDomain.toLowerCase())
+    ) {
       return { ...group, verdict: 'whitelisted' as const, lastVisitTime };
     }
     const verdict = classifyLastVisit(lastVisitTime, options.now, options.thresholdMs);
@@ -45,7 +58,7 @@ export function classifyGroups(
  * carries no signal, so nothing is preselected regardless of the setting.
  */
 export function shouldPreselectUnknown(
-  groups: readonly ClassifiedGroup[],
+  groups: ReadonlyArray<{ lastVisitTime?: number }>,
   keepNeverVisited: boolean,
 ): boolean {
   if (keepNeverVisited) return false;

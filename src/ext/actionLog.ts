@@ -1,16 +1,26 @@
 import browser from 'webextension-polyfill';
 
 /**
- * Local log of destructive actions the extension performed. Never leaves the
- * browser; exists so the user can audit what was deleted and so future
- * features can distinguish "extension deleted this" from "never existed"
- * (e.g. history entries removed by the extension itself).
+ * Local log of destructive actions the extension performed. Never leaves
+ * the browser; exists so the user can audit what was deleted. Deliberately
+ * records no visit timestamps — deleted history stays deleted.
  */
-export interface ActionLogEntry {
-  at: number;
-  type: 'delete-cookies';
-  deleted: Array<{ domain: string; storeId: string; count: number }>;
-}
+export type ActionLogEntry =
+  | {
+      at: number;
+      type: 'delete-cookies';
+      deleted: Array<{ domain: string; storeId: string; count: number }>;
+    }
+  | {
+      at: number;
+      type: 'delete-history' | 'delete-downloads';
+      deleted: Array<{ domain: string; count: number }>;
+    }
+  | {
+      at: number;
+      type: 'global-clear';
+      dataTypes: string[];
+    };
 
 const MAX_ENTRIES = 200;
 

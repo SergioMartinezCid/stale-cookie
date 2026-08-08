@@ -6,9 +6,9 @@ Name availability was checked 2026-08-07: no collisions on AMO, Chrome Web Store
 
 ## Scope
 
-Data types targeted (eventually): cookies, browsing history, download history, form data, cache/temporary files, site settings.
+Data types targeted (eventually): cookies, browsing history, download history, form data, cache/temporary files. Site settings are **out of scope for good** (decided 2026-08-07): Firefox exposes no API to clear them (see verified constraints) and they will not be pursued on Chrome either.
 
-Rule: **per-site deletion only where the browser APIs allow it; data types that can only be cleared globally are skipped**, not cleared globally. (Firefox's `browsingData` cannot scope cache or form data to a hostname.)
+Rule: **per-site deletion where the browser APIs allow it.** Data types that can only be cleared globally (Firefox's `browsingData` cannot scope cache or form data to a hostname) are supported as a **global clear**: a separate action invoked directly, without scanning — no staleness, no preview list, since it's all-or-nothing. The staleness/scan/preview flow applies only to per-site data types. **A global clear always requires an explicit in-UI confirmation step** — it bypasses the preview safety mechanism, so the UI must make clear it deletes ALL data of that type, not just stale sites.
 
 ## Roadmap
 
@@ -18,7 +18,7 @@ Rule: **per-site deletion only where the browser APIs allow it; data types that 
 
 ## Product decisions
 
-- **Staleness**: configurable threshold per data type (cookies vs history vs cache have different blast radius).
+- **Staleness**: configurable threshold per data type (cookies vs history have different blast radius). Global-clear types (cache, form data) have no threshold — they are never scanned.
 - **Visit matching**: by registrable domain (eTLD+1). Visiting `mail.google.com` keeps `google.com` data fresh. A Public Suffix List must be bundled (no built-in PSL API for extensions).
 - **Cleaning modes**: both automatic (scheduled) and manual are configurable. In manual mode, the extension reminds the user to clean after a configurable time has passed.
 - **Preview**: cleaning always shows what will be deleted before committing (at minimum in manual mode).
@@ -38,19 +38,22 @@ Rule: **per-site deletion only where the browser APIs allow it; data types that 
 
 - **Manifest V3**, targeting the cross-browser WebExtensions common subset. **Standing instruction: as implementation advances, flag MV3 limitations to the user as they are encountered.** The decision on whether to split into MV2 (Firefox) / MV3 (Chrome) builds stays deferred but **must be made before v1.0**.
 - **Stack**: TypeScript, a light bundler, `webextension-polyfill` (promise-based `browser.*` everywhere).
-- **Last-visited source**: `browser.history`, combined with the extension's own local log of actions it took (e.g. recording when the extension itself deleted history entries, so later logic can distinguish "extension-deleted" from "never visited").
+- **Last-visited source**: `browser.history` only. Decided 2026-08-07: the extension does **not** retain visit timestamps after deleting history (deleting history should delete that metadata too — an earlier "visit memory" was removed for this reason). The action log records what was deleted, not when sites were visited. Because the preview merges all data types into one row per site, cookies and history are deleted together; the one config where deleted history leaves cookies looking "never visited" (cookie threshold > history threshold) gets a warning on the options page instead.
 - **Permissions**: permissions the core always needs are requested at install (no point deferring them); feature-specific permissions go behind optional runtime requests (`permissions.request`) when the user enables the feature.
 - **Testing**: unit tests for the core logic (pure functions with mocked `browser.*` APIs) + integration tests against real seeded throwaway browser profiles. Never test deletion logic against a real profile. TDD only if explicitly requested.
 
-### Implementation decisions (v0.1)
+### Implementation decisions
 
 - **PSL/eTLD+1**: `tldts` (bundles the Public Suffix List, works offline).
-- **Partitioned cookies** (CHIPS/`partitionKey`): staleness is judged by visits to the **partition top-level site**, not the cookie's own domain — the cookie is only ever sent while visiting that site. They are separate groups with a "partitioned" badge in the UI.
+- **Partitioned cookies** (CHIPS/`partitionKey`): staleness is judged by visits to the **partition top-level site**, not the cookie's own domain — the cookie is only ever sent while visiting that site. In the preview they appear (with a "partitioned" badge) in the partition site's row.
+- **Preview rows: one per site** (eTLD+1 of the visit domain, decided 2026-08-07). All data types share the row; deleting a row deletes its stale/never-visited data of every enabled type together. Container cookie groups fold into their domain's row (container badges shown). The whitelist protects a group when either its own domain or its visit domain is whitelisted.
 - **Container enumeration**: via `contextualIdentities.query()` (permission added) — `cookies.getAllCookieStores()` only lists stores with open tabs, which would miss closed containers. The private-browsing store is excluded: its cookies are session-only.
 - **Cookie enumeration**: per store with `partitionKey: {}` (matches partitioned + unpartitioned) and `firstPartyDomain: null` (matches all when first-party isolation is on; needs a cast, typings only allow string).
-- **Default threshold**: 90 days (conservative — deleting cookies logs people out).
+- **Default thresholds**: cookies 90 days (conservative — deleting cookies logs people out), history 180 days (deleted history is unrecoverable, so it lives longer), downloads 90 days. History cleaning is ON by default (its permission is install-time anyway); downloads cleaning is OFF until enabled (optional `downloads` permission).
+- **Global clear UI**: options-page section (checkboxes for cache and form data) with a native `confirm()` modal — synchronous on purpose, so the `browsingData` permission request that follows still runs in a valid user-input handler. Lives on the options page, not the popup, because permission doorhangers misbehave over popups.
 - **Action log**: `storage.local`, capped at 200 entries.
 - v0.1 does all work in the popup (no background messaging); acceptable while scans are fast, revisit for scheduled cleaning.
+- **Dev/test environment**: WSL2 (Ubuntu). Manual testing runs in **Windows Firefox** with a dedicated `stale-cookie-dev` profile (`firefox.exe -CreateProfile stale-cookie-dev`, launch with `-P stale-cookie-dev -no-remote`), loading `dist/manifest.json` as a temporary add-on via `about:debugging` from `\\wsl.localhost\Ubuntu\home\<user>\stale-cookie\dist`. After a rebuild, use the Reload button there; temporary add-ons unload when Firefox closes. **Gotcha**: Reload does not refresh `_locales` (Firefox caches i18n messages at load — new keys come back as empty strings), so after changing `messages.json` (or the manifest), Remove the add-on and re-load it instead. The Linux-Firefox/WSLg route (`web-ext run`) was abandoned: Firefox crashed and buttons misbehaved under WSLg.
 
 ### Verified API constraints (2026-08-07)
 
@@ -59,6 +62,11 @@ Rule: **per-site deletion only where the browser APIs allow it; data types that 
 - **Unit mismatch**: `cookies.Cookie.expirationDate` is in **seconds**; history API times are in **milliseconds**. Convert deliberately.
 - Firefox-specific cookie fields: `firstPartyDomain`, `partitionKey` — relevant for containers and partitioned cookies.
 - `history` permission is desktop-only on Firefox (not Firefox for Android).
+- **`browsingData` on Firefox** implements: cache, cookies, downloads, formData, history, indexedDB, localStorage, passwords, serviceWorkers. **`siteSettings` is not in Firefox's schema at all** (passing it is a validation error) — extensions cannot clear site settings on Firefox; skipped there, revisit at the Chrome port.
+- **`RemovalOptions.hostnames` is honored only for cookies, indexedDB, localStorage, serviceWorkers.** For history, downloads and formData it is **silently ignored and everything in the time range is deleted** — never use `browsingData` for per-site history/downloads; use `history.deleteUrl` / `downloads.erase` per item instead. Also: hostnames don't match subdomains (each must be listed explicitly).
+- `browsingData.removeCache` always clears the ENTIRE cache (`since` is ignored); `removeFormData` honors `since`.
+- **Firefox's `downloads` API only sees the session download list**, not older download history stored in Places (Bug 1255507, open) — `downloads.search`/`erase` can't reach old entries. `downloads.search({})` has no default limit on Firefox (Chrome defaults to 1000; `limit: 0` disables it there — Chrome-port note).
+- `permissions.request()` must run inside a user-input handler **with no `await` before it** (awaiting drops user-handler status). Most reliable from the options page tab; the popup's permission doorhanger can render behind the popup — request optional permissions from the options page only.
 
 ## Privacy stance
 

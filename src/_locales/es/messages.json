@@ -8,6 +8,9 @@
   "popupTitle": {
     "message": "Stale Cookie"
   },
+  "popupOptionsButton": {
+    "message": "Ajustes"
+  },
   "popupScanButton": {
     "message": "Buscar cookies obsoletas"
   },
@@ -34,6 +37,14 @@
   },
   "cookieCount": {
     "message": "$COUNT$ cookies",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "historyCount": {
+    "message": "$COUNT$ entradas del historial",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "downloadCount": {
+    "message": "$COUNT$ descargas",
     "placeholders": { "count": { "content": "$1" } }
   },
   "lastVisit": {
@@ -64,8 +75,50 @@
   "optionsTitle": {
     "message": "Ajustes de Stale Cookie"
   },
-  "optionsThresholdLabel": {
-    "message": "Considerar un sitio obsoleto tras este número de días sin visitas:"
+  "optionsTypesTitle": {
+    "message": "Tipos de datos"
+  },
+  "optionsTypesHint": {
+    "message": "Los tipos marcados se incluyen en el análisis. Los datos de un sitio se consideran obsoletos tras este número de días sin visitas."
+  },
+  "typeCookies": {
+    "message": "Cookies"
+  },
+  "typeHistory": {
+    "message": "Historial de navegación"
+  },
+  "typeDownloads": {
+    "message": "Historial de descargas"
+  },
+  "optionsDaysLabel": {
+    "message": "días"
+  },
+  "optionsPermissionDenied": {
+    "message": "Se rechazó el permiso del navegador, así que esta opción queda desactivada."
+  },
+  "optionsThresholdWarning": {
+    "message": "Las cookies están configuradas para durar más que el historial. Cuando se borre el historial de un sitio, sus cookies restantes aparecerán como «sin visitas registradas» en análisis posteriores."
+  },
+  "optionsGlobalTitle": {
+    "message": "Limpieza global"
+  },
+  "optionsGlobalHint": {
+    "message": "La caché y los datos de formularios guardados no se pueden limpiar por sitio, así que esto lo borra TODO: de todos los sitios, recientes o no. No hay vista previa."
+  },
+  "optionsGlobalCache": {
+    "message": "Caché"
+  },
+  "optionsGlobalFormData": {
+    "message": "Datos de formularios guardados"
+  },
+  "optionsGlobalButton": {
+    "message": "Limpiar ahora…"
+  },
+  "optionsGlobalConfirm": {
+    "message": "Esto borrará TODOS los datos seleccionados, de todos los sitios, recientes o no. ¿Continuar?"
+  },
+  "optionsGlobalDone": {
+    "message": "Limpiado."
   },
   "optionsKeepUnknownLabel": {
     "message": "No preseleccionar nunca las cookies de sitios sin visitas registradas"

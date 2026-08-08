@@ -30,6 +30,14 @@ describe('classifyGroups', () => {
     expect(result?.verdict).toBe('whitelisted');
   });
 
+  it('protects partitioned cookies when their partition site is whitelisted', () => {
+    const groups = groupCookies([
+      cookie('.tracker.com', { partitionKey: { topLevelSite: 'https://bank.com' } }),
+    ]);
+    const [result] = classifyGroups(groups, new Map(), options);
+    expect(result?.verdict).toBe('whitelisted');
+  });
+
   it('judges partitioned cookies by the partition top-level site visits', () => {
     const groups = groupCookies([
       cookie('.tracker.com', { partitionKey: { topLevelSite: 'https://news.site.com' } }),

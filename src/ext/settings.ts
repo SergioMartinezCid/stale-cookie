@@ -4,6 +4,14 @@ import { getRegistrableDomain, hostnameOf } from '../core/domain';
 export interface Settings {
   /** Days without a visit after which a site's cookies count as stale. */
   cookieThresholdDays: number;
+  /** Days without a visit after which a site's history counts as stale. */
+  historyThresholdDays: number;
+  /** Days without a visit after which a site's downloads count as stale. */
+  downloadThresholdDays: number;
+  /** Include browsing history in scans (uses the install-time history permission). */
+  clearHistory: boolean;
+  /** Include download history in scans (needs the optional "downloads" permission). */
+  clearDownloads: boolean;
   /** Protected registrable domains — never deleted. */
   whitelist: string[];
   /** Never preselect never-visited sites for deletion. */
@@ -12,6 +20,12 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   cookieThresholdDays: 90,
+  // History is the user's own archive — a deleted entry is gone for good,
+  // so its default blast radius is kept smaller than cookies'.
+  historyThresholdDays: 180,
+  downloadThresholdDays: 90,
+  clearHistory: true,
+  clearDownloads: false,
   whitelist: [],
   keepNeverVisited: false,
 };
