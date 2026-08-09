@@ -30,6 +30,16 @@
       #scan {
         width: 100%;
       }
+      #reminder-banner {
+        margin: 0 0 var(--space-2);
+        padding: var(--space-1) var(--space-2);
+        border-left: 3px solid var(--warning);
+        background: color-mix(in srgb, var(--warning) 10%, transparent);
+        font-size: var(--font-sm);
+      }
+      #reminder-banner[hidden] {
+        display: none;
+      }
       #actions {
         display: flex;
         gap: var(--space-2);
@@ -169,6 +179,7 @@
         </svg>
       </button>
     </header>
+    <p id="reminder-banner" hidden></p>
     <button id="scan" class="primary" data-i18n="popupScanButton"></button>
     <div id="actions">
       <button id="skip" data-i18n="popupSkipReminder" hidden></button>

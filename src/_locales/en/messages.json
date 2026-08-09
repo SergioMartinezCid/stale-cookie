@@ -19,6 +19,16 @@
     "message": "Skip this reminder",
     "description": "Button shown while a cleaning reminder is due; dismisses it and restarts the timer without cleaning."
   },
+  "popupReminderBanner": {
+    "message": "Time to clean — it's been over $DAYS$ days since the last clean.",
+    "description": "Context banner shown in the popup while a cleaning reminder is due; $DAYS$ is the configured reminder interval.",
+    "placeholders": { "days": { "content": "$1" } }
+  },
+  "popupReminderSkipped": {
+    "message": "Reminder skipped — the next one comes in $DAYS$ days.",
+    "description": "Confirmation after the user skips a due reminder; $DAYS$ is the configured reminder interval.",
+    "placeholders": { "days": { "content": "$1" } }
+  },
   "reminderNotificationMessage": {
     "message": "Time to clean stale browsing data. Open Stale Cookie to review and delete.",
     "description": "Body of the optional system notification reminding the user to clean."

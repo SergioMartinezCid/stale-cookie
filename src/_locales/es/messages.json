@@ -14,6 +14,14 @@
   "popupSkipReminder": {
     "message": "Omitir este recordatorio"
   },
+  "popupReminderBanner": {
+    "message": "Hora de limpiar: han pasado más de $DAYS$ días desde la última limpieza.",
+    "placeholders": { "days": { "content": "$1" } }
+  },
+  "popupReminderSkipped": {
+    "message": "Recordatorio omitido: el próximo llegará en $DAYS$ días.",
+    "placeholders": { "days": { "content": "$1" } }
+  },
   "reminderNotificationMessage": {
     "message": "Es hora de limpiar los datos de navegación obsoletos. Abre Stale Cookie para revisarlos y eliminarlos."
   },

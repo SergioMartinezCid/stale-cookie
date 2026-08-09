@@ -29,6 +29,7 @@ const confirmDelete = el<HTMLButtonElement>('confirm-delete');
 const confirmCancel = el<HTMLButtonElement>('confirm-cancel');
 const status = el<HTMLParagraphElement>('status');
 const toast = el<HTMLParagraphElement>('toast');
+const reminderBanner = el<HTMLParagraphElement>('reminder-banner');
 const results = el<HTMLDivElement>('results');
 const footer = el<HTMLDivElement>('footer');
 
@@ -331,6 +332,9 @@ scanButton.addEventListener('click', () => {
 skipButton.addEventListener('click', async () => {
   await resetReminderTimer();
   skipButton.hidden = true;
+  reminderBanner.hidden = true;
+  const days = (settings ?? (await loadSettings())).reminderDays;
+  showToast(msg('popupReminderSkipped', [String(days)]), 'success');
 });
 
 // Native dialogs don't render their message over popup panels on Firefox,
@@ -378,6 +382,7 @@ confirmDelete.addEventListener('click', async () => {
   // Cleaning starts a new reminder cycle.
   await resetReminderTimer();
   skipButton.hidden = true;
+  reminderBanner.hidden = true;
   await runScan();
 });
 
@@ -385,9 +390,15 @@ confirmDelete.addEventListener('click', async () => {
 // scan right away in that case: the user opened the popup to clean, so save
 // the click. Scanning is read-only; the preview still gates any deletion.
 void loadSettings().then(async (loaded) => {
+  settings = loaded;
   const due = await reminderDue(loaded);
   skipButton.hidden = !due;
-  if (due) await runScan();
+  if (due) {
+    // The bare Skip button gave zero context on why it was there.
+    reminderBanner.textContent = msg('popupReminderBanner', [String(loaded.reminderDays)]);
+    reminderBanner.hidden = false;
+    await runScan();
+  }
 });
 
 void updateUndoButton();
