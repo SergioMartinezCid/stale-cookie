@@ -124,7 +124,14 @@ function addBadge(parent: HTMLElement, text: string, title?: string, color?: str
   const badge = document.createElement('span');
   badge.className = 'badge';
   badge.textContent = text;
-  if (title) badge.title = title;
+  if (title) {
+    badge.title = title;
+    // The tooltip is mouse-only; give assistive tech the same explanation.
+    const sr = document.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = ` (${title})`;
+    badge.append(sr);
+  }
   if (color) {
     // Container badges echo the container's own Firefox color.
     badge.style.borderColor = color;

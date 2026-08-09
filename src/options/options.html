@@ -107,11 +107,24 @@
         color: var(--danger);
         font-size: var(--font-md);
       }
-      .log-list {
-        max-width: none;
+      .log-scroll {
+        /* Focusable scroll region — without a tab stop, keyboard users
+           could never scroll past the first visible entries. */
         max-height: 180px;
         overflow-y: auto;
+      }
+      .log-list {
+        max-width: none;
         font-size: 13px;
+      }
+      .log-list details {
+        flex: 1;
+        min-width: 0;
+      }
+      .log-list pre {
+        margin: 4px 0 0;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
       }
       .log-list li {
         justify-content: flex-start;
@@ -128,7 +141,7 @@
         border-left: 2px solid color-mix(in srgb, var(--danger) 50%, transparent);
         padding-left: 6px;
       }
-      #error-log li span:last-child {
+      #error-log li :is(span:last-child, summary, pre) {
         font-family: ui-monospace, monospace;
         font-size: var(--font-sm);
       }
@@ -297,10 +310,14 @@
       <h2 data-i18n="optionsLogsTitle"></h2>
       <p class="hint" data-i18n="optionsLogsHint"></p>
       <h3 id="action-log-title"></h3>
-      <ul id="action-log" class="log-list"></ul>
+      <div class="log-scroll" tabindex="0" role="region" aria-labelledby="action-log-title">
+        <ul id="action-log" class="log-list"></ul>
+      </div>
       <p class="hint" id="action-log-empty" hidden data-i18n="optionsActionLogEmpty"></p>
       <h3 id="error-log-title"></h3>
-      <ul id="error-log" class="log-list"></ul>
+      <div class="log-scroll" tabindex="0" role="region" aria-labelledby="error-log-title">
+        <ul id="error-log" class="log-list"></ul>
+      </div>
       <p class="hint" id="error-log-empty" hidden data-i18n="optionsErrorLogEmpty"></p>
       <label
         ><input type="checkbox" id="logs-anonymize" checked /><span

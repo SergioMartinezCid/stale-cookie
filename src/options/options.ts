@@ -370,15 +370,25 @@ function actionSummary(entry: ActionLogEntry): string {
   return msg(key, [String(count), String(sites)]);
 }
 
-function logRow(at: number, text: string, tooltip?: string): HTMLLIElement {
+function logRow(at: number, text: string, stack?: string): HTMLLIElement {
   const li = document.createElement('li');
   const time = document.createElement('span');
   time.className = 'log-time';
   time.textContent = dateTimeFormat.format(at);
-  const body = document.createElement('span');
-  body.textContent = text;
-  if (tooltip) body.title = tooltip;
-  li.append(time, body);
+  if (stack) {
+    // A title-only tooltip hides the stack from keyboard and touch.
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = text;
+    const pre = document.createElement('pre');
+    pre.textContent = stack;
+    details.append(summary, pre);
+    li.append(time, details);
+  } else {
+    const body = document.createElement('span');
+    body.textContent = text;
+    li.append(time, body);
+  }
   return li;
 }
 

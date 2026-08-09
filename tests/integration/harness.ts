@@ -94,7 +94,11 @@ export async function readRows(driver: WebDriver, listId: string): Promise<Previ
     `return Array.from(document.querySelectorAll('#' + arguments[0] + ' li')).map((li) => ({
        domain: li.querySelector('.domain').textContent,
        checked: li.querySelector('input[type=checkbox]').checked,
-       badges: Array.from(li.querySelectorAll('.badge')).map((b) => b.textContent),
+       badges: Array.from(li.querySelectorAll('.badge')).map(
+         // First text node only — badges append a visually-hidden span with
+         // the tooltip text for screen readers.
+         (b) => (b.firstChild ? b.firstChild.textContent : b.textContent),
+       ),
        meta: (li.querySelector('.meta') || { textContent: '' }).textContent,
      }));`,
     listId,
