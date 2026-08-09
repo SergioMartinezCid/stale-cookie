@@ -301,6 +301,11 @@
     "message": "This file is not a Stale Cookie settings export.",
     "description": "Error shown when the imported file cannot be parsed as a settings export."
   },
+  "optionsImportConfirm": {
+    "message": "Replace all current settings with the imported ones? This also overwrites your protected-sites list ($COUNT$ entries).",
+    "description": "Confirmation dialog before applying an imported settings file; $COUNT$ is the current whitelist size.",
+    "placeholders": { "count": { "content": "$1" } }
+  },
   "optionsImportDone": {
     "message": "Settings imported.",
     "description": "Status after a successful settings import."

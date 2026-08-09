@@ -233,6 +233,10 @@
   "optionsImportInvalid": {
     "message": "Este archivo no es una exportación de ajustes de Stale Cookie."
   },
+  "optionsImportConfirm": {
+    "message": "¿Reemplazar toda la configuración actual por la importada? Esto también sobrescribe tu lista de sitios protegidos ($COUNT$ entradas).",
+    "placeholders": { "count": { "content": "$1" } }
+  },
   "optionsImportDone": {
     "message": "Ajustes importados."
   },

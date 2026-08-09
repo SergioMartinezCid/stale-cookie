@@ -303,6 +303,12 @@ importFile.addEventListener('change', async () => {
     configStatus.textContent = msg('optionsImportInvalid');
     return;
   }
+  // Importing replaces everything, including the whitelist — that deserves
+  // a confirmation, not an instant apply. confirm() is fine here: this is a
+  // normal tab, not a popup panel.
+  if (!window.confirm(msg('optionsImportConfirm', [String(settings.whitelist.length)]))) {
+    return;
+  }
   // Permissions can't travel with the file — permission-gated features
   // arrive off, and re-enabling them here triggers the request.
   let downgraded = false;
