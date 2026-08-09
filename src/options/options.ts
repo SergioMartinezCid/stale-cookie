@@ -178,6 +178,8 @@ function updateReminderEnabled(): void {
   reminderBadge.disabled = auto;
   reminderNotification.disabled = auto;
   reminderAutoNote.hidden = !auto;
+  // And the mirror image: the interval means nothing while auto-clean is off.
+  autoCleanDays.disabled = !auto;
 }
 
 autoClean.addEventListener('change', async () => {
