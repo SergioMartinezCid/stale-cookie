@@ -22,3 +22,13 @@ export async function addToWhitelist(domain: string): Promise<Settings> {
   }
   return settings;
 }
+
+/** Inverse of addToWhitelist — backs the popup's "Protected — Undo". */
+export async function removeFromWhitelist(domain: string): Promise<Settings> {
+  const settings = await loadSettings();
+  if (settings.whitelist.includes(domain)) {
+    settings.whitelist = settings.whitelist.filter((entry) => entry !== domain);
+    await saveSettings(settings);
+  }
+  return settings;
+}

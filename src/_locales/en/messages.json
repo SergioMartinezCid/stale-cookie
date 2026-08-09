@@ -86,6 +86,15 @@
     "message": "Protect",
     "description": "Per-site button that adds the site to the whitelist."
   },
+  "protectedToast": {
+    "message": "Protected $DOMAIN$.",
+    "description": "Feedback after a site was added to the whitelist from the preview.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "protectedUndo": {
+    "message": "Undo",
+    "description": "Button next to the protected-site feedback that removes the site from the whitelist again."
+  },
   "deleteButton": {
     "message": "Delete selected ($COUNT$ items from $SITES$ sites)",
     "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types, $SITES$ the number of selected sites.",

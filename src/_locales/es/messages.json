@@ -67,6 +67,13 @@
   "protectButton": {
     "message": "Proteger"
   },
+  "protectedToast": {
+    "message": "Se protegió $DOMAIN$.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "protectedUndo": {
+    "message": "Deshacer"
+  },
   "deleteButton": {
     "message": "Eliminar lo seleccionado ($COUNT$ elementos de $SITES$ sitios)",
     "placeholders": {

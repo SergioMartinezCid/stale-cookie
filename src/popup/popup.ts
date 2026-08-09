@@ -1,7 +1,12 @@
 import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
 import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
-import { loadSettings, addToWhitelist, type Settings } from '../ext/settings';
+import {
+  loadSettings,
+  addToWhitelist,
+  removeFromWhitelist,
+  type Settings,
+} from '../ext/settings';
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
 import { getSnapshot, restoreSnapshot } from '../ext/snapshot';
 import { installErrorCapture, recordError } from '../ext/errorLog';
@@ -31,6 +36,12 @@ let outcome: ScanOutcome | undefined;
 let settings: Settings | undefined;
 let rows: SiteRow[] = [];
 const selected = new Set<string>(); // row domains chosen for deletion
+/**
+ * The user's explicit checkbox choices, by domain. Rescans (after protect,
+ * delete, undo) rebuild every row; without this, a hand-tuned selection
+ * would silently reset to the preselection defaults.
+ */
+const overrides = new Map<string, boolean>();
 
 type Section = 'stale' | 'unknown';
 /** Per-section row checkboxes (rebuilt on every render), for select-all. */
@@ -60,6 +71,25 @@ function showToast(text: string, kind: 'success' | 'error'): void {
 function clearToast(): void {
   toast.hidden = true;
   toast.textContent = '';
+}
+
+/** "Protected example.com. [Undo]" — a mis-click shouldn't need a trip to the options page. */
+function showProtectedToast(domain: string): void {
+  toast.textContent = '';
+  toast.className = 'success';
+  toast.setAttribute('role', 'status');
+  const text = document.createElement('span');
+  text.textContent = msg('protectedToast', [domain]);
+  const undo = document.createElement('button');
+  undo.className = 'quiet';
+  undo.textContent = msg('protectedUndo');
+  undo.addEventListener('click', async () => {
+    await removeFromWhitelist(domain);
+    clearToast();
+    await runScan();
+  });
+  toast.append(text, ' ', undo);
+  toast.hidden = false;
 }
 
 function itemCount(group: ClassifiedGroup): number {
@@ -111,6 +141,7 @@ for (const section of ['stale', 'unknown'] as const) {
     for (const [domain, box] of rowCheckboxes[section]) {
       box.checked = check;
       check ? selected.add(domain) : selected.delete(domain);
+      overrides.set(domain, check);
     }
     updateMaster(section);
     updateDeleteButton();
@@ -128,6 +159,7 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   rowCheckboxes[section].set(row.domain, checkbox);
   checkbox.addEventListener('change', () => {
     checkbox.checked ? selected.add(row.domain) : selected.delete(row.domain);
+    overrides.set(row.domain, checkbox.checked);
     updateMaster(section);
     updateDeleteButton();
   });
@@ -169,6 +201,7 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   protect.textContent = msg('protectButton');
   protect.addEventListener('click', async () => {
     await addToWhitelist(row.domain);
+    showProtectedToast(row.domain);
     await runScan();
   });
   li.append(protect);
@@ -203,8 +236,10 @@ function renderResults(): void {
   );
   const staleList = el<HTMLUListElement>('stale-list');
   const unknownList = el<HTMLUListElement>('unknown-list');
-  staleList.replaceChildren(...stale.map((r) => renderRow(r, true)));
-  unknownList.replaceChildren(...unknown.map((r) => renderRow(r, preselectUnknown)));
+  staleList.replaceChildren(...stale.map((r) => renderRow(r, overrides.get(r.domain) ?? true)));
+  unknownList.replaceChildren(
+    ...unknown.map((r) => renderRow(r, overrides.get(r.domain) ?? preselectUnknown)),
+  );
 
   // Empty sections are noise — and a fully clean scan is good news, not
   // two zero-count headings over a disabled delete button.
