@@ -24,8 +24,8 @@
     "description": "Body of the optional system notification reminding the user to clean."
   },
   "popupScanButton": {
-    "message": "Scan for stale cookies",
-    "description": "Button in the popup that starts a scan (preview, nothing is deleted)."
+    "message": "Scan for stale browsing data",
+    "description": "Button in the popup that starts a scan (preview, nothing is deleted). Says \"browsing data\", not \"cookies\" — the scan covers cookies, history and downloads."
   },
   "popupNoScanYet": {
     "message": "No scan run yet.",
@@ -136,8 +136,8 @@
     "description": "Positive status shown when a scan finds data but none of it is stale or never-visited."
   },
   "emptyState": {
-    "message": "No cookies found.",
-    "description": "Status shown when a scan finds no cookies at all."
+    "message": "No browsing data found.",
+    "description": "Status shown when a scan finds no data of any enabled type at all."
   },
   "optionsTitle": {
     "message": "Stale Cookie settings",

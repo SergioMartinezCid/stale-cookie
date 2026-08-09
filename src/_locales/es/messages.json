@@ -18,7 +18,7 @@
     "message": "Es hora de limpiar los datos de navegación obsoletos. Abre Stale Cookie para revisarlos y eliminarlos."
   },
   "popupScanButton": {
-    "message": "Buscar cookies obsoletas"
+    "message": "Buscar datos de navegación obsoletos"
   },
   "popupNoScanYet": {
     "message": "Aún no se ha realizado ningún análisis."
@@ -107,7 +107,7 @@
     "message": "No hay nada obsoleto: todo limpio."
   },
   "emptyState": {
-    "message": "No se encontraron cookies."
+    "message": "No se encontraron datos de navegación."
   },
   "optionsTitle": {
     "message": "Ajustes de Stale Cookie"
