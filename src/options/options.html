@@ -11,8 +11,23 @@
         padding: var(--space-5);
         font-size: 14px;
       }
+      h1 {
+        font-size: var(--font-xl);
+      }
+      h2 {
+        font-size: var(--font-lg);
+        margin: 0 0 4px;
+      }
       section {
-        margin-bottom: 24px;
+        padding: var(--space-4) 0;
+        border-top: 1px solid var(--border);
+      }
+      section.danger-zone {
+        margin-top: var(--space-4);
+        padding: var(--space-4);
+        border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+        border-radius: var(--radius-card);
+        background: color-mix(in srgb, var(--danger) 6%, transparent);
       }
       label {
         display: flex;
@@ -91,7 +106,7 @@
         margin-top: 8px;
       }
       h3 {
-        font-size: 14px;
+        font-size: var(--font-md);
         margin: 16px 0 4px;
       }
     </style>
@@ -133,6 +148,7 @@
     </section>
 
     <section>
+      <h2 data-i18n="optionsUnknownTitle"></h2>
       <label>
         <input type="checkbox" id="keep-unknown" />
         <span data-i18n="optionsKeepUnknownLabel"></span>
@@ -191,19 +207,6 @@
     </section>
 
     <section>
-      <h2 data-i18n="optionsGlobalTitle"></h2>
-      <p class="hint danger-note" data-i18n="optionsGlobalHint"></p>
-      <label><input type="checkbox" id="global-cache" checked /><span data-i18n="optionsGlobalCache"></span></label>
-      <label
-        ><input type="checkbox" id="global-form-data" checked /><span
-          data-i18n="optionsGlobalFormData"
-        ></span
-      ></label>
-      <button id="global-clear" class="danger" data-i18n="optionsGlobalButton"></button>
-      <p id="global-status"></p>
-    </section>
-
-    <section>
       <h2 data-i18n="optionsConfigTitle"></h2>
       <p class="hint" data-i18n="optionsConfigHint"></p>
       <button id="export-config" data-i18n="optionsExportButton"></button>
@@ -230,6 +233,20 @@
       ></label>
       <p class="hint" data-i18n="optionsLogsAnonymizeHint"></p>
       <button id="export-logs" data-i18n="optionsLogsExportButton"></button>
+    </section>
+
+    <!-- Deliberately last: the one destructive action without a preview. -->
+    <section class="danger-zone">
+      <h2 data-i18n="optionsGlobalTitle"></h2>
+      <p class="hint danger-note" data-i18n="optionsGlobalHint"></p>
+      <label><input type="checkbox" id="global-cache" checked /><span data-i18n="optionsGlobalCache"></span></label>
+      <label
+        ><input type="checkbox" id="global-form-data" checked /><span
+          data-i18n="optionsGlobalFormData"
+        ></span
+      ></label>
+      <button id="global-clear" class="danger" data-i18n="optionsGlobalButton"></button>
+      <p id="global-status"></p>
     </section>
 
     <p id="saved" data-i18n="optionsSaved"></p>

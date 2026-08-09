@@ -227,6 +227,10 @@
     "message": "Cleared.",
     "description": "Status after a global clear finished."
   },
+  "optionsUnknownTitle": {
+    "message": "Sites with no recorded visit",
+    "description": "Heading of the options section governing preselection of never-visited sites."
+  },
   "optionsKeepUnknownLabel": {
     "message": "Never preselect cookies from sites with no recorded visit",
     "description": "Checkbox that stops never-visited sites from being preselected for deletion."
