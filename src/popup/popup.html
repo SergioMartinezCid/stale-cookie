@@ -236,7 +236,7 @@
         <circle cx="12.5" cy="17" r="1" fill="currentColor" stroke="none" />
       </svg>
     </div>
-    <p id="status" class="idle" role="status" data-i18n="popupNoScanYet"></p>
+    <p id="status" class="idle" role="status" tabindex="-1" data-i18n="popupNoScanYet"></p>
     <div id="results" hidden>
       <h2 id="stale-head">
         <label><input type="checkbox" id="stale-all" /><span id="stale-title"></span></label>
@@ -252,7 +252,12 @@
       <button id="delete" class="danger"></button>
       <div id="confirm" hidden>
         <span id="confirm-text"></span>
-        <button id="confirm-delete" class="danger" data-i18n="popupConfirmDeleteButton"></button>
+        <button
+          id="confirm-delete"
+          class="danger"
+          aria-describedby="confirm-text"
+          data-i18n="popupConfirmDeleteButton"
+        ></button>
         <button id="confirm-cancel" data-i18n="popupCancel"></button>
       </div>
     </div>

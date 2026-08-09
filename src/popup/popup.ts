@@ -299,6 +299,18 @@ function closeConfirm(): void {
 }
 
 /**
+ * Re-renders and hidden/disabled toggles destroy the focused element, which
+ * drops keyboard focus to <body> (i.e. back to the top of the popup). When
+ * that happened, land on the status line — it sits next to whatever just
+ * changed and reads its content.
+ */
+function restoreFocus(): void {
+  if (document.activeElement === document.body || document.activeElement === null) {
+    status.focus();
+  }
+}
+
+/**
  * Undo is offered whenever a snapshot of the last deletion exists — also on
  * popup open, so an automatic clean (no preview) can still be undone until
  * the browser closes or the next deletion replaces the snapshot.
@@ -338,6 +350,7 @@ async function runScan(): Promise<void> {
     showToast(msg('popupFailed'), 'error');
   } finally {
     scanButton.disabled = false;
+    restoreFocus();
   }
 }
 
@@ -361,6 +374,7 @@ skipButton.addEventListener('click', async () => {
   reminderBanner.hidden = true;
   const days = (settings ?? (await loadSettings())).reminderDays;
   showToast(msg('popupReminderSkipped', [String(days)]), 'success');
+  restoreFocus(); // the hidden Skip button was the focused element
 });
 
 // Native dialogs don't render their message over popup panels on Firefox,
@@ -370,9 +384,22 @@ deleteButton.addEventListener('click', () => {
   confirmText.textContent = msg('popupDeleteConfirm', [String(count)]);
   deleteButton.hidden = true;
   confirmBox.hidden = false;
+  // Dialog choreography for the inline pattern: focus moves in (to the safe
+  // choice), Escape cancels, and cancel returns focus to the Delete button.
+  confirmCancel.focus();
 });
 
-confirmCancel.addEventListener('click', closeConfirm);
+confirmBox.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeConfirm();
+    deleteButton.focus();
+  }
+});
+
+confirmCancel.addEventListener('click', () => {
+  closeConfirm();
+  deleteButton.focus();
+});
 
 undoButton.addEventListener('click', async () => {
   undoButton.disabled = true;
@@ -388,6 +415,7 @@ undoButton.addEventListener('click', async () => {
   await updateUndoButton();
   // The restored cookies are still stale — rescan so the preview is honest.
   if (outcome) await runScan();
+  restoreFocus(); // the Restore button hides itself once consumed
 });
 
 confirmDelete.addEventListener('click', async () => {
