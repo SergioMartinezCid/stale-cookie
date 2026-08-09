@@ -123,6 +123,14 @@
     "description": "Status shown after deletion.",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "scanSummary": {
+    "message": "Found $STALE$ stale sites and $UNKNOWN$ with no recorded visit.",
+    "description": "Status line after a scan, also announced to screen readers.",
+    "placeholders": {
+      "stale": { "content": "$1" },
+      "unknown": { "content": "$2" }
+    }
+  },
   "emptyState": {
     "message": "No cookies found.",
     "description": "Status shown when a scan finds no cookies at all."

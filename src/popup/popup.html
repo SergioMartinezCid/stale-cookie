@@ -123,6 +123,20 @@
         margin: 8px 0 0;
         color: var(--text-muted);
       }
+      #toast {
+        margin: 8px 0 0;
+      }
+      #toast[hidden] {
+        display: none;
+      }
+      #toast.success {
+        color: var(--success);
+      }
+      #toast.error {
+        border-left: 3px solid var(--danger);
+        padding: var(--space-1) var(--space-2);
+        background: color-mix(in srgb, var(--danger) 8%, transparent);
+      }
       #summary {
         margin: 8px 0 0;
         color: var(--text-muted);
@@ -148,7 +162,8 @@
       <button id="skip" data-i18n="popupSkipReminder" hidden></button>
       <button id="undo" hidden></button>
     </div>
-    <p id="status" data-i18n="popupNoScanYet"></p>
+    <p id="toast" role="status" hidden></p>
+    <p id="status" role="status" data-i18n="popupNoScanYet"></p>
     <div id="results" hidden>
       <h2 id="stale-title"></h2>
       <ul id="stale-list"></ul>

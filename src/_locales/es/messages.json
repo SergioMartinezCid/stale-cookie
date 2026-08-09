@@ -96,6 +96,13 @@
     "message": "Se eliminaron $COUNT$ elementos.",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "scanSummary": {
+    "message": "Se encontraron $STALE$ sitios obsoletos y $UNKNOWN$ sin visitas registradas.",
+    "placeholders": {
+      "stale": { "content": "$1" },
+      "unknown": { "content": "$2" }
+    }
+  },
   "emptyState": {
     "message": "No se encontraron cookies."
   },

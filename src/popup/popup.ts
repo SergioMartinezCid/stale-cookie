@@ -23,6 +23,7 @@ const confirmText = el<HTMLSpanElement>('confirm-text');
 const confirmDelete = el<HTMLButtonElement>('confirm-delete');
 const confirmCancel = el<HTMLButtonElement>('confirm-cancel');
 const status = el<HTMLParagraphElement>('status');
+const toast = el<HTMLParagraphElement>('toast');
 const results = el<HTMLDivElement>('results');
 const footer = el<HTMLDivElement>('footer');
 
@@ -32,6 +33,23 @@ let rows: SiteRow[] = [];
 const selected = new Set<string>(); // row domains chosen for deletion
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
+
+/**
+ * Outcome feedback lives in its own element so the rescan that follows a
+ * deletion or restore cannot wipe it (the status line is rewritten by every
+ * scan). Errors are announced assertively — they point at the error log.
+ */
+function showToast(text: string, kind: 'success' | 'error'): void {
+  toast.textContent = text;
+  toast.className = kind;
+  toast.setAttribute('role', kind === 'error' ? 'alert' : 'status');
+  toast.hidden = false;
+}
+
+function clearToast(): void {
+  toast.hidden = true;
+  toast.textContent = '';
+}
 
 function itemCount(group: ClassifiedGroup): number {
   switch (group.kind) {
@@ -154,7 +172,10 @@ function renderResults(): void {
 
   results.hidden = false;
   footer.hidden = false;
-  status.textContent = outcome.groups.length === 0 ? msg('emptyState') : '';
+  status.textContent =
+    outcome.groups.length === 0
+      ? msg('emptyState')
+      : msg('scanSummary', [String(stale.length), String(unknown.length)]);
   updateDeleteButton();
 }
 
@@ -199,7 +220,8 @@ async function runScan(): Promise<void> {
   } catch (error) {
     // A stuck "Scanning…" is unreportable — log it and say something failed.
     recordError('popup', error);
-    status.textContent = msg('popupFailed');
+    status.textContent = '';
+    showToast(msg('popupFailed'), 'error');
   } finally {
     scanButton.disabled = false;
   }
@@ -214,7 +236,10 @@ optionsButton.addEventListener('click', () => {
   window.close();
 });
 
-scanButton.addEventListener('click', () => void runScan());
+scanButton.addEventListener('click', () => {
+  clearToast(); // a fresh user-initiated scan starts a clean slate
+  void runScan();
+});
 
 skipButton.addEventListener('click', async () => {
   await resetReminderTimer();
@@ -236,10 +261,10 @@ undoButton.addEventListener('click', async () => {
   undoButton.disabled = true;
   try {
     const restored = await restoreSnapshot();
-    status.textContent = msg('popupRestoredToast', [String(restored)]);
+    showToast(msg('popupRestoredToast', [String(restored)]), 'success');
   } catch (error) {
     recordError('popup', error);
-    status.textContent = msg('popupFailed');
+    showToast(msg('popupFailed'), 'error');
   } finally {
     undoButton.disabled = false;
   }
@@ -252,10 +277,10 @@ confirmDelete.addEventListener('click', async () => {
   confirmDelete.disabled = true;
   try {
     const removed = await deleteGroups(selectedDeletable());
-    status.textContent = msg('deletedToast', [String(removed)]);
+    showToast(msg('deletedToast', [String(removed)]), 'success');
   } catch (error) {
     recordError('popup', error);
-    status.textContent = msg('popupFailed');
+    showToast(msg('popupFailed'), 'error');
     closeConfirm();
     return; // a failed clean is no clean — leave the reminder cycle alone
   } finally {
