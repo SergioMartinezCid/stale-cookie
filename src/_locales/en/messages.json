@@ -374,6 +374,19 @@
     "message": "Cookies from these sites are never deleted.",
     "description": "Explanation under the whitelist heading."
   },
+  "optionsWhitelistInvalid": {
+    "message": "This doesn't look like a valid domain.",
+    "description": "Shown when the whitelist input can't be normalized to a registrable domain."
+  },
+  "optionsWhitelistDuplicate": {
+    "message": "$DOMAIN$ is already protected.",
+    "description": "Shown when the whitelist input normalizes to a domain already on the list.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "optionsNumberInvalid": {
+    "message": "Enter a whole number of days between 1 and 3650.",
+    "description": "Shown next to a days input holding an invalid value; the invalid value is not saved."
+  },
   "optionsAdd": {
     "message": "Add",
     "description": "Button that adds a domain to the whitelist."

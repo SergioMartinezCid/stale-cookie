@@ -35,6 +35,7 @@ const reminderNotification = el<HTMLInputElement>('reminder-notification');
 const reminderPermissionNote = el<HTMLParagraphElement>('reminder-permission-note');
 const whitelistForm = el<HTMLFormElement>('whitelist-form');
 const whitelistInput = el<HTMLInputElement>('whitelist-input');
+const whitelistStatus = el<HTMLParagraphElement>('whitelist-status');
 const whitelistList = el<HTMLUListElement>('whitelist');
 const globalCache = el<HTMLInputElement>('global-cache');
 const globalFormData = el<HTMLInputElement>('global-form-data');
@@ -97,16 +98,44 @@ function updateThresholdWarning(): void {
   );
 }
 
+/**
+ * An invalid days value is not saved, but it isn't silently reverted either:
+ * the input keeps what the user typed, marked aria-invalid, with an inline
+ * explanation until corrected.
+ */
+function showFieldError(input: HTMLInputElement): void {
+  input.setAttribute('aria-invalid', 'true');
+  if (!input.parentElement?.querySelector('.field-error')) {
+    const error = document.createElement('span');
+    error.className = 'field-error';
+    error.setAttribute('role', 'alert');
+    error.textContent = msg('optionsNumberInvalid');
+    input.parentElement?.append(error);
+  }
+}
+
+function clearFieldError(input: HTMLInputElement): void {
+  input.removeAttribute('aria-invalid');
+  input.parentElement?.querySelector('.field-error')?.remove();
+}
+
+/** Parse a days input; null when out of the 1–3650 range the markup states. */
+function parseDays(input: HTMLInputElement): number | null {
+  const days = Number(input.value);
+  return Number.isInteger(days) && days >= 1 && days <= 3650 ? days : null;
+}
+
 function bindThreshold(input: HTMLInputElement, key: 'cookieThresholdDays' | 'historyThresholdDays' | 'downloadThresholdDays'): void {
   input.addEventListener('change', async () => {
-    const days = Number(input.value);
-    if (Number.isInteger(days) && days >= 1) {
-      settings[key] = days;
-      updateThresholdWarning();
-      await persist();
-    } else {
-      input.value = String(settings[key]);
+    const days = parseDays(input);
+    if (days === null) {
+      showFieldError(input);
+      return;
     }
+    clearFieldError(input);
+    settings[key] = days;
+    updateThresholdWarning();
+    await persist();
   });
 }
 
@@ -156,23 +185,25 @@ autoClean.addEventListener('change', async () => {
 });
 
 autoCleanDays.addEventListener('change', async () => {
-  const days = Number(autoCleanDays.value);
-  if (Number.isInteger(days) && days >= 1) {
-    settings.autoCleanDays = days;
-    await persist();
-  } else {
-    autoCleanDays.value = String(settings.autoCleanDays);
+  const days = parseDays(autoCleanDays);
+  if (days === null) {
+    showFieldError(autoCleanDays);
+    return;
   }
+  clearFieldError(autoCleanDays);
+  settings.autoCleanDays = days;
+  await persist();
 });
 
 reminderDays.addEventListener('change', async () => {
-  const days = Number(reminderDays.value);
-  if (Number.isInteger(days) && days >= 1) {
-    settings.reminderDays = days;
-    await persist();
-  } else {
-    reminderDays.value = String(settings.reminderDays);
+  const days = parseDays(reminderDays);
+  if (days === null) {
+    showFieldError(reminderDays);
+    return;
   }
+  clearFieldError(reminderDays);
+  settings.reminderDays = days;
+  await persist();
 });
 
 reminderBadge.addEventListener('change', async () => {
@@ -198,14 +229,28 @@ reminderNotification.addEventListener('change', async () => {
 whitelistForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const domain = normalizeWhitelistEntry(whitelistInput.value);
-  if (!domain) return;
-  if (!settings.whitelist.includes(domain)) {
-    settings.whitelist.push(domain);
-    settings.whitelist.sort();
-    renderWhitelist();
-    await persist();
+  if (!domain) {
+    // An add that silently does nothing looks like a lost click.
+    whitelistStatus.textContent = msg('optionsWhitelistInvalid');
+    whitelistStatus.hidden = false;
+    return;
   }
+  if (settings.whitelist.includes(domain)) {
+    whitelistStatus.textContent = msg('optionsWhitelistDuplicate', [domain]);
+    whitelistStatus.hidden = false;
+    whitelistInput.value = '';
+    return;
+  }
+  whitelistStatus.hidden = true;
+  settings.whitelist.push(domain);
+  settings.whitelist.sort();
+  renderWhitelist();
+  await persist();
   whitelistInput.value = '';
+});
+
+whitelistInput.addEventListener('input', () => {
+  whitelistStatus.hidden = true;
 });
 
 function updateGlobalClearEnabled(): void {

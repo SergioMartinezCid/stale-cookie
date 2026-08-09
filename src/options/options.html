@@ -86,6 +86,10 @@
       .import-row {
         margin-top: 8px;
       }
+      .field-error {
+        color: var(--danger);
+        font-size: var(--font-md);
+      }
       .log-list {
         max-width: none;
         max-height: 180px;
@@ -143,8 +147,8 @@
           ></span
         ></label>
       </div>
-      <p class="hint" id="permission-note" hidden data-i18n="optionsPermissionDenied"></p>
-      <p id="threshold-warning" hidden data-i18n="optionsThresholdWarning"></p>
+      <p class="hint" id="permission-note" role="alert" hidden data-i18n="optionsPermissionDenied"></p>
+      <p id="threshold-warning" role="alert" hidden data-i18n="optionsThresholdWarning"></p>
     </section>
 
     <section>
@@ -193,7 +197,7 @@
           data-i18n="optionsReminderNotificationLabel"
         ></span
       ></label>
-      <p class="hint" id="reminder-permission-note" hidden data-i18n="optionsPermissionDenied"></p>
+      <p class="hint" id="reminder-permission-note" role="alert" hidden data-i18n="optionsPermissionDenied"></p>
     </section>
 
     <section>
@@ -203,6 +207,7 @@
         <input type="text" id="whitelist-input" placeholder="example.com" />
         <button type="submit" data-i18n="optionsAdd"></button>
       </form>
+      <p id="whitelist-status" class="field-error" role="alert" hidden></p>
       <ul id="whitelist"></ul>
     </section>
 
@@ -214,7 +219,7 @@
         ><span data-i18n="optionsImportButton"></span
         ><input type="file" id="import-file" accept=".json,application/json"
       /></label>
-      <p id="config-status" class="hint"></p>
+      <p id="config-status" class="hint" role="status"></p>
     </section>
 
     <section>
@@ -246,7 +251,7 @@
         ></span
       ></label>
       <button id="global-clear" class="danger" data-i18n="optionsGlobalButton"></button>
-      <p id="global-status"></p>
+      <p id="global-status" role="status"></p>
     </section>
 
     <p id="saved" data-i18n="optionsSaved"></p>

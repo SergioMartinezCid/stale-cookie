@@ -291,6 +291,16 @@
   "optionsWhitelistHint": {
     "message": "Las cookies de estos sitios nunca se eliminan."
   },
+  "optionsWhitelistInvalid": {
+    "message": "No parece un dominio válido."
+  },
+  "optionsWhitelistDuplicate": {
+    "message": "$DOMAIN$ ya está protegido.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "optionsNumberInvalid": {
+    "message": "Introduce un número entero de días entre 1 y 3650."
+  },
   "optionsAdd": {
     "message": "Añadir"
   },
