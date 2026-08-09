@@ -313,6 +313,8 @@ async function updateUndoButton(): Promise<void> {
 
 async function runScan(): Promise<void> {
   scanButton.disabled = true;
+  el('empty-hero').hidden = true;
+  status.className = 'scanning';
   status.textContent = msg('popupScanning');
   try {
     settings = await loadSettings();
@@ -321,6 +323,7 @@ async function runScan(): Promise<void> {
   } catch (error) {
     // A stuck "Scanning…" is unreportable — log it and say something failed.
     recordError('popup', error);
+    status.className = '';
     status.textContent = '';
     showToast(msg('popupFailed'), 'error');
   } finally {

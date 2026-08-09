@@ -122,10 +122,14 @@
         padding: 2px 8px;
       }
       #footer {
+        /* Visually anchored action bar — marks the scroll boundary of the
+           results list above it. */
         display: flex;
         align-items: center;
         gap: 8px;
         margin-top: 10px;
+        padding-top: var(--space-2);
+        border-top: 1px solid var(--border);
       }
       #footer[hidden] {
         display: none;
@@ -149,6 +153,36 @@
       }
       #status.success {
         color: var(--success);
+      }
+      #status.idle {
+        text-align: center;
+      }
+      #empty-hero {
+        margin-top: var(--space-4);
+        text-align: center;
+        color: var(--text-muted);
+      }
+      #status.scanning::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 6px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        vertical-align: -1px;
+      }
+      /* All motion stays behind the user's preference. */
+      @media (prefers-reduced-motion: no-preference) {
+        #status.scanning::before {
+          animation: spin 0.8s linear infinite;
+        }
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
       #toast {
         margin: 8px 0 0;
@@ -192,7 +226,17 @@
     </div>
     <p id="undo-detail" hidden></p>
     <p id="toast" role="status" hidden></p>
-    <p id="status" role="status" data-i18n="popupNoScanYet"></p>
+    <div id="empty-hero" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none" />
+        <circle cx="14.5" cy="8" r="1" fill="currentColor" stroke="none" />
+        <circle cx="15.5" cy="13.5" r="1" fill="currentColor" stroke="none" />
+        <circle cx="9" cy="14.5" r="1" fill="currentColor" stroke="none" />
+        <circle cx="12.5" cy="17" r="1" fill="currentColor" stroke="none" />
+      </svg>
+    </div>
+    <p id="status" class="idle" role="status" data-i18n="popupNoScanYet"></p>
     <div id="results" hidden>
       <h2 id="stale-head">
         <label><input type="checkbox" id="stale-all" /><span id="stale-title"></span></label>
