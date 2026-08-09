@@ -13,8 +13,8 @@ import type { Settings } from './settings';
 
 export interface ScanOutcome {
   groups: ClassifiedGroup[];
-  /** cookieStoreId → container name, for display. Default store not included. */
-  containerNames: Record<string, string>;
+  /** cookieStoreId → container, for display. Default store not included. */
+  containers: Record<string, { name: string; colorCode: string }>;
   scannedAt: number;
 }
 
@@ -26,9 +26,12 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * are currently open. Private-browsing cookies are session-only and out of
  * scope, so the private store is excluded.
  */
-async function listCookieStores(): Promise<{ storeIds: string[]; containerNames: Record<string, string> }> {
+async function listCookieStores(): Promise<{
+  storeIds: string[];
+  containers: ScanOutcome['containers'];
+}> {
   const storeIds = new Set<string>();
-  const containerNames: Record<string, string> = {};
+  const containers: ScanOutcome['containers'] = {};
   for (const store of await browser.cookies.getAllCookieStores()) {
     storeIds.add(store.id);
   }
@@ -36,13 +39,16 @@ async function listCookieStores(): Promise<{ storeIds: string[]; containerNames:
     // Firefox-only; throws/undefined on Chrome or with containers disabled.
     for (const identity of await browser.contextualIdentities.query({})) {
       storeIds.add(identity.cookieStoreId);
-      containerNames[identity.cookieStoreId] = identity.name;
+      containers[identity.cookieStoreId] = {
+        name: identity.name,
+        colorCode: identity.colorCode,
+      };
     }
   } catch {
     // No container support — the open stores are all there is.
   }
   storeIds.delete('firefox-private');
-  return { storeIds: [...storeIds], containerNames };
+  return { storeIds: [...storeIds], containers };
 }
 
 const HISTORY_PAGE = 5000;
@@ -102,7 +108,7 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
     historyGroups.map((group) => [group.registrableDomain, group.lastVisitTime]),
   );
 
-  const { storeIds, containerNames } = await listCookieStores();
+  const { storeIds, containers } = await listCookieStores();
   const cookies = [];
   for (const storeId of storeIds) {
     cookies.push(
@@ -154,7 +160,7 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
     );
   }
 
-  return { groups, containerNames, scannedAt: now };
+  return { groups, containers, scannedAt: now };
 }
 
 /** Delete every item of the given groups. Returns the number removed. */

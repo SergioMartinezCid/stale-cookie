@@ -55,12 +55,17 @@ function countLabels(row: SiteRow): string[] {
   return parts;
 }
 
-function addBadge(li: HTMLLIElement, text: string, title?: string): void {
+function addBadge(parent: HTMLElement, text: string, title?: string, color?: string): void {
   const badge = document.createElement('span');
   badge.className = 'badge';
   badge.textContent = text;
   if (title) badge.title = title;
-  li.append(badge);
+  if (color) {
+    // Container badges echo the container's own Firefox color.
+    badge.style.borderColor = color;
+    badge.style.color = color;
+  }
+  parent.append(badge);
 }
 
 function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
@@ -76,24 +81,27 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   });
   li.append(checkbox);
 
+  const site = document.createElement('span');
+  site.className = 'site';
   const domain = document.createElement('span');
   domain.className = 'domain';
   domain.textContent = row.domain;
   domain.title = row.domain;
-  li.append(domain);
+  site.append(domain);
 
-  const containerBadges = new Set<string>();
+  const containerBadges = new Map<string, string | undefined>(); // name → colorCode
   let partitionedBadge: string | undefined;
   for (const group of row.deletable) {
     if (group.kind !== 'cookies') continue;
-    const containerName = outcome?.containerNames[group.storeId];
-    if (containerName) containerBadges.add(containerName);
+    const container = outcome?.containers[group.storeId];
+    if (container) containerBadges.set(container.name, container.colorCode);
     if (group.partitionSite) partitionedBadge = group.partitionSite;
   }
-  for (const name of containerBadges) addBadge(li, name);
+  for (const [name, color] of containerBadges) addBadge(site, name, undefined, color);
   if (partitionedBadge) {
-    addBadge(li, msg('partitionedBadge'), msg('partitionedUnder', [row.domain]));
+    addBadge(site, msg('partitionedBadge'), msg('partitionedUnder', [row.domain]));
   }
+  li.append(site);
 
   const meta = document.createElement('span');
   meta.className = 'meta';
