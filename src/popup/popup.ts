@@ -381,9 +381,13 @@ confirmDelete.addEventListener('click', async () => {
   await runScan();
 });
 
-// Offer "skip this reminder" only while a reminder is actually due.
+// Offer "skip this reminder" only while a reminder is actually due — and
+// scan right away in that case: the user opened the popup to clean, so save
+// the click. Scanning is read-only; the preview still gates any deletion.
 void loadSettings().then(async (loaded) => {
-  skipButton.hidden = !(await reminderDue(loaded));
+  const due = await reminderDue(loaded);
+  skipButton.hidden = !due;
+  if (due) await runScan();
 });
 
 void updateUndoButton();
