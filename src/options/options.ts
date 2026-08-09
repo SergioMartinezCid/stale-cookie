@@ -75,6 +75,7 @@ function renderWhitelist(): void {
       const span = document.createElement('span');
       span.textContent = domain;
       const remove = document.createElement('button');
+      remove.className = 'quiet';
       remove.textContent = msg('optionsRemove');
       remove.addEventListener('click', async () => {
         settings.whitelist = settings.whitelist.filter((d) => d !== domain);

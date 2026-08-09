@@ -35,15 +35,19 @@
         gap: 8px;
       }
       .type-row {
-        display: flex;
+        /* Shared two-column grid so every "N days" control lines up in the
+           same column page-wide, not wherever space-between dropped it. */
+        display: grid;
+        grid-template-columns: 1fr auto;
         align-items: center;
-        justify-content: space-between;
         gap: 16px;
         max-width: 440px;
         padding: 4px 0;
       }
       .type-row input[type='number'] {
         width: 5em;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
       }
       ul {
         list-style: none;
@@ -95,7 +99,9 @@
         font-size: var(--font-md);
       }
       .import-row {
-        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
       .field-error {
         color: var(--danger);
@@ -116,6 +122,22 @@
       .log-time {
         color: var(--text-muted);
         white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      #error-log li {
+        border-left: 2px solid color-mix(in srgb, var(--danger) 50%, transparent);
+        padding-left: 6px;
+      }
+      #error-log li span:last-child {
+        font-family: ui-monospace, monospace;
+        font-size: var(--font-sm);
+      }
+      .config-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-top: 8px;
       }
       #export-logs {
         margin-top: 8px;
@@ -225,11 +247,13 @@
     <section>
       <h2 data-i18n="optionsConfigTitle"></h2>
       <p class="hint" data-i18n="optionsConfigHint"></p>
-      <button id="export-config" data-i18n="optionsExportButton"></button>
-      <label class="import-row"
-        ><span data-i18n="optionsImportButton"></span
-        ><input type="file" id="import-file" accept=".json,application/json"
-      /></label>
+      <div class="config-actions">
+        <button id="export-config" data-i18n="optionsExportButton"></button>
+        <label class="import-row"
+          ><span data-i18n="optionsImportButton"></span
+          ><input type="file" id="import-file" accept=".json,application/json"
+        /></label>
+      </div>
       <p id="config-status" class="hint" role="status"></p>
     </section>
 
