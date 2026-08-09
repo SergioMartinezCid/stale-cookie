@@ -10,6 +10,7 @@
     "dev": "node scripts/build.mjs --watch",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:integration": "node scripts/build.mjs && vitest run --config vitest.integration.config.ts",
     "start:firefox": "web-ext run --source-dir dist",
     "lint:ext": "web-ext lint --source-dir dist",
     "typecheck": "tsc --noEmit"
@@ -23,8 +24,10 @@
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
+    "@types/selenium-webdriver": "^4.35.6",
     "@types/webextension-polyfill": "^0.12.5",
     "esbuild": "^0.28.1",
+    "selenium-webdriver": "^4.46.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10",
     "web-ext": "^10.6.0"
