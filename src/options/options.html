@@ -64,7 +64,18 @@
         font-size: var(--font-md);
       }
       #saved {
-        color: var(--text-muted);
+        /* Fixed corner toast — the page is long and the changed control
+           can be anywhere; an indicator at the bottom of the flow was
+           invisible from where the user was editing. */
+        position: fixed;
+        right: var(--space-4);
+        bottom: var(--space-4);
+        margin: 0;
+        padding: var(--space-2) var(--space-4);
+        background: var(--bg-subtle);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-ctrl);
+        color: var(--text);
         font-size: var(--font-md);
         visibility: hidden;
       }
@@ -254,7 +265,7 @@
       <p id="global-status" role="status"></p>
     </section>
 
-    <p id="saved" data-i18n="optionsSaved"></p>
+    <p id="saved" role="status" data-i18n="optionsSaved"></p>
     <script src="options.js"></script>
   </body>
 </html>
