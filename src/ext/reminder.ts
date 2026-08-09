@@ -79,7 +79,10 @@ async function showReminder(settings: Settings, base: number): Promise<void> {
 /** Start a new cycle: after a clean or an explicit "skip this reminder". */
 export async function resetReminderTimer(): Promise<void> {
   await browser.storage.local.set({ [BASE_KEY]: Date.now() });
-  await browser.notifications.clear(NOTIFICATION_ID).catch(() => undefined);
+  // browser.notifications is undefined until the optional permission is
+  // granted — accessing .clear unguarded throws and would abort the caller
+  // (e.g. the popup's post-delete rescan).
+  await browser.notifications?.clear(NOTIFICATION_ID).catch(() => undefined);
   await scheduleReminder();
 }
 
