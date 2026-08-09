@@ -2,13 +2,13 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="../ui/theme.css" />
     <style>
       body {
         width: 380px;
         margin: 0;
-        padding: 12px;
-        font-family: system-ui, sans-serif;
-        font-size: 13px;
+        padding: var(--space-3);
+        font-size: var(--font-md);
       }
       header {
         display: flex;
@@ -44,7 +44,7 @@
         align-items: center;
         gap: 4px 6px;
         padding: 4px 0;
-        border-bottom: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+        border-bottom: 1px solid var(--border);
       }
       li .domain {
         flex: 1;
@@ -57,15 +57,15 @@
         /* Full-width second line, aligned under the domain. */
         flex-basis: 100%;
         padding-left: 22px;
-        opacity: 0.65;
-        font-size: 11px;
+        color: var(--text-muted);
+        font-size: var(--font-xs);
       }
       .badge {
         font-size: 10px;
         padding: 1px 5px;
-        border-radius: 8px;
-        border: 1px solid currentColor;
-        opacity: 0.8;
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
         white-space: nowrap;
       }
       .protect {
@@ -91,18 +91,18 @@
       }
       #confirm-text {
         flex-basis: 100%;
-        color: #c05000;
+        color: var(--warning);
       }
       #confirm-delete {
-        color: #d70022;
+        color: var(--danger);
       }
       #status {
         margin: 8px 0 0;
-        opacity: 0.7;
+        color: var(--text-muted);
       }
       #summary {
         margin: 8px 0 0;
-        opacity: 0.7;
+        color: var(--text-muted);
       }
       button:disabled {
         opacity: 0.5;

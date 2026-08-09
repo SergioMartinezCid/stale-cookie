@@ -25,6 +25,8 @@ const options = {
           cpSync('src/_locales', 'dist/_locales', { recursive: true });
           cpSync('src/popup/popup.html', 'dist/popup/popup.html');
           cpSync('src/options/options.html', 'dist/options/options.html');
+          mkdirSync('dist/ui', { recursive: true });
+          cpSync('src/ui/theme.css', 'dist/ui/theme.css');
         });
       },
     },
