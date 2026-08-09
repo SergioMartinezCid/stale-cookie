@@ -69,7 +69,8 @@
         white-space: nowrap;
       }
       .protect {
-        font-size: 11px;
+        font-size: var(--font-xs);
+        padding: 2px 8px;
       }
       #footer {
         display: flex;
@@ -93,9 +94,6 @@
         flex-basis: 100%;
         color: var(--warning);
       }
-      #confirm-delete {
-        color: var(--danger);
-      }
       #status {
         margin: 8px 0 0;
         color: var(--text-muted);
@@ -104,17 +102,14 @@
         margin: 8px 0 0;
         color: var(--text-muted);
       }
-      button:disabled {
-        opacity: 0.5;
-      }
     </style>
   </head>
   <body>
     <header>
       <h1 data-i18n="popupTitle"></h1>
-      <button id="options" data-i18n="popupOptionsButton"></button>
+      <button id="options" class="quiet" data-i18n="popupOptionsButton"></button>
     </header>
-    <button id="scan" data-i18n="popupScanButton"></button>
+    <button id="scan" class="primary" data-i18n="popupScanButton"></button>
     <button id="skip" data-i18n="popupSkipReminder" hidden></button>
     <button id="undo" hidden></button>
     <p id="status" data-i18n="popupNoScanYet"></p>
@@ -126,10 +121,10 @@
       <p id="summary"></p>
     </div>
     <div id="footer" hidden>
-      <button id="delete"></button>
+      <button id="delete" class="danger"></button>
       <div id="confirm" hidden>
         <span id="confirm-text"></span>
-        <button id="confirm-delete" data-i18n="popupConfirmDeleteButton"></button>
+        <button id="confirm-delete" class="danger" data-i18n="popupConfirmDeleteButton"></button>
         <button id="confirm-cancel" data-i18n="popupCancel"></button>
       </div>
     </div>

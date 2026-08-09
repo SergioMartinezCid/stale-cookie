@@ -37,6 +37,9 @@
   --radius-ctrl: 4px;
   --radius-card: 8px;
   --radius-pill: 999px;
+
+  /* text on filled accent/danger buttons */
+  --on-fill: light-dark(#ffffff, #15141a);
 }
 
 body {
@@ -48,4 +51,50 @@ body {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/*
+ * Button hierarchy. An unclassed <button> is the secondary style;
+ * .primary = the one main action of a surface, .danger = destructive,
+ * .quiet = low-emphasis inline actions (rows, header).
+ */
+button {
+  font: inherit;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  background: var(--bg-subtle);
+  color: var(--text);
+  cursor: pointer;
+}
+button:hover:enabled {
+  background: color-mix(in srgb, var(--text) 8%, var(--bg-subtle));
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-fill);
+}
+button.primary:hover:enabled {
+  background: color-mix(in srgb, var(--text) 15%, var(--accent));
+}
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-fill);
+}
+button.danger:hover:enabled {
+  background: color-mix(in srgb, var(--text) 15%, var(--danger));
+}
+button.quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent);
+}
+button.quiet:hover:enabled {
+  background: var(--bg-subtle);
 }

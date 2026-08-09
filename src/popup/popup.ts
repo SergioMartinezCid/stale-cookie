@@ -105,7 +105,7 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   li.append(meta);
 
   const protect = document.createElement('button');
-  protect.className = 'protect';
+  protect.className = 'protect quiet';
   protect.textContent = msg('protectButton');
   protect.addEventListener('click', async () => {
     await addToWhitelist(row.domain);
