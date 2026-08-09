@@ -262,8 +262,13 @@
     "description": "Button that starts the global clear (first click arms a confirmation)."
   },
   "optionsGlobalConfirm": {
-    "message": "This will clear ALL selected data — every site, recently visited or not. Continue?",
-    "description": "Confirmation dialog shown before executing the global clear."
+    "message": "This will clear ALL of: $TYPES$ — every site, recently visited or not. Continue?",
+    "description": "Confirmation dialog shown before executing the global clear; $TYPES$ lists the selected data types (the checkboxes are off-screen memory by the time the dialog shows).",
+    "placeholders": { "types": { "content": "$1" } }
+  },
+  "optionsGlobalRunning": {
+    "message": "Clearing…",
+    "description": "Status while the global clear runs; the button is disabled meanwhile."
   },
   "optionsGlobalDone": {
     "message": "Cleared.",

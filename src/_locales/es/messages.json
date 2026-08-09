@@ -204,7 +204,11 @@
     "message": "Limpiar ahora…"
   },
   "optionsGlobalConfirm": {
-    "message": "Esto borrará TODOS los datos seleccionados, de todos los sitios, recientes o no. ¿Continuar?"
+    "message": "Esto borrará TODO ($TYPES$), de todos los sitios, recientes o no. ¿Continuar?",
+    "placeholders": { "types": { "content": "$1" } }
+  },
+  "optionsGlobalRunning": {
+    "message": "Borrando…"
   },
   "optionsGlobalDone": {
     "message": "Limpiado."

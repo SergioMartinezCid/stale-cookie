@@ -264,15 +264,26 @@ globalClearButton.addEventListener('click', async () => {
   globalStatus.textContent = '';
   // Global clear bypasses the preview, so it demands an explicit modal
   // confirmation. confirm() is synchronous, which also keeps this a valid
-  // user-input handler for the permission request that follows.
-  if (!window.confirm(msg('optionsGlobalConfirm'))) return;
+  // user-input handler for the permission request that follows. The dialog
+  // names the selected types — the checkboxes are out of sight behind it.
+  const typeNames = [
+    ...(globalCache.checked ? [msg('optionsGlobalCache')] : []),
+    ...(globalFormData.checked ? [msg('optionsGlobalFormData')] : []),
+  ].join(', ');
+  if (!window.confirm(msg('optionsGlobalConfirm', [typeNames]))) return;
   const granted = await requestBrowsingDataPermission();
   if (!granted) {
     globalStatus.textContent = msg('optionsPermissionDenied');
     return;
   }
-  await runGlobalClear({ cache: globalCache.checked, formData: globalFormData.checked });
-  globalStatus.textContent = msg('optionsGlobalDone');
+  globalClearButton.disabled = true; // a double-click must not clear twice
+  globalStatus.textContent = msg('optionsGlobalRunning');
+  try {
+    await runGlobalClear({ cache: globalCache.checked, formData: globalFormData.checked });
+    globalStatus.textContent = msg('optionsGlobalDone');
+  } finally {
+    updateGlobalClearEnabled();
+  }
 });
 
 function downloadFile(filename: string, content: string, type: string): void {
