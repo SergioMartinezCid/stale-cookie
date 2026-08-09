@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Stale Cookie icon: a cookie as a clock face (staleness = time since the
-     last visit). Standard variant — dark outlines, for light toolbars and
-     everywhere a full-color icon is shown. Rendered to PNGs by
-     `npm run build:icons`; keep both SVG variants in sync. -->
+     last visit). One variant everywhere by decision — no theme_icons swap.
+     Rendered to PNGs by `npm run build:icons`. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
   <circle cx="64" cy="64" r="55" fill="#c98a4b" stroke="#7a4e22" stroke-width="7" />
   <!-- chocolate chips, kept clear of the hands -->
