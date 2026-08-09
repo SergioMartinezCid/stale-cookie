@@ -26,12 +26,13 @@
   --space-4: 16px;
   --space-5: 24px;
 
-  /* type scale */
-  --font-xs: 11px;
-  --font-sm: 12px;
-  --font-md: 13px;
-  --font-lg: 15px;
-  --font-xl: 18px;
+  /* type scale — rem so the browser's font-size preference applies;
+     nothing below 0.75rem (12px at defaults). */
+  --font-xs: 0.75rem;
+  --font-sm: 0.8125rem;
+  --font-md: 0.875rem;
+  --font-lg: 1rem;
+  --font-xl: 1.125rem;
 
   /* radius */
   --radius-ctrl: 4px;
