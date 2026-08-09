@@ -62,6 +62,9 @@ async function showReminder(settings: Settings, base: number): Promise<void> {
   if (settings.reminderBadge) {
     await browser.action.setBadgeText({ text: '!' });
     await browser.action.setBadgeBackgroundColor({ color: '#d70022' });
+    // Explicit white — the default text color is browser-dependent and can
+    // land low-contrast on the red. Optional call: Chrome gained this in 110.
+    await browser.action.setBadgeTextColor?.({ color: '#ffffff' });
   }
   if (settings.reminderNotification && (await hasNotificationsPermission())) {
     const stored = await browser.storage.local.get(NOTIFIED_KEY);
