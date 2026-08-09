@@ -441,3 +441,10 @@ void loadSettings().then((loaded) => {
 });
 
 void renderLogs();
+
+// The logs list was a load-time snapshot: a popup deletion, an automatic
+// clean, or this page's own global clear never appeared until a manual
+// reload. Both logs live in extension storage, so re-render on change.
+browser.storage.onChanged.addListener((changes) => {
+  if ('actionLog' in changes || 'errorLog' in changes) void renderLogs();
+});
