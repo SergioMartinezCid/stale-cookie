@@ -119,7 +119,7 @@
     "placeholders": { "count": { "content": "$1" } }
   },
   "deletedToast": {
-    "message": "Deleted $COUNT$ cookies.",
+    "message": "Deleted $COUNT$ items.",
     "description": "Status shown after deletion.",
     "placeholders": { "count": { "content": "$1" } }
   },

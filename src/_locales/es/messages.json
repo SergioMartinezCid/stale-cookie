@@ -93,7 +93,7 @@
     "placeholders": { "count": { "content": "$1" } }
   },
   "deletedToast": {
-    "message": "Se eliminaron $COUNT$ cookies.",
+    "message": "Se eliminaron $COUNT$ elementos.",
     "placeholders": { "count": { "content": "$1" } }
   },
   "emptyState": {
