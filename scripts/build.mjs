@@ -27,6 +27,7 @@ const options = {
           cpSync('src/options/options.html', 'dist/options/options.html');
           mkdirSync('dist/ui', { recursive: true });
           cpSync('src/ui/theme.css', 'dist/ui/theme.css');
+          cpSync('src/icons', 'dist/icons', { recursive: true });
         });
       },
     },

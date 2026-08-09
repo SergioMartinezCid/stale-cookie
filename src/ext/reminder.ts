@@ -71,6 +71,7 @@ async function showReminder(settings: Settings, base: number): Promise<void> {
     if (shouldNotify(base, stored[NOTIFIED_KEY] as number | undefined)) {
       await browser.notifications.create(NOTIFICATION_ID, {
         type: 'basic',
+        iconUrl: browser.runtime.getURL('icons/icon-96.png'),
         title: browser.i18n.getMessage('extensionName'),
         message: browser.i18n.getMessage('reminderNotificationMessage'),
       });
