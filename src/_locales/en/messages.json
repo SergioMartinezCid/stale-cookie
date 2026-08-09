@@ -87,9 +87,12 @@
     "description": "Per-site button that adds the site to the whitelist."
   },
   "deleteButton": {
-    "message": "Delete selected ($COUNT$)",
-    "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types.",
-    "placeholders": { "count": { "content": "$1" } }
+    "message": "Delete selected ($COUNT$ items from $SITES$ sites)",
+    "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types, $SITES$ the number of selected sites.",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
   },
   "popupDeleteConfirm": {
     "message": "Delete the selected data ($COUNT$ items)? Cookies can be restored for the next 24 hours while the browser stays open; deleted history and downloads cannot be recovered.",

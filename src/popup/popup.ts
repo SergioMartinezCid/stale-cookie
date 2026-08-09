@@ -32,6 +32,17 @@ let settings: Settings | undefined;
 let rows: SiteRow[] = [];
 const selected = new Set<string>(); // row domains chosen for deletion
 
+type Section = 'stale' | 'unknown';
+/** Per-section row checkboxes (rebuilt on every render), for select-all. */
+const rowCheckboxes: Record<Section, Map<string, HTMLInputElement>> = {
+  stale: new Map(),
+  unknown: new Map(),
+};
+const masterCheckbox: Record<Section, HTMLInputElement> = {
+  stale: el<HTMLInputElement>('stale-all'),
+  unknown: el<HTMLInputElement>('unknown-all'),
+};
+
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
 
 /**
@@ -86,15 +97,38 @@ function addBadge(parent: HTMLElement, text: string, title?: string, color?: str
   parent.append(badge);
 }
 
+/** Reflect the section's row states on its select-all checkbox. */
+function updateMaster(section: Section): void {
+  const boxes = [...rowCheckboxes[section].values()];
+  const checked = boxes.filter((box) => box.checked).length;
+  masterCheckbox[section].checked = checked > 0 && checked === boxes.length;
+  masterCheckbox[section].indeterminate = checked > 0 && checked < boxes.length;
+}
+
+for (const section of ['stale', 'unknown'] as const) {
+  masterCheckbox[section].addEventListener('change', () => {
+    const check = masterCheckbox[section].checked;
+    for (const [domain, box] of rowCheckboxes[section]) {
+      box.checked = check;
+      check ? selected.add(domain) : selected.delete(domain);
+    }
+    updateMaster(section);
+    updateDeleteButton();
+  });
+}
+
 function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   const li = document.createElement('li');
+  const section: Section = row.verdict === 'stale' ? 'stale' : 'unknown';
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.checked = checked;
   if (checked) selected.add(row.domain);
+  rowCheckboxes[section].set(row.domain, checkbox);
   checkbox.addEventListener('change', () => {
     checkbox.checked ? selected.add(row.domain) : selected.delete(row.domain);
+    updateMaster(section);
     updateDeleteButton();
   });
   li.append(checkbox);
@@ -145,6 +179,8 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
 function renderResults(): void {
   if (!outcome) return;
   selected.clear();
+  rowCheckboxes.stale.clear();
+  rowCheckboxes.unknown.clear();
   rows = buildSiteRows(outcome.groups);
 
   const stale = rows.filter((r) => r.verdict === 'stale');
@@ -172,11 +208,13 @@ function renderResults(): void {
 
   // Empty sections are noise — and a fully clean scan is good news, not
   // two zero-count headings over a disabled delete button.
-  el('stale-title').hidden = stale.length === 0;
+  el('stale-head').hidden = stale.length === 0;
   staleList.hidden = stale.length === 0;
-  el('unknown-title').hidden = unknown.length === 0;
+  el('unknown-head').hidden = unknown.length === 0;
   unknownList.hidden = unknown.length === 0;
   const hasRows = stale.length > 0 || unknown.length > 0;
+  updateMaster('stale');
+  updateMaster('unknown');
 
   results.hidden = false;
   footer.hidden = !hasRows;
@@ -198,8 +236,9 @@ function selectedDeletable(): ClassifiedGroup[] {
 
 function updateDeleteButton(): void {
   closeConfirm(); // selection changed — a pending confirmation is stale
-  const count = selectedDeletable().reduce((n, g) => n + itemCount(g), 0);
-  deleteButton.textContent = msg('deleteButton', [String(count)]);
+  const chosen = rows.filter((r) => selected.has(r.domain));
+  const count = chosen.flatMap((r) => r.deletable).reduce((n, g) => n + itemCount(g), 0);
+  deleteButton.textContent = msg('deleteButton', [String(count), String(chosen.length)]);
   deleteButton.disabled = count === 0;
 }
 

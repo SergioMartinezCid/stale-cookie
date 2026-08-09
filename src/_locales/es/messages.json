@@ -68,8 +68,11 @@
     "message": "Proteger"
   },
   "deleteButton": {
-    "message": "Eliminar seleccionadas ($COUNT$)",
-    "placeholders": { "count": { "content": "$1" } }
+    "message": "Eliminar lo seleccionado ($COUNT$ elementos de $SITES$ sitios)",
+    "placeholders": {
+      "count": { "content": "$1" },
+      "sites": { "content": "$2" }
+    }
   },
   "popupDeleteConfirm": {
     "message": "¿Eliminar los datos seleccionados ($COUNT$ elementos)? Las cookies podrán restaurarse durante las próximas 24 horas mientras el navegador siga abierto; el historial y las descargas eliminados no se pueden recuperar.",
