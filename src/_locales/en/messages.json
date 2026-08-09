@@ -96,6 +96,11 @@
     "message": "Protect",
     "description": "Per-site button that adds the site to the whitelist."
   },
+  "protectButtonLabel": {
+    "message": "Protect $DOMAIN$",
+    "description": "Accessible name of a row's Protect button — a list of identical \"Protect\" buttons is unusable by screen reader.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
   "protectedToast": {
     "message": "Protected $DOMAIN$.",
     "description": "Feedback after a site was added to the whitelist from the preview.",
@@ -422,6 +427,15 @@
   "optionsRemove": {
     "message": "Remove",
     "description": "Button that removes a domain from the whitelist."
+  },
+  "optionsRemoveLabel": {
+    "message": "Remove $DOMAIN$",
+    "description": "Accessible name of a whitelist entry's Remove button.",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "optionsWhitelistInputLabel": {
+    "message": "Domain to protect",
+    "description": "Accessible (visually hidden) label of the whitelist input — a placeholder is not a name."
   },
   "optionsSaved": {
     "message": "Saved",

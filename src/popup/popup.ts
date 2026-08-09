@@ -215,6 +215,8 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   const protect = document.createElement('button');
   protect.className = 'protect quiet';
   protect.textContent = msg('protectButton');
+  // Forty rows of identical "Protect" need per-site names for a screen reader.
+  protect.setAttribute('aria-label', msg('protectButtonLabel', [row.domain]));
   protect.addEventListener('click', async () => {
     await addToWhitelist(row.domain);
     showProtectedToast(row.domain);

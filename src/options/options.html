@@ -154,30 +154,57 @@
     <section>
       <h2 data-i18n="optionsTypesTitle"></h2>
       <p class="hint" data-i18n="optionsTypesHint"></p>
+      <!-- The days inputs take their accessible name from the row subject
+           plus the unit — a wrapping label alone would name them all "days". -->
       <div class="type-row">
-        <label><input type="checkbox" checked disabled /><span data-i18n="typeCookies"></span></label>
         <label
-          ><input type="number" id="cookie-threshold" min="1" max="3650" /><span
-            data-i18n="optionsDaysLabel"
+          ><input type="checkbox" checked disabled /><span
+            data-i18n="typeCookies"
+            id="cookies-subject"
           ></span
+        ></label>
+        <label
+          ><input
+            type="number"
+            id="cookie-threshold"
+            min="1"
+            max="3650"
+            aria-labelledby="cookies-subject cookie-days-unit"
+          /><span data-i18n="optionsDaysLabel" id="cookie-days-unit"></span
         ></label>
       </div>
       <div class="type-row">
-        <label><input type="checkbox" id="clear-history" /><span data-i18n="typeHistory"></span></label>
         <label
-          ><input type="number" id="history-threshold" min="1" max="3650" /><span
-            data-i18n="optionsDaysLabel"
+          ><input type="checkbox" id="clear-history" /><span
+            data-i18n="typeHistory"
+            id="history-subject"
           ></span
+        ></label>
+        <label
+          ><input
+            type="number"
+            id="history-threshold"
+            min="1"
+            max="3650"
+            aria-labelledby="history-subject history-days-unit"
+          /><span data-i18n="optionsDaysLabel" id="history-days-unit"></span
         ></label>
       </div>
       <div class="type-row">
         <label
-          ><input type="checkbox" id="clear-downloads" /><span data-i18n="typeDownloads"></span
+          ><input type="checkbox" id="clear-downloads" /><span
+            data-i18n="typeDownloads"
+            id="downloads-subject"
+          ></span
         ></label>
         <label
-          ><input type="number" id="download-threshold" min="1" max="3650" /><span
-            data-i18n="optionsDaysLabel"
-          ></span
+          ><input
+            type="number"
+            id="download-threshold"
+            min="1"
+            max="3650"
+            aria-labelledby="downloads-subject download-days-unit"
+          /><span data-i18n="optionsDaysLabel" id="download-days-unit"></span
         ></label>
       </div>
       <p class="hint" id="permission-note" role="alert" hidden data-i18n="optionsPermissionDenied"></p>
@@ -200,11 +227,15 @@
         ><input type="checkbox" id="auto-clean" /><span data-i18n="optionsAutoEnableLabel"></span
       ></label>
       <div class="type-row">
-        <span data-i18n="optionsAutoDaysLabel"></span>
+        <span data-i18n="optionsAutoDaysLabel" id="auto-days-subject"></span>
         <label
-          ><input type="number" id="auto-clean-days" min="1" max="3650" /><span
-            data-i18n="optionsDaysLabel"
-          ></span
+          ><input
+            type="number"
+            id="auto-clean-days"
+            min="1"
+            max="3650"
+            aria-labelledby="auto-days-subject auto-days-unit"
+          /><span data-i18n="optionsDaysLabel" id="auto-days-unit"></span
         ></label>
       </div>
     </section>
@@ -213,11 +244,15 @@
       <h2 data-i18n="optionsReminderTitle"></h2>
       <p class="hint" id="reminder-auto-note" hidden data-i18n="optionsReminderAutoNote"></p>
       <div class="type-row">
-        <span data-i18n="optionsReminderDaysLabel"></span>
+        <span data-i18n="optionsReminderDaysLabel" id="reminder-days-subject"></span>
         <label
-          ><input type="number" id="reminder-days" min="1" max="3650" /><span
-            data-i18n="optionsDaysLabel"
-          ></span
+          ><input
+            type="number"
+            id="reminder-days"
+            min="1"
+            max="3650"
+            aria-labelledby="reminder-days-subject reminder-days-unit"
+          /><span data-i18n="optionsDaysLabel" id="reminder-days-unit"></span
         ></label>
       </div>
       <label
@@ -237,6 +272,7 @@
       <h2 data-i18n="optionsWhitelistTitle"></h2>
       <p class="hint" data-i18n="optionsWhitelistHint"></p>
       <form id="whitelist-form">
+        <label for="whitelist-input" class="sr-only" data-i18n="optionsWhitelistInputLabel"></label>
         <input type="text" id="whitelist-input" placeholder="example.com" />
         <button type="submit" data-i18n="optionsAdd"></button>
       </form>

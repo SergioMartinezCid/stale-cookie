@@ -77,6 +77,7 @@ function renderWhitelist(): void {
       const remove = document.createElement('button');
       remove.className = 'quiet';
       remove.textContent = msg('optionsRemove');
+      remove.setAttribute('aria-label', msg('optionsRemoveLabel', [domain]));
       remove.addEventListener('click', async () => {
         settings.whitelist = settings.whitelist.filter((d) => d !== domain);
         renderWhitelist();

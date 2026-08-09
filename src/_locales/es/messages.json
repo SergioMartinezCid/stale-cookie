@@ -75,6 +75,10 @@
   "protectButton": {
     "message": "Proteger"
   },
+  "protectButtonLabel": {
+    "message": "Proteger $DOMAIN$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
   "protectedToast": {
     "message": "Se protegió $DOMAIN$.",
     "placeholders": { "domain": { "content": "$1" } }
@@ -329,6 +333,13 @@
   },
   "optionsRemove": {
     "message": "Quitar"
+  },
+  "optionsRemoveLabel": {
+    "message": "Quitar $DOMAIN$",
+    "placeholders": { "domain": { "content": "$1" } }
+  },
+  "optionsWhitelistInputLabel": {
+    "message": "Dominio a proteger"
   },
   "optionsSaved": {
     "message": "Guardado"
