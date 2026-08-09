@@ -154,12 +154,16 @@ for (const section of ['stale', 'unknown'] as const) {
   });
 }
 
+let rowIdCounter = 0;
+
 function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   const li = document.createElement('li');
   const section: Section = row.verdict === 'stale' ? 'stale' : 'unknown';
+  const rowId = rowIdCounter++;
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
+  checkbox.id = `row-check-${rowId}`;
   checkbox.checked = checked;
   if (checked) selected.add(row.domain);
   rowCheckboxes[section].set(row.domain, checkbox);
@@ -171,8 +175,12 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   });
   li.append(checkbox);
 
-  const site = document.createElement('span');
+  // The site cell is the checkbox's label: screen readers get the domain
+  // (and badges) as the checkbox name instead of an anonymous checkbox,
+  // and the click target grows from a 14px square to the whole cell.
+  const site = document.createElement('label');
   site.className = 'site';
+  site.htmlFor = checkbox.id;
   const domain = document.createElement('span');
   domain.className = 'domain';
   domain.textContent = row.domain;
@@ -195,11 +203,13 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
 
   const meta = document.createElement('span');
   meta.className = 'meta';
+  meta.id = `row-meta-${rowId}`;
   const parts = countLabels(row);
   if (row.lastVisitTime !== undefined) {
     parts.push(msg('lastVisit', [dateFormat.format(row.lastVisitTime)]));
   }
   meta.textContent = parts.join(' · ');
+  checkbox.setAttribute('aria-describedby', meta.id);
   li.append(meta);
 
   const protect = document.createElement('button');
