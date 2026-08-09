@@ -170,12 +170,25 @@ function renderResults(): void {
   staleList.replaceChildren(...stale.map((r) => renderRow(r, true)));
   unknownList.replaceChildren(...unknown.map((r) => renderRow(r, preselectUnknown)));
 
+  // Empty sections are noise — and a fully clean scan is good news, not
+  // two zero-count headings over a disabled delete button.
+  el('stale-title').hidden = stale.length === 0;
+  staleList.hidden = stale.length === 0;
+  el('unknown-title').hidden = unknown.length === 0;
+  unknownList.hidden = unknown.length === 0;
+  const hasRows = stale.length > 0 || unknown.length > 0;
+
   results.hidden = false;
-  footer.hidden = false;
-  status.textContent =
-    outcome.groups.length === 0
-      ? msg('emptyState')
-      : msg('scanSummary', [String(stale.length), String(unknown.length)]);
+  footer.hidden = !hasRows;
+  status.className = '';
+  if (outcome.groups.length === 0) {
+    status.textContent = msg('emptyState');
+  } else if (!hasRows) {
+    status.textContent = msg('allClean');
+    status.className = 'success';
+  } else {
+    status.textContent = msg('scanSummary', [String(stale.length), String(unknown.length)]);
+  }
   updateDeleteButton();
 }
 

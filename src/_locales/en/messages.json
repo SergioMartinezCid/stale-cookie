@@ -131,6 +131,10 @@
       "unknown": { "content": "$2" }
     }
   },
+  "allClean": {
+    "message": "Nothing stale — you're all clean.",
+    "description": "Positive status shown when a scan finds data but none of it is stale or never-visited."
+  },
   "emptyState": {
     "message": "No cookies found.",
     "description": "Status shown when a scan finds no cookies at all."

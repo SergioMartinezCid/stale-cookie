@@ -103,6 +103,9 @@
       "unknown": { "content": "$2" }
     }
   },
+  "allClean": {
+    "message": "No hay nada obsoleto: todo limpio."
+  },
   "emptyState": {
     "message": "No se encontraron cookies."
   },
