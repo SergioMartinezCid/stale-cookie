@@ -21,7 +21,7 @@ const KEY = 'undoSnapshot';
  * an unattended auto-clean deleted the wrong thing, short enough not to
  * hold credential-bearing cookie values for a week-long browser session.
  */
-const SNAPSHOT_TTL_MS = 24 * 60 * 60 * 1000;
+export const SNAPSHOT_TTL_MS = 24 * 60 * 60 * 1000;
 
 export interface UndoSnapshot {
   at: number;

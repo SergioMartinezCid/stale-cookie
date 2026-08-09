@@ -8,7 +8,7 @@ import {
   type Settings,
 } from '../ext/settings';
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
-import { getSnapshot, restoreSnapshot } from '../ext/snapshot';
+import { getSnapshot, restoreSnapshot, SNAPSHOT_TTL_MS } from '../ext/snapshot';
 import { installErrorCapture, recordError } from '../ext/errorLog';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 import { buildSiteRows, type SiteRow } from '../core/rows';
@@ -30,6 +30,7 @@ const confirmCancel = el<HTMLButtonElement>('confirm-cancel');
 const status = el<HTMLParagraphElement>('status');
 const toast = el<HTMLParagraphElement>('toast');
 const reminderBanner = el<HTMLParagraphElement>('reminder-banner');
+const undoDetail = el<HTMLParagraphElement>('undo-detail');
 const results = el<HTMLDivElement>('results');
 const footer = el<HTMLDivElement>('footer');
 
@@ -56,6 +57,10 @@ const masterCheckbox: Record<Section, HTMLInputElement> = {
 };
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' });
+const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+  dateStyle: 'short',
+  timeStyle: 'short',
+});
 
 /**
  * Outcome feedback lives in its own element so the rescan that follows a
@@ -293,8 +298,16 @@ async function updateUndoButton(): Promise<void> {
   if (snapshot && snapshot.cookies.length > 0) {
     undoButton.textContent = msg('popupUndoButton', [String(snapshot.cookies.length)]);
     undoButton.hidden = false;
+    // Which deletion this covers and how long it stays undoable — vital
+    // context when the deletion was an unattended automatic clean.
+    undoDetail.textContent = msg('popupUndoDetail', [
+      dateTimeFormat.format(snapshot.at),
+      dateTimeFormat.format(snapshot.at + SNAPSHOT_TTL_MS),
+    ]);
+    undoDetail.hidden = false;
   } else {
     undoButton.hidden = true;
+    undoDetail.hidden = true;
   }
 }
 

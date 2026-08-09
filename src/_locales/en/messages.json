@@ -135,6 +135,14 @@
     "description": "Button that undoes the last deletion by re-creating the snapshotted cookies. Cookies only — history and downloads cannot be restored.",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "popupUndoDetail": {
+    "message": "Deleted $WHEN$ · restorable until $UNTIL$ while the browser stays open.",
+    "description": "Detail line under the restore button: when the snapshotted deletion happened and when the undo window closes. Must stay faithful to the undo bounds (24 h, browser session).",
+    "placeholders": {
+      "when": { "content": "$1" },
+      "until": { "content": "$2" }
+    }
+  },
   "popupRestoredToast": {
     "message": "Restored $COUNT$ cookies.",
     "description": "Status shown after an undo finished.",

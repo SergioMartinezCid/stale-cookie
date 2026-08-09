@@ -106,6 +106,13 @@
     "message": "Restaurar cookies eliminadas ($COUNT$)",
     "placeholders": { "count": { "content": "$1" } }
   },
+  "popupUndoDetail": {
+    "message": "Eliminadas el $WHEN$ · recuperables hasta el $UNTIL$ mientras el navegador siga abierto.",
+    "placeholders": {
+      "when": { "content": "$1" },
+      "until": { "content": "$2" }
+    }
+  },
   "popupRestoredToast": {
     "message": "Se restauraron $COUNT$ cookies.",
     "placeholders": { "count": { "content": "$1" } }

@@ -48,6 +48,11 @@
         flex: 1;
         margin-top: var(--space-2);
       }
+      #undo-detail {
+        margin: 2px 0 0;
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
       h2 {
         margin: 12px 0 2px;
         font-size: var(--font-xs);
@@ -185,6 +190,7 @@
       <button id="skip" data-i18n="popupSkipReminder" hidden></button>
       <button id="undo" hidden></button>
     </div>
+    <p id="undo-detail" hidden></p>
     <p id="toast" role="status" hidden></p>
     <p id="status" role="status" data-i18n="popupNoScanYet"></p>
     <div id="results" hidden>
