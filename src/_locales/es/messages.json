@@ -156,6 +156,9 @@
   "typeDownloads": {
     "message": "Historial de descargas"
   },
+  "optionsDownloadsHint": {
+    "message": "Firefox solo permite a las extensiones ver las descargas de la sesión actual del navegador, así que las entradas antiguas no aparecerán."
+  },
   "optionsDaysLabel": {
     "message": "días"
   },

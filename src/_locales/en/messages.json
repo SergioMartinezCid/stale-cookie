@@ -198,6 +198,10 @@
     "message": "Download history",
     "description": "Data type row label: download history (the log, not the files)."
   },
+  "optionsDownloadsHint": {
+    "message": "Firefox only lets extensions see downloads from the current browser session, so older entries won't appear.",
+    "description": "Hint under the downloads toggle; Firefox's downloads API cannot reach download history from earlier sessions (Bug 1255507)."
+  },
   "optionsDaysLabel": {
     "message": "days",
     "description": "Unit shown after each staleness threshold input."
