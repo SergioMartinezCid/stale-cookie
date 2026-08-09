@@ -197,7 +197,11 @@ async function runScan(): Promise<void> {
   }
 }
 
-el<HTMLButtonElement>('options').addEventListener('click', () => {
+const optionsButton = el<HTMLButtonElement>('options');
+// Icon-only button — its name comes from i18n, not visible text.
+optionsButton.title = msg('popupOptionsButton');
+optionsButton.setAttribute('aria-label', msg('popupOptionsButton'));
+optionsButton.addEventListener('click', () => {
   void browser.runtime.openOptionsPage();
   window.close();
 });
