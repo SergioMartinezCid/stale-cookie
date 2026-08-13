@@ -9,6 +9,7 @@ import { classifyGroups, type ClassifiedGroup } from '../core/classify';
 import { cookieRemovalDetails } from '../core/removal';
 import { appendActionLog } from './actionLog';
 import { saveSnapshot } from './snapshot';
+import { isFirefox } from './browserInfo';
 import type { Settings } from './settings';
 
 export interface ScanOutcome {
@@ -47,7 +48,11 @@ async function listCookieStores(): Promise<{
   } catch {
     // No container support — the open stores are all there is.
   }
+  // Private/incognito cookies are session-only and out of scope. Chrome's
+  // incognito store ("1") only appears when the extension is allowed in
+  // incognito and a window is open — excluded for the same reason.
   storeIds.delete('firefox-private');
+  if (!isFirefox()) storeIds.delete('1');
   return { storeIds: [...storeIds], containers };
 }
 
@@ -114,11 +119,13 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
     cookies.push(
       ...(await browser.cookies.getAll({
         storeId,
-        // {} matches partitioned and unpartitioned cookies alike.
+        // {} matches partitioned and unpartitioned cookies alike — same
+        // semantics on Firefox and Chrome (119+).
         partitionKey: {},
         // null matches any first-party domain (relevant when FPI is on);
-        // the typings only allow string, hence the cast.
-        firstPartyDomain: null as unknown as string,
+        // the typings only allow string, hence the cast. Firefox-only:
+        // Chrome's schema validation rejects unexpected properties.
+        ...(isFirefox() ? { firstPartyDomain: null as unknown as string } : {}),
       })),
     );
   }
@@ -140,7 +147,11 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
   }
 
   if (settings.clearDownloads && (await hasPermission('downloads'))) {
-    const downloadGroups = groupDownloads(await browser.downloads.search({}));
+    // Chrome caps downloads.search at 1000 results by default; limit: 0
+    // disables the cap there. Firefox has no default cap — the parameter is
+    // omitted rather than sent with unverified 0-semantics.
+    const downloadItems = await browser.downloads.search(isFirefox() ? {} : { limit: 0 });
+    const downloadGroups = groupDownloads(downloadItems);
     // A download is itself a usage signal for its group: a domain that only
     // ever served a download shouldn't look "never visited".
     const downloadVisits = new Map(lastVisitByDomain);
