@@ -2,24 +2,28 @@ import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Browser, Builder, By, type WebDriver } from 'selenium-webdriver';
+import * as chromium from 'selenium-webdriver/chrome';
 import * as firefox from 'selenium-webdriver/firefox';
 
 /**
- * Integration harness: launches a real headless Firefox with a throwaway
- * profile (geckodriver creates a fresh temporary profile for every session
- * and deletes it on quit — deletion logic never runs against a real
- * profile) and installs dist/ as a temporary add-on.
+ * Integration harness: launches a real headless browser with a throwaway
+ * profile (both drivers create a fresh temporary profile per session and
+ * delete it on quit — deletion logic never runs against a real profile)
+ * and installs the built extension: dist/ as a Firefox temporary add-on,
+ * dist-chrome/ via --load-extension on Chrome for Testing.
  *
- * The extension's internal UUID is pinned via the
+ * On Firefox the extension's internal UUID is pinned via the
  * `extensions.webextensions.uuids` pref so tests can navigate straight to
- * moz-extension:// pages. Extension pages are privileged documents, so
- * executeScript there has access to the `browser.*` APIs — that is how
- * tests seed cookies/history (backdated via history.addUrl's visitTime)
- * and verify what a deletion actually removed.
+ * moz-extension:// pages; on Chrome the generated id is discovered from
+ * the service worker's DevTools target. Extension pages are privileged
+ * documents, so executeScript there has access to the extension APIs —
+ * that is how tests seed cookies/history and verify what a deletion
+ * actually removed.
  */
 
 const ROOT = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../..');
 const DIST = path.join(ROOT, 'dist');
+const DIST_CHROME = path.join(ROOT, 'dist-chrome');
 
 // Snap-packaged Firefox cannot read profiles under /tmp (snap confinement
 // bit us 2026-08-13 after the snap auto-updated: "Failed to read marionette
@@ -72,6 +76,60 @@ export async function launchWithExtension(): Promise<WebDriver> {
   return driver;
 }
 
+/** Launch headless Chrome for Testing with dist-chrome/ loaded unpacked. */
+export async function launchChromeWithExtension(): Promise<{
+  driver: WebDriver;
+  extensionId: string;
+}> {
+  if (!existsSync(path.join(DIST_CHROME, 'manifest.json'))) {
+    throw new Error(
+      'dist-chrome/manifest.json missing — run `npm run build` first (npm run test:integration does).',
+    );
+  }
+
+  const options = new chromium.Options();
+  // --headless=new is the unified headless that supports extensions and
+  // service workers. --load-extension was removed from branded Chrome in
+  // 137 but kept in Chrome for Testing, which Selenium Manager provisions.
+  // --disable-dev-shm-usage: /dev/shm is tiny under WSL/containers.
+  options.addArguments(
+    '--headless=new',
+    `--load-extension=${DIST_CHROME}`,
+    '--disable-dev-shm-usage',
+  );
+
+  const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(options).build();
+  try {
+    return { driver, extensionId: await discoverExtensionId(driver) };
+  } catch (error) {
+    await driver.quit();
+    throw error;
+  }
+}
+
+/**
+ * An unpacked extension's id is derived from its absolute path; rather than
+ * reimplement that hash, read it off the background service worker's
+ * DevTools target once it registers.
+ */
+async function discoverExtensionId(driver: WebDriver): Promise<string> {
+  const deadline = Date.now() + 20_000;
+  while (Date.now() < deadline) {
+    const result = (await (driver as chromium.Driver).sendAndGetDevToolsCommand(
+      'Target.getTargets',
+      {},
+    )) as unknown as { targetInfos: Array<{ url: string }> };
+    const target = result.targetInfos.find((t) => t.url.startsWith('chrome-extension://'));
+    if (target) return new URL(target.url).host;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error('extension service worker target never appeared');
+}
+
+export function chromeExtensionPage(extensionId: string, page: string): string {
+  return `chrome-extension://${extensionId}/${page}`;
+}
+
 /**
  * Run an async script body inside the current (extension) page, with access
  * to the page's `browser.*` APIs. The body may use `await` and must `return`
@@ -79,7 +137,11 @@ export async function launchWithExtension(): Promise<WebDriver> {
  */
 export async function inExtensionPage<T>(driver: WebDriver, body: string): Promise<T> {
   const result = (await driver.executeAsyncScript(
-    `const done = arguments[arguments.length - 1];
+    // On Firefox extension pages `browser` is a native global; Chrome only
+    // has `chrome`, whose MV3 APIs are promise-based too — one shim serves
+    // both, so seeding/verification scripts are written against browser.*.
+    `const browser = globalThis.browser ?? globalThis.chrome;
+     const done = arguments[arguments.length - 1];
      (async () => { ${body}\n })().then(
        (value) => done({ ok: true, value: value === undefined ? null : value }),
        (error) => done({ ok: false, error: String((error && error.message) || error) }),
