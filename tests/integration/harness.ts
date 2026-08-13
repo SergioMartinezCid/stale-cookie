@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Browser, Builder, By, type WebDriver } from 'selenium-webdriver';
@@ -20,6 +20,14 @@ import * as firefox from 'selenium-webdriver/firefox';
 
 const ROOT = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../..');
 const DIST = path.join(ROOT, 'dist');
+
+// Snap-packaged Firefox cannot read profiles under /tmp (snap confinement
+// bit us 2026-08-13 after the snap auto-updated: "Failed to read marionette
+// port"). geckodriver honors TMPDIR for its throwaway profiles, so they land
+// under the repo instead; geckodriver still deletes each profile on quit.
+const PROFILE_TMP = path.join(ROOT, '.tmp-profiles');
+mkdirSync(PROFILE_TMP, { recursive: true });
+process.env['TMPDIR'] = PROFILE_TMP;
 
 /** Must match browser_specific_settings.gecko.id in the manifest. */
 export const GECKO_ID = 'stale-cookie@sergiomartinezcid.github.io';
