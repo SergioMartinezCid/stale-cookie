@@ -431,7 +431,7 @@ undoButton.addEventListener('click', async () => {
 confirmDelete.addEventListener('click', async () => {
   confirmDelete.disabled = true;
   try {
-    const removed = await deleteGroups(selectedDeletable());
+    const removed = await deleteGroups(selectedDeletable(), 'popup');
     showToast(msg('deletedToast', [String(removed)]), 'success');
   } catch (error) {
     recordError('popup', error);

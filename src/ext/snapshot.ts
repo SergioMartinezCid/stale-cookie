@@ -2,7 +2,9 @@ import browser from 'webextension-polyfill';
 import type { Cookies } from 'webextension-polyfill';
 import { cookieRestoreDetails, type RestorableCookie } from '../core/restore';
 import { getRegistrableDomain, normalizeCookieDomain } from '../core/domain';
+import type { ErrorContext } from '../core/logs';
 import { appendActionLog } from './actionLog';
+import { recordError } from './errorLog';
 
 /**
  * Undo snapshot: the cookies of the most recent deletion (manual or
@@ -28,15 +30,20 @@ export interface UndoSnapshot {
   cookies: RestorableCookie[];
 }
 
-export async function saveSnapshot(cookies: readonly RestorableCookie[]): Promise<void> {
+export async function saveSnapshot(
+  cookies: readonly RestorableCookie[],
+  context: ErrorContext,
+): Promise<void> {
   // A deletion with no cookies keeps the previous snapshot alive instead of
   // clobbering it with nothing to undo.
   if (cookies.length === 0) return;
   const snapshot: UndoSnapshot = { at: Date.now(), cookies: [...cookies] };
   try {
     await browser.storage.session.set({ [KEY]: snapshot });
-  } catch {
-    // No snapshot just means no undo — never block the deletion itself.
+  } catch (error) {
+    // No snapshot just means no undo — never block the deletion itself,
+    // but do leave a trace: the confirmation promised restorability.
+    recordError(context, error);
   }
 }
 

@@ -3,6 +3,7 @@ import { selectForAutoClean } from '../core/classify';
 import { scan, deleteGroups } from './scanner';
 import { loadSettings, type Settings } from './settings';
 import { resetReminderTimer } from './reminder';
+import { recordError } from './errorLog';
 
 /**
  * Scheduled/automatic cleaning. Runs in the background: an exact alarm fires
@@ -56,11 +57,19 @@ export async function handleAutoCleanAlarm(name: string): Promise<void> {
 }
 
 async function runAutoClean(settings: Settings): Promise<void> {
-  const outcome = await scan(settings);
-  await deleteGroups(selectForAutoClean(outcome.groups, settings.keepNeverVisited));
-  await browser.storage.local.set({ [BASE_KEY]: Date.now() });
-  // An automatic clean is still a clean: keep the manual reminder's base in
-  // step so switching back to manual mode counts from the last run.
-  await resetReminderTimer();
-  browser.alarms.create(ALARM_NAME, { when: Date.now() + settings.autoCleanDays * DAY_MS });
+  try {
+    const outcome = await scan(settings);
+    await deleteGroups(selectForAutoClean(outcome.groups, settings.keepNeverVisited), 'background');
+    await browser.storage.local.set({ [BASE_KEY]: Date.now() });
+    // An automatic clean is still a clean: keep the manual reminder's base in
+    // step so switching back to manual mode counts from the last run.
+    await resetReminderTimer();
+  } catch (error) {
+    // A failed clean is no clean — base and reminder stay put. But the
+    // error must not eat the rescheduling below, or scheduled cleaning
+    // silently stops until the next browser restart.
+    recordError('background', error);
+  } finally {
+    browser.alarms.create(ALARM_NAME, { when: Date.now() + settings.autoCleanDays * DAY_MS });
+  }
 }

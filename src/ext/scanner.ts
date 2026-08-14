@@ -8,9 +8,11 @@ import {
 import { classifyGroups, type ClassifiedGroup } from '../core/classify';
 import { cookieRemovalDetails } from '../core/removal';
 import { appendActionLog } from './actionLog';
+import { recordError } from './errorLog';
 import { saveSnapshot } from './snapshot';
 import { isFirefox } from './browserInfo';
 import type { Settings } from './settings';
+import type { ErrorContext } from '../core/logs';
 
 export interface ScanOutcome {
   groups: ClassifiedGroup[];
@@ -174,41 +176,61 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
   return { groups, containers, scannedAt: now };
 }
 
-/** Delete every item of the given groups. Returns the number removed. */
-export async function deleteGroups(groups: readonly ClassifiedGroup[]): Promise<number> {
+/**
+ * Delete every item of the given groups. Returns the number removed.
+ * One failing group never aborts the rest (same isolation the restore path
+ * has: a container removed between scan and delete rejects its calls), and
+ * whatever WAS deleted always reaches the action log — with no preview in
+ * auto-clean, the log is the only record.
+ */
+export async function deleteGroups(
+  groups: readonly ClassifiedGroup[],
+  context: ErrorContext,
+): Promise<number> {
   let removed = 0;
 
   // Undo snapshot, taken before anything is removed. The group objects hold
   // full cookies.getAll() results at runtime, so every field needed to
   // re-create them travels along.
-  await saveSnapshot(groups.filter((g) => g.kind === 'cookies').flatMap((g) => g.cookies));
+  await saveSnapshot(
+    groups.filter((g) => g.kind === 'cookies').flatMap((g) => g.cookies),
+    context,
+  );
 
   const cookieLog: Array<{ domain: string; storeId: string; count: number }> = [];
   const historyLog: Array<{ domain: string; count: number }> = [];
   const downloadLog: Array<{ domain: string; count: number }> = [];
 
   for (const group of groups) {
-    if (group.kind === 'cookies') {
-      let count = 0;
-      for (const cookie of group.cookies) {
-        const result = await browser.cookies.remove(cookieRemovalDetails(cookie));
-        if (result) count++;
+    // Counts live outside the try so a mid-group failure still logs the
+    // items that were removed before it.
+    let count = 0;
+    try {
+      if (group.kind === 'cookies') {
+        for (const cookie of group.cookies) {
+          const result = await browser.cookies.remove(cookieRemovalDetails(cookie));
+          if (result) count++;
+        }
+      } else if (group.kind === 'history') {
+        for (const url of group.urls) {
+          await browser.history.deleteUrl({ url });
+          count++;
+        }
+      } else {
+        for (const id of group.downloadIds) {
+          const erased = await browser.downloads.erase({ id });
+          count += erased.length;
+        }
       }
-      removed += count;
+    } catch (error) {
+      recordError(context, error);
+    }
+    removed += count;
+    if (group.kind === 'cookies') {
       cookieLog.push({ domain: group.registrableDomain, storeId: group.storeId, count });
     } else if (group.kind === 'history') {
-      for (const url of group.urls) {
-        await browser.history.deleteUrl({ url });
-      }
-      removed += group.urls.length;
-      historyLog.push({ domain: group.registrableDomain, count: group.urls.length });
+      historyLog.push({ domain: group.registrableDomain, count });
     } else {
-      let count = 0;
-      for (const id of group.downloadIds) {
-        const erased = await browser.downloads.erase({ id });
-        count += erased.length;
-      }
-      removed += count;
       downloadLog.push({ domain: group.registrableDomain, count });
     }
   }
