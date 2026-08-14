@@ -22,12 +22,20 @@
   "popupReminderBanner": {
     "message": "Time to clean — it's been over $DAYS$ days since the last clean.",
     "description": "Context banner shown in the popup while a cleaning reminder is due; $DAYS$ is the configured reminder interval.",
-    "placeholders": { "days": { "content": "$1" } }
+    "placeholders": {
+      "days": {
+        "content": "$1"
+      }
+    }
   },
   "popupReminderSkipped": {
     "message": "Reminder skipped — the next one comes in $DAYS$ days.",
     "description": "Confirmation after the user skips a due reminder; $DAYS$ is the configured reminder interval.",
-    "placeholders": { "days": { "content": "$1" } }
+    "placeholders": {
+      "days": {
+        "content": "$1"
+      }
+    }
   },
   "reminderNotificationMessage": {
     "message": "Time to clean stale browsing data. Open Stale Cookie to review and delete.",
@@ -48,40 +56,119 @@
   "sectionStale": {
     "message": "Stale ($COUNT$)",
     "description": "Heading of the list of stale sites; $COUNT$ is the number of sites.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "sectionUnknown": {
     "message": "No visit recorded ($COUNT$)",
     "description": "Heading of the list of sites with no recorded visit; preselection follows the never-visited policy.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "summaryFreshProtected": {
     "message": "Fresh: $FRESH$ · Protected: $PROTECTED$",
     "description": "Summary line for sites that are not shown in the lists.",
     "placeholders": {
-      "fresh": { "content": "$1" },
-      "protected": { "content": "$2" }
+      "fresh": {
+        "content": "$1"
+      },
+      "protected": {
+        "content": "$2"
+      }
     }
   },
   "cookieCount": {
     "message": "$COUNT$ cookies",
     "description": "Number of cookies in a site group.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "cookieCountOne": {
+    "message": "1 cookie",
+    "description": "Singular of cookieCount."
   },
   "historyCount": {
     "message": "$COUNT$ history entries",
     "description": "Number of history entries in a site group.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "historyCountOne": {
+    "message": "1 history entry",
+    "description": "Singular of historyCount."
   },
   "downloadCount": {
     "message": "$COUNT$ downloads",
     "description": "Number of download history entries in a site group.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadCountOne": {
+    "message": "1 download",
+    "description": "Singular of downloadCount."
+  },
+  "itemCount": {
+    "message": "$COUNT$ items",
+    "description": "Count fragment composed into deleteButton/popupDeleteConfirm.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "itemCountOne": {
+    "message": "1 item",
+    "description": "Singular of itemCount."
+  },
+  "siteCount": {
+    "message": "$COUNT$ sites",
+    "description": "Count fragment composed into deleteButton and log rows.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "siteCountOne": {
+    "message": "1 site",
+    "description": "Singular of siteCount."
+  },
+  "entryCount": {
+    "message": "$COUNT$ entries",
+    "description": "Count fragment for the whitelist size in optionsImportConfirm.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "entryCountOne": {
+    "message": "1 entry",
+    "description": "Singular of entryCount."
   },
   "lastVisit": {
     "message": "last visit $DATE$",
     "description": "Last visit date of a site, shown next to the cookie count.",
-    "placeholders": { "date": { "content": "$1" } }
+    "placeholders": {
+      "date": {
+        "content": "$1"
+      }
+    }
   },
   "partitionedBadge": {
     "message": "partitioned",
@@ -90,7 +177,11 @@
   "partitionedUnder": {
     "message": "Partitioned under $SITE$",
     "description": "Tooltip explaining which top-level site a partitioned cookie belongs to.",
-    "placeholders": { "site": { "content": "$1" } }
+    "placeholders": {
+      "site": {
+        "content": "$1"
+      }
+    }
   },
   "protectButton": {
     "message": "Protect",
@@ -99,29 +190,45 @@
   "protectButtonLabel": {
     "message": "Protect $DOMAIN$",
     "description": "Accessible name of a row's Protect button — a list of identical \"Protect\" buttons is unusable by screen reader.",
-    "placeholders": { "domain": { "content": "$1" } }
+    "placeholders": {
+      "domain": {
+        "content": "$1"
+      }
+    }
   },
   "protectedToast": {
     "message": "Protected $DOMAIN$.",
     "description": "Feedback after a site was added to the whitelist from the preview.",
-    "placeholders": { "domain": { "content": "$1" } }
+    "placeholders": {
+      "domain": {
+        "content": "$1"
+      }
+    }
   },
   "protectedUndo": {
     "message": "Undo",
     "description": "Button next to the protected-site feedback that removes the site from the whitelist again."
   },
   "deleteButton": {
-    "message": "Delete selected ($COUNT$ items from $SITES$ sites)",
-    "description": "Button that deletes the selected rows' data; $COUNT$ is the total item count across data types, $SITES$ the number of selected sites.",
+    "message": "Delete selected ($ITEMS$ from $SITES$)",
+    "description": "Button that deletes the selected rows' data; $ITEMS$/$SITES$ arrive pre-pluralized via msgCount (itemCount/siteCount).",
     "placeholders": {
-      "count": { "content": "$1" },
-      "sites": { "content": "$2" }
+      "items": {
+        "content": "$1"
+      },
+      "sites": {
+        "content": "$2"
+      }
     }
   },
   "popupDeleteConfirm": {
-    "message": "Delete the selected data ($COUNT$ items)? Cookies can be restored for the next 24 hours while the browser stays open; deleted history and downloads cannot be recovered.",
+    "message": "Delete the selected data ($ITEMS$)? Cookies can be restored for the next 24 hours while the browser stays open; deleted history and downloads cannot be recovered.",
     "description": "Inline confirmation message shown before deleting the selected preview rows. Must stay faithful to the undo bounds: cookie snapshot expires after 24 h or on browser close, one deletion deep; history/downloads are never restorable.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "items": {
+        "content": "$1"
+      }
+    }
   },
   "popupConfirmDeleteButton": {
     "message": "Yes, delete",
@@ -138,33 +245,87 @@
   "popupUndoButton": {
     "message": "Restore deleted cookies ($COUNT$)",
     "description": "Button that undoes the last deletion by re-creating the snapshotted cookies. Cookies only — history and downloads cannot be restored.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "popupUndoDetail": {
     "message": "Deleted $WHEN$ · restorable until $UNTIL$ while the browser stays open.",
     "description": "Detail line under the restore button: when the snapshotted deletion happened and when the undo window closes. Must stay faithful to the undo bounds (24 h, browser session).",
     "placeholders": {
-      "when": { "content": "$1" },
-      "until": { "content": "$2" }
+      "when": {
+        "content": "$1"
+      },
+      "until": {
+        "content": "$2"
+      }
     }
   },
   "popupRestoredToast": {
     "message": "Restored $COUNT$ cookies.",
     "description": "Status shown after an undo finished.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupRestoredToastOne": {
+    "message": "Restored 1 cookie.",
+    "description": "Singular of popupRestoredToast."
   },
   "deletedToast": {
     "message": "Deleted $COUNT$ items.",
     "description": "Status shown after deletion.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "deletedToastOne": {
+    "message": "Deleted 1 item.",
+    "description": "Singular of deletedToast."
   },
   "scanSummary": {
-    "message": "Found $STALE$ stale sites and $UNKNOWN$ with no recorded visit.",
-    "description": "Status line after a scan, also announced to screen readers.",
+    "message": "Found $STALE$ and $UNKNOWN$.",
+    "description": "Scan result line; both placeholders arrive pre-pluralized via msgCount (staleSiteCount/unknownSiteCount).",
     "placeholders": {
-      "stale": { "content": "$1" },
-      "unknown": { "content": "$2" }
+      "stale": {
+        "content": "$1"
+      },
+      "unknown": {
+        "content": "$2"
+      }
     }
+  },
+  "staleSiteCount": {
+    "message": "$COUNT$ stale sites",
+    "description": "Count fragment composed into scanSummary.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "staleSiteCountOne": {
+    "message": "1 stale site",
+    "description": "Singular of staleSiteCount."
+  },
+  "unknownSiteCount": {
+    "message": "$COUNT$ with no recorded visit",
+    "description": "Count fragment composed into scanSummary.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "unknownSiteCountOne": {
+    "message": "1 with no recorded visit",
+    "description": "Singular of unknownSiteCount."
   },
   "allClean": {
     "message": "Nothing stale — you're all clean.",
@@ -273,7 +434,11 @@
   "optionsGlobalConfirm": {
     "message": "This will clear ALL of: $TYPES$ — every site, recently visited or not. Continue?",
     "description": "Confirmation dialog shown before executing the global clear; $TYPES$ lists the selected data types (the checkboxes are off-screen memory by the time the dialog shows).",
-    "placeholders": { "types": { "content": "$1" } }
+    "placeholders": {
+      "types": {
+        "content": "$1"
+      }
+    }
   },
   "optionsGlobalRunning": {
     "message": "Clearing…",
@@ -336,9 +501,13 @@
     "description": "Error shown when the imported file cannot be parsed as a settings export."
   },
   "optionsImportConfirm": {
-    "message": "Replace all current settings with the imported ones? This also overwrites your protected-sites list ($COUNT$ entries).",
+    "message": "Replace all current settings with the imported ones? This also overwrites your protected-sites list ($ENTRIES$).",
     "description": "Confirmation dialog before applying an imported settings file; $COUNT$ is the current whitelist size.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "entries": {
+        "content": "$1"
+      }
+    }
   },
   "optionsImportDone": {
     "message": "Settings imported.",
@@ -359,12 +528,20 @@
   "optionsActionLogTitle": {
     "message": "Action log ($COUNT$)",
     "description": "Subheading of the action log list; $COUNT$ is the number of entries.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "optionsErrorLogTitle": {
     "message": "Errors this session ($COUNT$)",
     "description": "Subheading of the session error list; $COUNT$ is the number of entries.",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
   "optionsActionLogEmpty": {
     "message": "Nothing recorded yet.",
@@ -374,42 +551,38 @@
     "message": "No errors this session.",
     "description": "Empty state of the session error list."
   },
-  "logDeletedCookies": {
-    "message": "Deleted $COUNT$ cookies from $SITES$ sites.",
-    "description": "Action log line for a cookie deletion.",
+  "logDeleted": {
+    "message": "Deleted $ITEMS$ from $SITES$.",
+    "description": "Action-log row for any deletion type; $ITEMS$ arrives pre-pluralized (cookieCount/historyCount/downloadCount), $SITES$ via siteCount.",
     "placeholders": {
-      "count": { "content": "$1" },
-      "sites": { "content": "$2" }
-    }
-  },
-  "logDeletedHistory": {
-    "message": "Deleted $COUNT$ history entries from $SITES$ sites.",
-    "description": "Action log line for a history deletion.",
-    "placeholders": {
-      "count": { "content": "$1" },
-      "sites": { "content": "$2" }
-    }
-  },
-  "logDeletedDownloads": {
-    "message": "Deleted $COUNT$ download entries from $SITES$ sites.",
-    "description": "Action log line for a download history deletion.",
-    "placeholders": {
-      "count": { "content": "$1" },
-      "sites": { "content": "$2" }
+      "items": {
+        "content": "$1"
+      },
+      "sites": {
+        "content": "$2"
+      }
     }
   },
   "logRestoredCookies": {
-    "message": "Restored $COUNT$ cookies to $SITES$ sites.",
-    "description": "Action log line for an undo (cookie restore).",
+    "message": "Restored $ITEMS$ to $SITES$.",
+    "description": "Action-log row for an undo; placeholders arrive pre-pluralized (cookieCount/siteCount).",
     "placeholders": {
-      "count": { "content": "$1" },
-      "sites": { "content": "$2" }
+      "items": {
+        "content": "$1"
+      },
+      "sites": {
+        "content": "$2"
+      }
     }
   },
   "logGlobalClear": {
     "message": "Global clear: $TYPES$.",
     "description": "Action log line for a global clear; $TYPES$ lists the cleared data types.",
-    "placeholders": { "types": { "content": "$1" } }
+    "placeholders": {
+      "types": {
+        "content": "$1"
+      }
+    }
   },
   "optionsLogsAnonymize": {
     "message": "Anonymize sites in the export",
@@ -438,7 +611,11 @@
   "optionsWhitelistDuplicate": {
     "message": "$DOMAIN$ is already protected.",
     "description": "Shown when the whitelist input normalizes to a domain already on the list.",
-    "placeholders": { "domain": { "content": "$1" } }
+    "placeholders": {
+      "domain": {
+        "content": "$1"
+      }
+    }
   },
   "optionsNumberInvalid": {
     "message": "Enter a whole number of days between 1 and 3650.",
@@ -455,7 +632,11 @@
   "optionsRemoveLabel": {
     "message": "Remove $DOMAIN$",
     "description": "Accessible name of a whitelist entry's Remove button.",
-    "placeholders": { "domain": { "content": "$1" } }
+    "placeholders": {
+      "domain": {
+        "content": "$1"
+      }
+    }
   },
   "optionsWhitelistInputLabel": {
     "message": "Domain to protect",

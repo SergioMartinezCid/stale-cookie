@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { localizePage } from '../ui/i18n';
+import { localizePage, msgCount } from '../ui/i18n';
 import {
   DEFAULT_SETTINGS,
   loadSettings,
@@ -334,7 +334,7 @@ importFile.addEventListener('change', async () => {
   // Importing replaces everything, including the whitelist — that deserves
   // a confirmation, not an instant apply. confirm() is fine here: this is a
   // normal tab, not a popup panel.
-  if (!window.confirm(msg('optionsImportConfirm', [String(settings.whitelist.length)]))) {
+  if (!window.confirm(msg('optionsImportConfirm', [msgCount('entryCount', settings.whitelist.length)]))) {
     return;
   }
   // Permissions can't travel with the file — permission-gated features
@@ -372,17 +372,19 @@ function actionSummary(entry: ActionLogEntry): string {
   if (entry.type === 'restore-cookies') {
     const count = entry.restored.reduce((n, r) => n + r.count, 0);
     const sites = new Set(entry.restored.map((r) => r.domain)).size;
-    return msg('logRestoredCookies', [String(count), String(sites)]);
+    return msg('logRestoredCookies', [msgCount('cookieCount', count), msgCount('siteCount', sites)]);
   }
   const count = entry.deleted.reduce((n, d) => n + d.count, 0);
   const sites = new Set(entry.deleted.map((d) => d.domain)).size;
-  const key =
+  // One logDeleted message serves all three types — the pre-pluralized
+  // item fragment carries the data-type wording.
+  const countKey =
     entry.type === 'delete-cookies'
-      ? 'logDeletedCookies'
+      ? 'cookieCount'
       : entry.type === 'delete-history'
-        ? 'logDeletedHistory'
-        : 'logDeletedDownloads';
-  return msg(key, [String(count), String(sites)]);
+        ? 'historyCount'
+        : 'downloadCount';
+  return msg('logDeleted', [msgCount(countKey, count), msgCount('siteCount', sites)]);
 }
 
 function logRow(at: number, text: string, stack?: string): HTMLLIElement {

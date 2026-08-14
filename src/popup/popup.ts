@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { localizePage } from '../ui/i18n';
+import { localizePage, msgCount } from '../ui/i18n';
 import { scan, type DeleteGroupsRequest, type ScanOutcome } from '../ext/scanner';
 import {
   loadSettings,
@@ -115,9 +115,9 @@ function countLabels(row: SiteRow): string[] {
   const counts = { cookies: 0, history: 0, downloads: 0 };
   for (const group of row.deletable) counts[group.kind] += itemCount(group);
   const parts: string[] = [];
-  if (counts.cookies) parts.push(msg('cookieCount', [String(counts.cookies)]));
-  if (counts.history) parts.push(msg('historyCount', [String(counts.history)]));
-  if (counts.downloads) parts.push(msg('downloadCount', [String(counts.downloads)]));
+  if (counts.cookies) parts.push(msgCount('cookieCount', counts.cookies));
+  if (counts.history) parts.push(msgCount('historyCount', counts.history));
+  if (counts.downloads) parts.push(msgCount('downloadCount', counts.downloads));
   return parts;
 }
 
@@ -290,7 +290,10 @@ function renderResults(): void {
     status.textContent = msg('allClean');
     status.className = 'success';
   } else {
-    status.textContent = msg('scanSummary', [String(stale.length), String(unknown.length)]);
+    status.textContent = msg('scanSummary', [
+      msgCount('staleSiteCount', stale.length),
+      msgCount('unknownSiteCount', unknown.length),
+    ]);
   }
   updateDeleteButton();
 }
@@ -303,7 +306,10 @@ function updateDeleteButton(): void {
   closeConfirm(); // selection changed — a pending confirmation is stale
   const chosen = rows.filter((r) => selected.has(r.domain));
   const count = chosen.flatMap((r) => r.deletable).reduce((n, g) => n + itemCount(g), 0);
-  deleteButton.textContent = msg('deleteButton', [String(count), String(chosen.length)]);
+  deleteButton.textContent = msg('deleteButton', [
+    msgCount('itemCount', count),
+    msgCount('siteCount', chosen.length),
+  ]);
   deleteButton.disabled = count === 0;
 }
 
@@ -395,7 +401,7 @@ skipButton.addEventListener('click', async () => {
 // so the confirmation is inline: Delete swaps to a message + confirm/cancel.
 deleteButton.addEventListener('click', () => {
   const count = selectedDeletable().reduce((n, g) => n + itemCount(g), 0);
-  confirmText.textContent = msg('popupDeleteConfirm', [String(count)]);
+  confirmText.textContent = msg('popupDeleteConfirm', [msgCount('itemCount', count)]);
   deleteButton.hidden = true;
   confirmBox.hidden = false;
   // Dialog choreography for the inline pattern: focus moves in (to the safe
@@ -419,7 +425,7 @@ undoButton.addEventListener('click', async () => {
   undoButton.disabled = true;
   try {
     const restored = await restoreSnapshot();
-    showToast(msg('popupRestoredToast', [String(restored)]), 'success');
+    showToast(msgCount('popupRestoredToast', restored), 'success');
   } catch (error) {
     recordError('popup', error);
     showToast(msg('popupFailed'), 'error');
@@ -440,7 +446,7 @@ confirmDelete.addEventListener('click', async () => {
     // on any outside click. See DeleteGroupsRequest.
     const request: DeleteGroupsRequest = { type: 'delete-groups', groups: selectedDeletable() };
     const { removed } = (await browser.runtime.sendMessage(request)) as { removed: number };
-    showToast(msg('deletedToast', [String(removed)]), 'success');
+    showToast(msgCount('deletedToast', removed), 'success');
   } catch (error) {
     recordError('popup', error);
     showToast(msg('popupFailed'), 'error');
