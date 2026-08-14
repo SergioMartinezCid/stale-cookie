@@ -6,7 +6,10 @@
  * styling too.
  */
 :root {
-  color-scheme: light dark;
+  /* Themed by setting, not by the browser: dark here matches the default
+     of the `theme` setting (no flash before JS runs); applyTheme() in
+     ui/theme.ts overrides color-scheme when the user chose light. */
+  color-scheme: dark;
 
   /* color */
   --bg: light-dark(#ffffff, #23222b);

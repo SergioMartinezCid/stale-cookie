@@ -229,6 +229,18 @@
   "optionsKeepUnknownHint": {
     "message": "Si está desactivado, estas cookies se preseleccionan para eliminar, salvo que el análisis no encuentre ningún dato de visitas, en cuyo caso no se preselecciona nada. Siempre puedes cambiar la selección antes de eliminar."
   },
+  "optionsAppearanceTitle": {
+    "message": "Apariencia"
+  },
+  "optionsThemeLabel": {
+    "message": "Tema"
+  },
+  "optionsThemeDark": {
+    "message": "Oscuro"
+  },
+  "optionsThemeLight": {
+    "message": "Claro"
+  },
   "optionsConfigTitle": {
     "message": "Importar / exportar ajustes"
   },

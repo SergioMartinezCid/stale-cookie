@@ -45,6 +45,15 @@ describe('settings import/export', () => {
     expect(parsed).toEqual({ ...DEFAULT_SETTINGS, keepNeverVisited: true });
   });
 
+  it('accepts a valid theme and rejects anything else', () => {
+    const parse = (theme: unknown) =>
+      parseSettingsImport(JSON.stringify({ version: 1, settings: { theme } }));
+    expect(parse('light')?.theme).toBe('light');
+    expect(parse('dark')?.theme).toBe('dark');
+    expect(parse('system')?.theme).toBe(DEFAULT_SETTINGS.theme); // unknown value
+    expect(parse(true)?.theme).toBe(DEFAULT_SETTINGS.theme); // wrong type
+  });
+
   it('ignores unknown fields instead of importing them', () => {
     const parsed = parseSettingsImport(
       JSON.stringify({ version: 1, settings: { telemetry: true, autoCleanDays: 3 } }),

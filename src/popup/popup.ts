@@ -10,6 +10,7 @@ import {
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
 import { getSnapshot, restoreSnapshot, SNAPSHOT_TTL_MS } from '../ext/snapshot';
 import { installErrorCapture, recordError } from '../ext/errorLog';
+import { applyTheme } from '../ui/theme';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
 import { buildSiteRows, type SiteRow } from '../core/rows';
 
@@ -454,6 +455,7 @@ confirmDelete.addEventListener('click', async () => {
 // the click. Scanning is read-only; the preview still gates any deletion.
 void loadSettings().then(async (loaded) => {
   settings = loaded;
+  applyTheme(loaded.theme);
   const due = await reminderDue(loaded);
   skipButton.hidden = !due;
   if (due) {

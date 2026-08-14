@@ -295,6 +295,22 @@
     "message": "When off, these cookies are preselected for deletion — unless the scan finds no visit data at all, in which case nothing is preselected. You can always change the selection before deleting.",
     "description": "Explanation under the never-visited checkbox."
   },
+  "optionsAppearanceTitle": {
+    "message": "Appearance",
+    "description": "Heading of the appearance section."
+  },
+  "optionsThemeLabel": {
+    "message": "Theme",
+    "description": "Label of the dark/light theme selector."
+  },
+  "optionsThemeDark": {
+    "message": "Dark",
+    "description": "Theme option: dark color scheme."
+  },
+  "optionsThemeLight": {
+    "message": "Light",
+    "description": "Theme option: light color scheme."
+  },
   "optionsConfigTitle": {
     "message": "Import / export settings",
     "description": "Heading of the settings import/export section."

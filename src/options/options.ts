@@ -11,6 +11,7 @@ import { parseSettingsImport, serializeSettings } from '../core/settings';
 import { getActionLog, type ActionLogEntry } from '../ext/actionLog';
 import { getErrorLog, installErrorCapture } from '../ext/errorLog';
 import { serializeLogs, type ErrorLogEntry } from '../core/logs';
+import { applyTheme } from '../ui/theme';
 
 installErrorCapture('options');
 localizePage();
@@ -33,6 +34,7 @@ const reminderDays = el<HTMLInputElement>('reminder-days');
 const reminderBadge = el<HTMLInputElement>('reminder-badge');
 const reminderNotification = el<HTMLInputElement>('reminder-notification');
 const reminderPermissionNote = el<HTMLParagraphElement>('reminder-permission-note');
+const themeSelect = el<HTMLSelectElement>('theme');
 const whitelistForm = el<HTMLFormElement>('whitelist-form');
 const whitelistInput = el<HTMLInputElement>('whitelist-input');
 const whitelistStatus = el<HTMLParagraphElement>('whitelist-status');
@@ -227,6 +229,12 @@ reminderNotification.addEventListener('change', async () => {
     }
   }
   settings.reminderNotification = reminderNotification.checked;
+  await persist();
+});
+
+themeSelect.addEventListener('change', async () => {
+  settings.theme = themeSelect.value === 'light' ? 'light' : 'dark';
+  applyTheme(settings.theme); // this page re-themes immediately
   await persist();
 });
 
@@ -432,6 +440,8 @@ exportLogs.addEventListener('click', async () => {
 });
 
 function applySettingsToUi(): void {
+  themeSelect.value = settings.theme;
+  applyTheme(settings.theme);
   cookieThreshold.value = String(settings.cookieThresholdDays);
   historyThreshold.value = String(settings.historyThresholdDays);
   downloadThreshold.value = String(settings.downloadThresholdDays);

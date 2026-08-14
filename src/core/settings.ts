@@ -1,6 +1,10 @@
 import { getRegistrableDomain, hostnameOf } from './domain';
 
+export type Theme = 'dark' | 'light';
+
 export interface Settings {
+  /** Color scheme of the popup and options pages (independent of the browser theme). */
+  theme: Theme;
   /** Days without a visit after which a site's cookies count as stale. */
   cookieThresholdDays: number;
   /** Days without a visit after which a site's history counts as stale. */
@@ -28,6 +32,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  theme: 'dark',
   cookieThresholdDays: 90,
   // History is the user's own archive — a deleted entry is gone for good,
   // so its default blast radius is kept smaller than cookies'.
@@ -119,6 +124,9 @@ export function parseSettingsImport(text: string): Settings | undefined {
   for (const key of FLAG_KEYS) {
     const value = fields[key];
     if (typeof value === 'boolean') result[key] = value;
+  }
+  if (fields['theme'] === 'dark' || fields['theme'] === 'light') {
+    result.theme = fields['theme'];
   }
   if (Array.isArray(fields['whitelist'])) {
     const domains = fields['whitelist']
