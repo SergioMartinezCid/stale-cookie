@@ -10,7 +10,7 @@ import {
 import { requestBrowsingDataPermission, runGlobalClear } from '../ext/globalClear';
 import { parseSettingsImport, serializeSettings } from '../core/settings';
 import { getActionLog, type ActionLogEntry } from '../ext/actionLog';
-import { getErrorLog, installErrorCapture } from '../ext/errorLog';
+import { getErrorLog, installErrorCapture, recordError } from '../ext/errorLog';
 import { serializeLogs, type ErrorLogEntry } from '../core/logs';
 import { applyTheme } from '../ui/theme';
 
@@ -294,6 +294,10 @@ globalClearButton.addEventListener('click', async () => {
   try {
     await runGlobalClear({ cache: globalCache.checked, formData: globalFormData.checked });
     globalStatus.textContent = msg('optionsGlobalDone');
+  } catch (error) {
+    // Without this, the status stayed on "Clearing…" forever.
+    recordError('options', error);
+    globalStatus.textContent = msg('optionsGlobalFailed');
   } finally {
     updateGlobalClearEnabled();
   }

@@ -283,6 +283,10 @@
     "message": "Cleared.",
     "description": "Status after a global clear finished."
   },
+  "optionsGlobalFailed": {
+    "message": "Clearing failed — see the error log below.",
+    "description": "Status when the global clear threw; details land in the Logs section."
+  },
   "optionsUnknownTitle": {
     "message": "Sites with no recorded visit",
     "description": "Heading of the options section governing preselection of never-visited sites."
