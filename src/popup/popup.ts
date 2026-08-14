@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
-import { scan, deleteGroups, type ScanOutcome } from '../ext/scanner';
+import { scan, type DeleteGroupsRequest, type ScanOutcome } from '../ext/scanner';
 import {
   loadSettings,
   addToWhitelist,
@@ -431,7 +431,11 @@ undoButton.addEventListener('click', async () => {
 confirmDelete.addEventListener('click', async () => {
   confirmDelete.disabled = true;
   try {
-    const removed = await deleteGroups(selectedDeletable(), 'popup');
+    // The background executes the deletion (and resets the reminder cycle
+    // on success) — it outlives this popup, which the browser tears down
+    // on any outside click. See DeleteGroupsRequest.
+    const request: DeleteGroupsRequest = { type: 'delete-groups', groups: selectedDeletable() };
+    const { removed } = (await browser.runtime.sendMessage(request)) as { removed: number };
     showToast(msg('deletedToast', [String(removed)]), 'success');
   } catch (error) {
     recordError('popup', error);
@@ -443,8 +447,6 @@ confirmDelete.addEventListener('click', async () => {
   }
   closeConfirm();
   await updateUndoButton();
-  // Cleaning starts a new reminder cycle.
-  await resetReminderTimer();
   skipButton.hidden = true;
   reminderBanner.hidden = true;
   await runScan();

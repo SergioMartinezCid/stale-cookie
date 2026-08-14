@@ -1,9 +1,25 @@
 import browser from 'webextension-polyfill';
-import { scheduleReminder, handleAlarm } from '../ext/reminder';
+import { scheduleReminder, handleAlarm, resetReminderTimer } from '../ext/reminder';
 import { scheduleAutoClean, handleAutoCleanAlarm } from '../ext/autoClean';
+import { deleteGroups, type DeleteGroupsRequest } from '../ext/scanner';
 import { installErrorCapture } from '../ext/errorLog';
 
 installErrorCapture('background');
+
+// Manual deletion runs here on the popup's behalf (see DeleteGroupsRequest:
+// the popup can die mid-run). Returning a promise sends the async reply.
+browser.runtime.onMessage.addListener((message: unknown) => {
+  const request = message as DeleteGroupsRequest;
+  if (request?.type !== 'delete-groups') return undefined;
+  return (async () => {
+    const removed = await deleteGroups(request.groups, 'background');
+    // Cleaning starts a new reminder cycle — reset here so it happens even
+    // if the asking popup is already gone. A delete that removed nothing
+    // is no clean and leaves the cycle alone.
+    if (removed > 0) await resetReminderTimer();
+    return { removed };
+  })();
+});
 
 browser.runtime.onInstalled.addListener(() => {
   void scheduleReminder();

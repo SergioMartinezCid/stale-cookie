@@ -14,6 +14,18 @@ import { isFirefox } from './browserInfo';
 import type { Settings } from './settings';
 import type { ErrorContext } from '../core/logs';
 
+/**
+ * runtime message asking the background to run deleteGroups. Manual
+ * deletion executes there, not in the popup: popup pages are torn down on
+ * any outside click, which would kill a long deletion mid-run — half done,
+ * unlogged. The groups are plain cookies.getAll()/history data, so they
+ * survive message structured-cloning unchanged.
+ */
+export interface DeleteGroupsRequest {
+  type: 'delete-groups';
+  groups: ClassifiedGroup[];
+}
+
 export interface ScanOutcome {
   groups: ClassifiedGroup[];
   /** cookieStoreId → container, for display. Default store not included. */
