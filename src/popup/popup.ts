@@ -226,6 +226,10 @@ function renderRow(row: SiteRow, checked: boolean): HTMLLIElement {
   // Forty rows of identical "Protect" need per-site names for a screen reader.
   protect.setAttribute('aria-label', msg('protectButtonLabel', [row.domain]));
   protect.addEventListener('click', async () => {
+    // An open delete confirmation still covers the pre-protect selection —
+    // close it NOW, not after the awaits, or a quick Yes in that window
+    // deletes the row being protected.
+    closeConfirm();
     await addToWhitelist(row.domain);
     showProtectedToast(row.domain);
     await runScan();
