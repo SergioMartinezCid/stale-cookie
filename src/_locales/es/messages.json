@@ -43,7 +43,7 @@
     "message": "Analizando…"
   },
   "sectionStale": {
-    "message": "Obsoletas ($COUNT$)",
+    "message": "Obsoletos ($COUNT$)",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -345,7 +345,7 @@
     "message": "Limpieza global"
   },
   "optionsGlobalHint": {
-    "message": "La caché y los datos de formularios guardados no se pueden limpiar por sitio, así que esto lo borra TODO: de todos los sitios, recientes o no. No hay vista previa."
+    "message": "La caché y los datos de formularios guardados no se pueden borrar por sitio, así que esto lo borra TODO: de todos los sitios, recientes o no. No hay vista previa."
   },
   "optionsGlobalCache": {
     "message": "Caché"
@@ -354,7 +354,7 @@
     "message": "Datos de formularios guardados"
   },
   "optionsGlobalButton": {
-    "message": "Limpiar ahora…"
+    "message": "Borrar ahora…"
   },
   "optionsGlobalConfirm": {
     "message": "Esto borrará TODO ($TYPES$), de todos los sitios, recientes o no. ¿Continuar?",
@@ -368,7 +368,7 @@
     "message": "Borrando…"
   },
   "optionsGlobalDone": {
-    "message": "Limpiado."
+    "message": "Borrado."
   },
   "optionsGlobalFailed": {
     "message": "No se pudo borrar; consulta el registro de errores más abajo."
@@ -377,10 +377,10 @@
     "message": "Sitios sin visitas registradas"
   },
   "optionsKeepUnknownLabel": {
-    "message": "No preseleccionar nunca las cookies de sitios sin visitas registradas"
+    "message": "No preseleccionar nunca los datos de sitios sin visitas registradas"
   },
   "optionsKeepUnknownHint": {
-    "message": "Si está desactivado, estas cookies se preseleccionan para eliminar, salvo que el análisis no encuentre ningún dato de visitas, en cuyo caso no se preselecciona nada. Siempre puedes cambiar la selección antes de eliminar."
+    "message": "Si está desactivado, estos datos se preseleccionan para eliminar, salvo que el análisis no encuentre ningún dato de visitas, en cuyo caso no se preselecciona nada. Siempre puedes cambiar la selección antes de eliminar."
   },
   "optionsAppearanceTitle": {
     "message": "Apariencia"
@@ -494,7 +494,7 @@
     "message": "Sitios protegidos"
   },
   "optionsWhitelistHint": {
-    "message": "Las cookies de estos sitios nunca se eliminan."
+    "message": "Los datos de navegación de estos sitios nunca se eliminan."
   },
   "optionsWhitelistInvalid": {
     "message": "No parece un dominio válido."

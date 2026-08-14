@@ -457,11 +457,11 @@
     "description": "Heading of the options section governing preselection of never-visited sites."
   },
   "optionsKeepUnknownLabel": {
-    "message": "Never preselect cookies from sites with no recorded visit",
+    "message": "Never preselect data from sites with no recorded visit",
     "description": "Checkbox that stops never-visited sites from being preselected for deletion."
   },
   "optionsKeepUnknownHint": {
-    "message": "When off, these cookies are preselected for deletion — unless the scan finds no visit data at all, in which case nothing is preselected. You can always change the selection before deleting.",
+    "message": "When off, this data is preselected for deletion — unless the scan finds no visit data at all, in which case nothing is preselected. You can always change the selection before deleting.",
     "description": "Explanation under the never-visited checkbox."
   },
   "optionsAppearanceTitle": {
@@ -601,7 +601,7 @@
     "description": "Heading of the whitelist section."
   },
   "optionsWhitelistHint": {
-    "message": "Cookies from these sites are never deleted.",
+    "message": "Browsing data from these sites is never deleted.",
     "description": "Explanation under the whitelist heading."
   },
   "optionsWhitelistInvalid": {
