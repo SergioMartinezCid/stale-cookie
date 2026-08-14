@@ -1,6 +1,6 @@
 {
   "name": "stale-cookie",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Browser extension that clears stale browser data from sites you no longer visit.",
   "license": "MIT",
   "private": true,
