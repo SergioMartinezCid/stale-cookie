@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import { localizePage } from '../ui/i18n';
 import {
+  DEFAULT_SETTINGS,
   loadSettings,
   saveSettings,
   normalizeWhitelistEntry,
@@ -471,4 +472,18 @@ void renderLogs();
 // reload. Both logs live in extension storage, so re-render on change.
 browser.storage.onChanged.addListener((changes) => {
   if ('actionLog' in changes || 'errorLog' in changes) void renderLogs();
+  // Settings can change under this page too (the popup's Protect / its
+  // Undo write the whitelist). Without this refresh, the next persist()
+  // here would write the stale whole-object copy back and silently drop
+  // that protection — which auto-clean would then act on, previewless.
+  const change = changes['settings'];
+  if (change && settings) {
+    const stored: Settings = { ...DEFAULT_SETTINGS, ...(change.newValue as Partial<Settings>) };
+    // Own writes arrive here too — deep-equal means nothing to refresh
+    // (and re-rendering would clobber in-progress input for no reason).
+    if (JSON.stringify(stored) !== JSON.stringify(settings)) {
+      settings = stored;
+      applySettingsToUi();
+    }
+  }
 });
