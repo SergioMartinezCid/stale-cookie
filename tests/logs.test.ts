@@ -51,6 +51,18 @@ describe('createAnonymizer', () => {
     expect(anon.text(stack)).toBe('runScan@moz-extension://extension/popup/popup.js:12:3');
   });
 
+  it('redacts Chrome extension ids too (32 chars of a-p, not a UUID)', () => {
+    const anon = createAnonymizer();
+    const stack = 'runScan@chrome-extension://abcdefghijklmnopabcdefghijklmnop/popup/popup.js:12:3';
+    expect(anon.text(stack)).toBe('runScan@chrome-extension://extension/popup/popup.js:12:3');
+  });
+
+  it('pseudonymizes hosts under punycode TLDs', () => {
+    const anon = createAnonymizer();
+    // .xn--p1ai is ICANN (.рф) — digits/hyphens in the TLD must not let it escape.
+    expect(anon.text('visit example.xn--p1ai now')).toBe('visit site-1.example now');
+  });
+
   it('replaces IPv4 addresses', () => {
     const anon = createAnonymizer();
     expect(anon.text('request to 192.168.1.20 refused')).toBe('request to site-1.example refused');

@@ -59,10 +59,14 @@ export interface Anonymizer {
 }
 
 const URL_PATTERN = /(https?|wss?|ftps?):\/\/[^\s"'<>()[\]]+/gi;
-// The extension-origin UUID identifies the browser profile; the path after it
-// is our own code and stays (useful in stack traces, not personal).
-const EXTENSION_UUID_PATTERN = /(moz-extension|chrome-extension):\/\/[0-9a-f-]{36}/gi;
-const HOST_PATTERN = /\b(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}\b/gi;
+// The extension-origin id identifies the browser profile (Firefox: a
+// per-profile UUID; Chrome: 32 chars of a–p); the path after it is our own
+// code and stays (useful in stack traces, not personal).
+const EXTENSION_UUID_PATTERN =
+  /(moz-extension|chrome-extension):\/\/(?:[0-9a-f-]{36}|[a-p]{32})/gi;
+// The final label alternation covers punycode TLDs (xn--…, e.g. IDN
+// registries), which contain digits/hyphens that [a-z]{2,} rejects.
+const HOST_PATTERN = /\b(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:xn--[a-z0-9-]+|[a-z]{2,})\b/gi;
 const IPV4_PATTERN = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
 
 /**
