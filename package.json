@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Browser extension that clears stale browser data from sites you no longer visit.",
   "license": "MIT",
+  "author": "Sergio Martínez Cid",
+  "homepage": "https://github.com/SergioMartinezCid/stale-cookie#readme",
+  "bugs": "https://github.com/SergioMartinezCid/stale-cookie/issues",
   "private": true,
   "type": "module",
   "engines": {
