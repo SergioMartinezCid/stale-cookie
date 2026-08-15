@@ -56,6 +56,9 @@ const options = {
           mkdirSync('dist/ui', { recursive: true });
           cpSync('src/ui/theme.css', 'dist/ui/theme.css');
           cpSync('src/icons', 'dist/icons', { recursive: true });
+          // License notices for the bundled deps (esbuild strips their
+          // headers); must ship with the extension, not just the repo.
+          cpSync('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.md');
           emitChromeDist();
         });
       },

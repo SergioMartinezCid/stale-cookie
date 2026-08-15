@@ -56,4 +56,4 @@ For manual testing, load `dist/manifest.json` as a temporary add-on via `about:d
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE). Bundled third-party code (tldts, webextension-polyfill) is covered by [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), which also ships inside the extension package.
