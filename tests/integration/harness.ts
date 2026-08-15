@@ -50,6 +50,10 @@ export async function launchWithExtension(): Promise<WebDriver> {
 
   const options = new firefox.Options();
   options.addArguments('-headless');
+  // Point the suite at a specific Firefox build (e.g. an ESR tarball to
+  // verify strict_min_version) instead of the system one.
+  const firefoxBin = process.env['FIREFOX_BIN'];
+  if (firefoxBin) options.setBinary(firefoxBin);
   // Without system access, Marionette refuses to navigate content tabs to
   // (non-web-accessible) moz-extension:// pages. geckodriver ≥ 0.36 forwards
   // this as Firefox's -remote-allow-system-access.

@@ -21,6 +21,7 @@ Historical record: dated decisions, rationale, verification logs, review records
 - **MV2/MV3 split: no split** (2026-08-13): Firefox MV3 (event page, strict_min_version 142) was proven by the real-time verifications, so an MV2 Firefox build would solve nothing. One shared JS bundle; only the manifest differs per target.
 - **Theme setting** (2026-08-14, user decision): dark/light selector in an options "Appearance" section, default dark — extension pages no longer follow the browser/OS theme.
 - **Version 1.0.0 and keeping the GitHub links** (2026-08-14, user decisions): the repo must be made public before AMO submission or `homepage_url` 404s.
+- **`strict_min_version` lowered 142 → 140** (2026-08-15): 142 was only the version the real-time verification happened to run on, not an API floor. The true floor is 140 — `data_collection_permissions` in the gecko block (older Firefox refuses the key); everything else sits lower (`light-dark()` 120, `storage.session` 115). 140 covers the ESR audience. Verified empirically: full Firefox integration suite green against a Firefox ESR 140.0 tarball via the harness's new `FIREFOX_BIN` override. Accepted trade-off: one `web-ext lint` warning (Firefox for Android only got `data_collection_permissions` in 142) — irrelevant because the extension is desktop-only (`history` permission), and silencing it via a `gecko_android` key would wrongly declare Android compatibility on AMO.
 
 ## Verification records
 
