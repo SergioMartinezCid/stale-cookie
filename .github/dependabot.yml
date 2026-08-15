@@ -1,0 +1,17 @@
+# Monthly, grouped: low PR noise for a solo maintainer. tldts bumps have
+# functional value beyond security — it embeds the Public Suffix List,
+# which goes stale.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
