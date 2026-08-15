@@ -13,6 +13,7 @@ import { getActionLog, type ActionLogEntry } from '../ext/actionLog';
 import { getErrorLog, installErrorCapture, recordError } from '../ext/errorLog';
 import { serializeLogs, type ErrorLogEntry } from '../core/logs';
 import { applyTheme } from '../ui/theme';
+import { isFirefox } from '../ext/browserInfo';
 
 installErrorCapture('options');
 localizePage();
@@ -472,6 +473,14 @@ void loadSettings().then((loaded) => {
 });
 
 void renderLogs();
+
+// The session-only-downloads caveat is Firefox-specific (Bug 1255507);
+// Chrome extensions see the full download history.
+if (!isFirefox()) el<HTMLParagraphElement>('downloads-hint').hidden = true;
+
+el<HTMLParagraphElement>('about-version').textContent = msg('optionsAboutVersion', [
+  browser.runtime.getManifest().version,
+]);
 
 // The logs list was a load-time snapshot: a popup deletion, an automatic
 // clean, or this page's own global clear never appeared until a manual

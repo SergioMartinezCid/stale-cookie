@@ -645,5 +645,30 @@
   "optionsSaved": {
     "message": "Saved",
     "description": "Brief confirmation after settings are stored."
+  },
+  "optionsAboutTitle": {
+    "message": "About",
+    "description": "Heading of the options-page About section (version + external links)."
+  },
+  "optionsAboutVersion": {
+    "message": "Version $VERSION$",
+    "description": "Extension version line in the About section.",
+    "placeholders": {
+      "version": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsAboutRepo": {
+    "message": "Source code",
+    "description": "About-section link to the GitHub repository."
+  },
+  "optionsAboutIssues": {
+    "message": "Report a problem",
+    "description": "About-section link to the public issue tracker (the error-reporting channel)."
+  },
+  "optionsAboutPrivacy": {
+    "message": "Privacy policy",
+    "description": "About-section link to PRIVACY.md."
   }
 }

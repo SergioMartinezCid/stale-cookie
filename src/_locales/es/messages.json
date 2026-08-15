@@ -529,5 +529,25 @@
   },
   "optionsSaved": {
     "message": "Guardado"
+  },
+  "optionsAboutTitle": {
+    "message": "Acerca de"
+  },
+  "optionsAboutVersion": {
+    "message": "Versión $VERSION$",
+    "placeholders": {
+      "version": {
+        "content": "$1"
+      }
+    }
+  },
+  "optionsAboutRepo": {
+    "message": "Código fuente"
+  },
+  "optionsAboutIssues": {
+    "message": "Informar de un problema"
+  },
+  "optionsAboutPrivacy": {
+    "message": "Política de privacidad"
   }
 }

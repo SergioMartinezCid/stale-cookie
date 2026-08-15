@@ -23,6 +23,11 @@
         padding: var(--space-4) 0;
         border-top: 1px solid var(--border);
       }
+      .about-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+      }
       section.danger-zone {
         margin-top: var(--space-4);
         padding: var(--space-4);
@@ -221,7 +226,7 @@
           /><span data-i18n="optionsDaysLabel" id="download-days-unit"></span
         ></label>
       </div>
-      <p class="hint" data-i18n="optionsDownloadsHint"></p>
+      <p class="hint" id="downloads-hint" data-i18n="optionsDownloadsHint"></p>
       <p class="hint" id="permission-note" role="alert" hidden data-i18n="optionsPermissionDenied"></p>
       <p id="threshold-warning" role="alert" hidden data-i18n="optionsThresholdWarning"></p>
     </section>
@@ -352,6 +357,16 @@
       ></label>
       <button id="global-clear" class="danger" data-i18n="optionsGlobalButton"></button>
       <p id="global-status" role="status"></p>
+    </section>
+
+    <section>
+      <h2 data-i18n="optionsAboutTitle"></h2>
+      <p class="hint" id="about-version"></p>
+      <p class="about-links">
+        <a href="https://github.com/SergioMartinezCid/stale-cookie" target="_blank" rel="noreferrer" data-i18n="optionsAboutRepo"></a>
+        <a href="https://github.com/SergioMartinezCid/stale-cookie/issues" target="_blank" rel="noreferrer" data-i18n="optionsAboutIssues"></a>
+        <a href="https://github.com/SergioMartinezCid/stale-cookie/blob/main/PRIVACY.md" target="_blank" rel="noreferrer" data-i18n="optionsAboutPrivacy"></a>
+      </p>
     </section>
 
     <p id="saved" role="status" data-i18n="optionsSaved"></p>
