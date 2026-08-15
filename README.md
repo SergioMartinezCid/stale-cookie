@@ -2,7 +2,12 @@
 
 Browser extension that clears stale browsing data — data belonging to sites you no longer visit — while preserving everything from the sites you use. For Firefox and Chrome.
 
-**Status: v1.0 — first published version.**
+## Install
+
+<a href="#"><img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" alt="Get the add-on for Firefox" height="60"></a>
+<a href="#"><img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" height="60"></a>
+
+*Store listings are not live yet — links will be added once published.*
 
 ## What it does
 
@@ -13,7 +18,6 @@ Browser extension that clears stale browsing data — data belonging to sites yo
 - **Reminders** (manual mode): a toolbar badge — and, optionally, a system notification — when it's time to clean.
 - **Action log and error log**: a local record of what was deleted, exportable as JSONL with an anonymize option for bug reports.
 - **Firefox niceties**: container cookies (per-container stores) and partitioned (CHIPS) cookies are handled and labeled in the preview.
-- English and Spanish.
 
 ## Privacy
 
@@ -23,10 +27,10 @@ No network requests, ever. No telemetry. Everything the extension needs to work 
 
 Reproducible from a clean checkout; no network access is needed beyond `npm ci`.
 
-- **Environment**: Linux (developed on Ubuntu under WSL2; any Linux works), Node 20 (built with v20.15.1, see `.nvmrc`), npm 10 (10.8.2).
+- **Environment**: Linux, Node 20 (built with v20.15.1, see `.nvmrc`), npm 10 (10.8.2).
 
 ```sh
-npm ci               # exact dependency versions from package-lock.json
+npm ci
 npm run build        # emits dist/ (Firefox) and dist-chrome/ (Chrome)
 ```
 
