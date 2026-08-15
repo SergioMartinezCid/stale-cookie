@@ -1,0 +1,55 @@
+name: Bug report
+description: Something broke or behaved unexpectedly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. **Security vulnerabilities don't belong here** — please use [private vulnerability reporting](https://github.com/SergioMartinezCid/stale-cookie/security/advisories/new) instead (see [SECURITY.md](https://github.com/SergioMartinezCid/stale-cookie/blob/main/SECURITY.md)).
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Firefox
+        - Chrome
+        - Other / multiple (say which below)
+    validations:
+      required: true
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser version
+      placeholder: e.g. Firefox 140.2esr
+    validations:
+      required: true
+  - type: input
+    id: extension-version
+    attributes:
+      label: Extension version
+      description: Shown at the bottom of the extension's settings page (About section).
+      placeholder: e.g. 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: log-export
+    attributes:
+      label: Log export
+      description: |
+        If something went wrong (an error, a wrong deletion), please attach the log export: settings page → Logs → **Export logs**. Keep the **anonymize** option ON — the export replaces site names with pseudonyms (`site-1.example`, …), so it's safe to share and still diagnosable. Drag the file here or paste its contents.
