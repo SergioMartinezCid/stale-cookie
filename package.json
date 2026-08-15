@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "node scripts/build.mjs && vitest run --config vitest.integration.config.ts",
+    "screenshots": "node scripts/build.mjs && vitest run --config vitest.screenshots.config.ts",
     "build:icons": "mkdir -p src/icons && for s in 16 32 48 96 128; do convert -background none -density 768 assets/icon.svg -resize ${s}x${s} src/icons/icon-$s.png; done",
     "start:firefox": "web-ext run --source-dir dist",
     "lint:ext": "web-ext lint --source-dir dist",

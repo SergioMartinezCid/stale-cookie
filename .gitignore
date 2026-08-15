@@ -4,3 +4,4 @@ dist-chrome/
 web-ext-artifacts/
 .tmp-profiles/
 *.log
+.screenshots-raw/
