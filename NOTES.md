@@ -31,6 +31,8 @@ Historical record: dated decisions, rationale, verification logs, review records
 - **Chrome port verified end to end 2026-08-13** on Chrome for Testing 152: scan, never-visited preselection, partitioned cookie folding + badge, deletion, action log, undo — all pass in the automated suite.
 - **First catches by the integration suite** (2026-08-08): an unguarded `browser.notifications.clear` threw without the optional permission and aborted the popup's post-delete rescan (the dev profile had the permission, hiding it); `deletedToast` claimed "N cookies" for a count that includes history/download items (now "N items").
 
+- **Source-submission rebuild dry run** (2026-08-15): `git archive HEAD` → clean checkout → `npm ci && npm run build` (Node 20.15.1) → `diff -r` against the repo's build: `dist/` and `dist-chrome/` byte-identical. Repeat at the submission commit.
+
 ## Reviews
 
 - **Final pre-publication review** (2026-08-14): 5-lens multi-agent pass (correctness/security, privacy compliance, AMO readiness, i18n/copy, build reproducibility) with adversarial verification — 10 confirmed majors + 12 minors, all fixed the same day. Highlights: options-page settings sync, deletion resilience (per-group try/catch, partial counts always logged, auto-clean rescheduled in `finally`), deletion moved to the background, plural handling via `msgCount` + `<key>One` variants, anonymizer gaps (Chrome extension ids, punycode TLDs), README/toolchain pinning. Remaining publishing collateral at the time: privacy policy text, AMO screenshots (light + dark).

@@ -1,0 +1,27 @@
+name: Feature request
+description: Propose a feature — please read the scope policy first
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Stale Cookie has a **deliberately limited scope** — see [CONTRIBUTING.md](https://github.com/SergioMartinezCid/stale-cookie/blob/main/CONTRIBUTING.md) for what's in, what's out for good (anything networked, visit-timestamp retention, site settings, history/download undo, whitelist auto-detection), and why. Features need justification to be included; this form asks for it up front so nobody wastes time.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation, not the solution — what goes wrong or is missing today?
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Why does this belong in Stale Cookie?
+      description: How does it make the existing flow (scan → preview → delete → undo) safer, clearer, or more accurate — rather than growing the extension into a general-purpose privacy suite?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other extensions, browser settings, or workarounds — and why they don't cover it.
