@@ -6,7 +6,7 @@ Thanks for your interest! Bug reports and pull requests are welcome — but plea
 
 Stale Cookie is deliberately small: it deletes stale browsing data (data from sites you haven't visited recently) with a preview, and it does nothing else. Small scope is what keeps it auditable, low-maintenance, and worthy of the broad permissions it holds.
 
-**New features need justification.** Before writing code, open an issue describing the problem you're solving and why it belongs in this extension rather than another one. A feature is likely to be accepted when it makes the existing flow (scan → preview → delete → undo) safer, clearer, or more accurate — and likely to be rejected when it grows the extension into a general-purpose privacy suite.
+**New features need justification.** Before writing code, open an issue describing the problem you're solving and why it belongs in this extension. A feature is likely to be accepted when it makes the existing flow (scan → preview → delete → undo) safer, clearer, or more accurate — and likely to be rejected when it grows the extension into a general-purpose privacy suite.
 
 Some things are **out of scope for good** — please don't open PRs for them:
 
