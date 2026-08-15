@@ -427,7 +427,7 @@
     "message": "Registros"
   },
   "optionsLogsHint": {
-    "message": "El registro de acciones guarda lo que la extensión ha eliminado. Los errores de esta sesión del navegador se guardan solo en memoria y desaparecen al cerrar el navegador. Nada de esto sale de tu equipo salvo que lo exportes."
+    "message": "El registro de acciones guarda lo que la extensión ha eliminado en los últimos 30 días; las entradas más antiguas se eliminan automáticamente. Los errores de esta sesión del navegador se guardan solo en memoria y desaparecen al cerrar el navegador. Nada de esto sale de tu equipo salvo que lo exportes."
   },
   "optionsActionLogTitle": {
     "message": "Registro de acciones ($COUNT$)",

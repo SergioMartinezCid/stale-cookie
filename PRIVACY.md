@@ -18,7 +18,7 @@ All of this processing is local. None of it is transmitted, and the extension de
 ## Data the extension stores (locally only)
 
 - **Settings**, including your protected-sites list — in extension storage in your profile.
-- **Action log** — a record of what the extension deleted (site names and item counts, never visit timestamps), capped at 200 entries, in extension storage.
+- **Action log** — a record of what the extension deleted (site names and item counts, never visit timestamps), in extension storage. Entries are deleted automatically after **30 days** (with a 200-entry cap as a secondary bound), so the log cannot become a long-term record of the sites you once had data from.
 - **Error log** — kept in memory only, capped at 50 entries; it disappears when the browser closes and is never written to disk.
 - **Undo snapshot** — when cookies are deleted, a copy is kept in memory only so you can restore them; it disappears when the browser closes and expires 24 hours after the deletion, whichever comes first.
 - **Timers** for the cleaning reminder and automatic cleaning.

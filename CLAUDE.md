@@ -23,7 +23,7 @@ This file holds the working rules only. Dated decision history, rationale, revie
 - **No network requests, ever.** No telemetry, no analytics, no phone-home.
 - Data needed for the extension to function (visit correlation, action log, config) is collected and stored **locally only** and never shared.
 - Error reporting = user-facing log consultation/export + the public issue tracker. No automatic reporting.
-- Action log: `storage.local`, capped at 200 entries. Error log: `storage.session` only, never persisted, capped at 50. Log-export anonymization happens **at export time only** (raw data stays local; anonymize defaults ON).
+- Action log: `storage.local`, pruned to the last **30 days** (`ACTION_LOG_MAX_AGE_MS`; enforced on append and `onStartup` — deletion metadata must not become a long-term record of past sites), 200-entry cap as secondary bound. Error log: `storage.session` only, never persisted, capped at 50. Log-export anonymization happens **at export time only** (raw data stays local; anonymize defaults ON).
 
 This stance is a published commitment (privacy policy for AMO) — do not introduce anything that contradicts it.
 

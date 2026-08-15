@@ -1,10 +1,38 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ACTION_LOG_MAX_AGE_MS,
+  ACTION_LOG_MAX_ENTRIES,
   createAnonymizer,
+  pruneActionLog,
   serializeLogs,
   type ActionLogEntry,
   type ErrorLogEntry,
 } from '../src/core/logs';
+
+describe('pruneActionLog', () => {
+  const now = 1_755_200_000_000;
+  const clear = (at: number): ActionLogEntry => ({ at, type: 'global-clear', dataTypes: ['cache'] });
+
+  it('drops entries older than the 30-day age bound, keeps the rest', () => {
+    const fresh = clear(now - ACTION_LOG_MAX_AGE_MS);
+    const stale = clear(now - ACTION_LOG_MAX_AGE_MS - 1);
+    expect(pruneActionLog([stale, fresh, clear(now)], now)).toEqual([fresh, clear(now)]);
+  });
+
+  it('caps at 200 entries, keeping the newest', () => {
+    const entries = Array.from({ length: ACTION_LOG_MAX_ENTRIES + 5 }, (_, i) => clear(now - i));
+    entries.reverse(); // chronological, like the stored log
+    const pruned = pruneActionLog(entries, now);
+    expect(pruned).toHaveLength(ACTION_LOG_MAX_ENTRIES);
+    expect(pruned.at(-1)).toEqual(clear(now)); // newest survives
+    expect(pruned[0]).toEqual(clear(now - ACTION_LOG_MAX_ENTRIES + 1)); // oldest 5 dropped
+  });
+
+  it('leaves an in-bounds log untouched', () => {
+    const entries = [clear(now - 1000), clear(now)];
+    expect(pruneActionLog(entries, now)).toEqual(entries);
+  });
+});
 
 describe('createAnonymizer', () => {
   it('maps the same site to the same alias, different sites to different ones', () => {

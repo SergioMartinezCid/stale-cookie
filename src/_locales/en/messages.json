@@ -522,8 +522,8 @@
     "description": "Heading of the logs section (action log + session error log)."
   },
   "optionsLogsHint": {
-    "message": "The action log records what the extension deleted. Errors from this browser session are kept in memory only and disappear when the browser closes. Nothing here leaves your computer unless you export it.",
-    "description": "Explanation under the logs heading."
+    "message": "The action log records what the extension deleted over the last 30 days; older entries are removed automatically. Errors from this browser session are kept in memory only and disappear when the browser closes. Nothing here leaves your computer unless you export it.",
+    "description": "Explanation under the logs heading. The 30 days must match ACTION_LOG_MAX_AGE_MS."
   },
   "optionsActionLogTitle": {
     "message": "Action log ($COUNT$)",

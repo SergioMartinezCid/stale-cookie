@@ -18,7 +18,7 @@ Requires **Firefox 140+** (desktop only — see limitations) or **Chrome 123+**.
 - **Undo**: every deletion snapshots its cookies first — restorable for 24 hours while the browser stays open. (History and downloads are unrecoverable by nature; the preview says so before you confirm.)
 - **Automatic cleaning** (opt-in): a scheduled clean of exactly what a manual preview would pre-select, recorded in the action log.
 - **Reminders** (manual mode): a toolbar badge — and, optionally, a system notification — when it's time to clean.
-- **Action log and error log**: a local record of what was deleted, exportable as JSONL with an anonymize option for bug reports.
+- **Action log and error log**: a local record of what was deleted (kept for 30 days), exportable as JSONL with an anonymize option for bug reports.
 - **Firefox niceties**: container cookies (per-container stores) and partitioned (CHIPS) cookies are handled and labeled in the preview.
 
 ![The scan preview in the toolbar popup (dark theme): stale sites with container and partitioned badges, a never-visited tracker, and per-row Protect buttons](assets/store/screenshots/popup-dark-1280x800.png)

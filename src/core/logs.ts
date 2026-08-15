@@ -38,6 +38,20 @@ export type ActionLogEntry =
       restored: Array<{ domain: string; storeId: string; count: number }>;
     };
 
+export const ACTION_LOG_MAX_ENTRIES = 200;
+export const ACTION_LOG_MAX_AGE_MS = 30 * 86_400_000;
+
+/**
+ * Age bound first (the privacy bound: deletion metadata must not outlive
+ * its usefulness — the log is an audit trail, not an archive), entry cap
+ * second (the size bound). Enforced on every append and at browser startup.
+ */
+export function pruneActionLog(entries: readonly ActionLogEntry[], now: number): ActionLogEntry[] {
+  return entries
+    .filter((entry) => now - entry.at <= ACTION_LOG_MAX_AGE_MS)
+    .slice(-ACTION_LOG_MAX_ENTRIES);
+}
+
 export type ErrorContext = 'popup' | 'options' | 'background';
 
 /**

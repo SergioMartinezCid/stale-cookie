@@ -3,6 +3,7 @@ import { scheduleReminder, handleAlarm, resetReminderTimer } from '../ext/remind
 import { scheduleAutoClean, handleAutoCleanAlarm } from '../ext/autoClean';
 import { deleteGroups, type DeleteGroupsRequest } from '../ext/scanner';
 import { installErrorCapture } from '../ext/errorLog';
+import { pruneStoredActionLog } from '../ext/actionLog';
 
 installErrorCapture('background');
 
@@ -27,10 +28,13 @@ browser.runtime.onInstalled.addListener(() => {
 });
 
 // Alarms do not survive a browser restart — reschedule both on startup.
-// An overdue auto-clean runs right here.
+// An overdue auto-clean runs right here. Startup also prunes action-log
+// entries past the 30-day age bound (appends alone would let an idle
+// profile keep them indefinitely).
 browser.runtime.onStartup.addListener(() => {
   void scheduleReminder();
   void scheduleAutoClean();
+  void pruneStoredActionLog();
 });
 
 browser.alarms.onAlarm.addListener((alarm) => {
