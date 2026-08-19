@@ -4,12 +4,11 @@ Browser extension that clears stale browsing data — data belonging to sites yo
 
 ## Install
 
-<a href="#"><img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" alt="Get the add-on for Firefox" height="60"></a>
-<a href="#"><img src="https://developer.chrome.com/static/docs/webstore/branding/image/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" height="60"></a>
-
-*Store listings are not live yet — links will be added once published.*
+<a href="https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/"><img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" alt="Get the add-on for Firefox" height="60"></a>
 
 Requires **Firefox 140+** (desktop only — see limitations) or **Chrome 123+**.
+
+**Chrome**: fully supported, but not published on the Chrome Web Store yet — as a personal project, the Web Store listing is deferred until there's enough traction to justify it. Chrome users can build from source and load `dist-chrome/` as an unpacked extension (see [Development](#development)); unpacked extensions survive browser restarts.
 
 ## What it does
 
