@@ -2,6 +2,9 @@
 
 Browser extension that clears stale browsing data — data belonging to sites you no longer visit — while preserving everything from the sites you use. For Firefox and Chrome.
 
+[![AMO version](https://img.shields.io/amo/v/stale-cookie)](https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/)
+[![AMO users](https://img.shields.io/amo/users/stale-cookie)](https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/)
+
 ## Install
 
 <a href="https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/"><img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" alt="Get the add-on for Firefox" height="60"></a>
