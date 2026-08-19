@@ -275,6 +275,30 @@ describe('cleaning flow', () => {
     expect(forum?.checked).toBe(false); // the hand-tuned choice survived
   });
 
+  it('clamps the body to the viewport so only the results list scrolls', async () => {
+    // Simulate a short popup panel (the browser cap varies per machine)
+    // with a short window: the fitPopupHeight clamp must remove the
+    // document's own overflow and leave #results as the one scroller.
+    // 420 gives a viewport that is shorter than the preview but still
+    // taller than the popup's fixed chrome (header, scan button, footer),
+    // which is the smallest panel a browser realistically produces.
+    await driver.manage().window().setRect({ x: 0, y: 0, width: 500, height: 420 });
+    await driver.wait(
+      async () =>
+        (await driver.executeScript(
+          'return document.documentElement.scrollHeight <= window.innerHeight;',
+        )) === true,
+      5_000,
+      'document still overflows the viewport after the clamp',
+    );
+    const resultsScrolls = await driver.executeScript(
+      `const r = document.getElementById('results');
+       return r.scrollHeight > r.clientHeight;`,
+    );
+    expect(resultsScrolls).toBe(true);
+    await driver.manage().window().setRect({ x: 0, y: 0, width: 1000, height: 800 });
+  });
+
   it('dismisses the preview and its cache with Clear results', async () => {
     await driver.findElement(By.id('clear-results')).click();
     await driver.wait(

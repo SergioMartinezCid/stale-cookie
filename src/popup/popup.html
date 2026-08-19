@@ -5,6 +5,15 @@
     <title data-i18n="popupTitle">Stale Cookie</title>
     <link rel="stylesheet" href="../ui/theme.css" />
     <style>
+      html {
+        /* The document itself must never scroll — #results owns scrolling
+           and fitPopupHeight() keeps the content within the viewport.
+           Firefox's popup panel keeps a phantom scroll range from its
+           intrinsic-size pass when the document holds a large scroll
+           container (the outer scrollbar "scrolls into emptiness");
+           clipping root overflow is the standard extension-popup fix. */
+        overflow: hidden;
+      }
       body {
         /* rem width: the popup grows with the user's font-size preference
            instead of cramming bigger text into a fixed 380px. */
@@ -13,10 +22,12 @@
         margin: 0;
         padding: var(--space-3);
         font-size: var(--font-md);
-        /* Single scrollbar: browsers cap the popup panel around 600px, and
-           a document taller than that grows a second, near-useless outer
-           scrollbar alongside the results list's own. Keep the document
-           under the cap and let the results list absorb the overflow. */
+        /* Single scrollbar: browsers cap the popup panel height, and a
+           document taller than the cap grows a second, near-useless outer
+           scrollbar alongside the results list's own. 560px is only the
+           ceiling — the real cap varies with screen, window and OS display
+           scaling, so fitPopupHeight() in popup.ts clamps the body to the
+           measured viewport whenever the document still overflows. */
         max-height: 560px;
         display: flex;
         flex-direction: column;

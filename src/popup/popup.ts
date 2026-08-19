@@ -303,6 +303,9 @@ function renderResults(): void {
   updateDeleteButton();
   // After updateDeleteButton — its closeConfirm() unhides the button.
   deleteButton.hidden = !hasRows;
+  // The new content may push the panel to its height cap — no resize
+  // event fires when the panel is already there.
+  scheduleFitPopupHeight();
 }
 
 function selectedDeletable(): ClassifiedGroup[] {
@@ -335,6 +338,32 @@ function closeConfirm(): void {
   confirmBox.hidden = true;
   deleteButton.hidden = false;
 }
+
+/**
+ * The browser caps the popup panel height at a size CSS can't know in
+ * advance (it varies with screen, window and OS display scaling — the
+ * stylesheet's 560px is only a ceiling). When the document still overflows
+ * the panel viewport, clamp the body to the measured viewport so the
+ * results list stays the only scrollbar. Reset first so the clamp can also
+ * relax again; both writes land in the same task, so nothing flickers.
+ */
+function fitPopupHeight(): void {
+  document.body.style.maxHeight = '';
+  if (document.documentElement.scrollHeight > window.innerHeight) {
+    document.body.style.maxHeight = `${window.innerHeight}px`;
+  }
+}
+
+/**
+ * Debounced: the panel resizes in steps while it grows to fit new content,
+ * and clamping against an intermediate height would freeze the popup small.
+ */
+let fitTimer: ReturnType<typeof setTimeout> | undefined;
+function scheduleFitPopupHeight(): void {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(fitPopupHeight, 150);
+}
+window.addEventListener('resize', scheduleFitPopupHeight);
 
 /**
  * Re-renders and hidden/disabled toggles destroy the focused element, which
@@ -424,6 +453,7 @@ clearButton.addEventListener('click', () => {
   status.className = 'idle';
   status.textContent = msg('popupNoScanYet');
   scanButton.focus(); // the dismissed preview leaves Scan as the next action
+  scheduleFitPopupHeight(); // let a shrunken clamp relax
 });
 
 skipButton.addEventListener('click', async () => {
