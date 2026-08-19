@@ -64,8 +64,6 @@ jobs:
   integration-esr:
     name: Firefox ESR 140 (strict_min_version floor)
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # TEMPORARY: ci-debug branch push on failure
     env:
       ESR_VERSION: 140.0esr
     steps:
@@ -95,21 +93,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Run the Firefox suite against ESR
-        shell: bash
-        run: |
-          FIREFOX_BIN="$HOME/firefox-esr/firefox/firefox" \
-            npx vitest run --config vitest.integration.config.ts \
-            tests/integration/cleaning-flow.test.ts 2>&1 | tee esr-suite.log
-          exit "${PIPESTATUS[0]}"
-      # TEMPORARY diagnostics: Actions logs need auth to download, so on
-      # failure park the suite output on a throwaway branch instead.
-      - name: Publish debug log
-        if: failure()
-        run: |
-          git config user.name ci-debug
-          git config user.email ci-debug@invalid
-          git checkout --orphan ci-debug
-          git reset
-          git add -f esr-suite.log
-          git commit -q -m "esr suite debug log"
-          git push -f origin ci-debug
+        run: >
+          FIREFOX_BIN="$HOME/firefox-esr/firefox/firefox"
+          npx vitest run --config vitest.integration.config.ts
+          tests/integration/cleaning-flow.test.ts

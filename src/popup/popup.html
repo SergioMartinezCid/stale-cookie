@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="../ui/theme.css" />
     <style>
       html {
-        /* The document itself must never scroll — #results owns scrolling
-           and fitPopupHeight() keeps the content within the viewport.
-           Firefox's popup panel keeps a phantom scroll range from its
-           intrinsic-size pass when the document holds a large scroll
-           container (the outer scrollbar "scrolls into emptiness");
-           clipping root overflow is the standard extension-popup fix. */
+        /* The document itself must never scroll — #results owns scrolling,
+           fitPopupHeight() keeps the content within the viewport, and
+           #results' position:relative keeps absolutely-positioned
+           descendants from stretching the document (see below). This is
+           defense in depth: whatever slips through those must not grow the
+           panel a second scrollbar. */
         overflow: hidden;
       }
       body {
@@ -95,6 +95,13 @@
         min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
+        /* Containing block for absolutely-positioned descendants (the
+           .sr-only badge twins): without it their containing block is the
+           document root, so they escape this scroller's clip at their
+           static position deep in the UNSCROLLED list coordinates and
+           stretch the document into a phantom scroll range — the popup's
+           infamous second scrollbar that scrolls into empty background. */
+        position: relative;
       }
       ul {
         list-style: none;

@@ -279,10 +279,29 @@ describe('cleaning flow', () => {
     // Simulate a short popup panel (the browser cap varies per machine)
     // with a short window: the fitPopupHeight clamp must remove the
     // document's own overflow and leave #results as the one scroller.
-    // 420 gives a viewport that is shorter than the preview but still
-    // taller than the popup's fixed chrome (header, scan button, footer),
-    // which is the smallest panel a browser realistically produces.
-    await driver.manage().window().setRect({ x: 0, y: 0, width: 500, height: 420 });
+    // The test needs fixed-chrome < viewport < full content with sturdy
+    // margins on both sides — font metrics differ between Firefox
+    // versions (ESR 140 failed at 420px with only two rows). Widen the
+    // preview first so the content side has plenty of slack.
+    await inExtensionPage(
+      driver,
+      `const now = Date.now();
+       const inAYear = Math.floor(now / 1000) + 365 * 86_400;
+       for (let d = 0; d < 10; d++) {
+         const domain = 'clamp-' + d + '.example';
+         await browser.history.addUrl({
+           url: 'https://' + domain + '/p',
+           visitTime: now - 300 * 86_400_000,
+         });
+         await browser.cookies.set({
+           url: 'https://' + domain + '/',
+           name: 's', value: 'x', secure: true, expirationDate: inAYear,
+         });
+       }
+       return true;`,
+    );
+    await scanAndWait(driver);
+    await driver.manage().window().setRect({ x: 0, y: 0, width: 500, height: 500 });
     await driver.wait(
       async () =>
         (await driver.executeScript(
