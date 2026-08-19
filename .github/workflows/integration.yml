@@ -38,6 +38,12 @@ jobs:
       # Testing gets provisioned instead.
       - name: Remove branded Chrome
         run: sudo apt-get -qq remove -y google-chrome-stable 2>/dev/null || sudo rm -rf /usr/bin/google-chrome /opt/google/chrome
+      # Ubuntu 24.04 restricts unprivileged user namespaces via AppArmor;
+      # the branded .deb ships an AppArmor profile but the bare Chrome for
+      # Testing download does not, so its sandbox dies at launch
+      # ("Chrome instance exited"). Allow userns instead of --no-sandbox.
+      - name: Allow unprivileged user namespaces
+        run: sudo sysctl -q -w kernel.apparmor_restrict_unprivileged_userns=0
       - run: npm ci
       - run: npm run build
       # Separate steps per browser so a failure names the culprit at a
