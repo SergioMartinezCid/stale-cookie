@@ -9,6 +9,7 @@ import { classifyGroups, type ClassifiedGroup } from '../core/classify';
 import { cookieRemovalDetails } from '../core/removal';
 import { appendActionLog } from './actionLog';
 import { recordError } from './errorLog';
+import { clearScanCache } from './scanCache';
 import { saveSnapshot } from './snapshot';
 import { isFirefox } from './browserInfo';
 import type { Settings } from './settings';
@@ -189,17 +190,53 @@ export async function scan(settings: Settings): Promise<ScanOutcome> {
 }
 
 /**
+ * Deletion concurrency within a group. Sequential awaits made large
+ * deletions crawl — thousands of history URLs at one round-trip each — so
+ * items go through a small worker pool instead. Bounded, because firing
+ * thousands of unresolved API calls at once is its own way to hang a browser.
+ */
+const DELETE_CONCURRENCY = 10;
+
+/**
+ * Run fn over every item with bounded concurrency. A failing item never
+ * aborts the rest; the errors come back for the caller to log.
+ */
+async function forEachConcurrent<T>(
+  items: readonly T[],
+  fn: (item: T) => Promise<void>,
+): Promise<unknown[]> {
+  let next = 0;
+  const errors: unknown[] = [];
+  const worker = async () => {
+    while (next < items.length) {
+      const item = items[next++] as T;
+      try {
+        await fn(item);
+      } catch (error) {
+        errors.push(error);
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(DELETE_CONCURRENCY, items.length) }, worker));
+  return errors;
+}
+
+/**
  * Delete every item of the given groups. Returns the number removed.
- * One failing group never aborts the rest (same isolation the restore path
- * has: a container removed between scan and delete rejects its calls), and
- * whatever WAS deleted always reaches the action log — with no preview in
- * auto-clean, the log is the only record.
+ * One failing item or group never aborts the rest (same isolation the
+ * restore path has: a container removed between scan and delete rejects its
+ * calls), and whatever WAS deleted always reaches the action log — with no
+ * preview in auto-clean, the log is the only record.
  */
 export async function deleteGroups(
   groups: readonly ClassifiedGroup[],
   context: ErrorContext,
 ): Promise<number> {
   let removed = 0;
+
+  // Any cached preview describes the pre-deletion world — drop it up front
+  // so a popup opened mid-deletion can't restore it.
+  await clearScanCache();
 
   // Undo snapshot, taken before anything is removed. The group objects hold
   // full cookies.getAll() results at runtime, so every field needed to
@@ -214,29 +251,30 @@ export async function deleteGroups(
   const downloadLog: Array<{ domain: string; count: number }> = [];
 
   for (const group of groups) {
-    // Counts live outside the try so a mid-group failure still logs the
-    // items that were removed before it.
+    // The count survives item failures, so a half-failed group still logs
+    // the items that were removed. count++ inside the workers is safe:
+    // JS is single-threaded, the pool only overlaps the API round-trips.
     let count = 0;
-    try {
-      if (group.kind === 'cookies') {
-        for (const cookie of group.cookies) {
-          const result = await browser.cookies.remove(cookieRemovalDetails(cookie));
-          if (result) count++;
-        }
-      } else if (group.kind === 'history') {
-        for (const url of group.urls) {
-          await browser.history.deleteUrl({ url });
-          count++;
-        }
-      } else {
-        for (const id of group.downloadIds) {
-          const erased = await browser.downloads.erase({ id });
-          count += erased.length;
-        }
-      }
-    } catch (error) {
-      recordError(context, error);
+    let errors: unknown[];
+    if (group.kind === 'cookies') {
+      errors = await forEachConcurrent(group.cookies, async (cookie) => {
+        const result = await browser.cookies.remove(cookieRemovalDetails(cookie));
+        if (result) count++;
+      });
+    } else if (group.kind === 'history') {
+      errors = await forEachConcurrent(group.urls, async (url) => {
+        await browser.history.deleteUrl({ url });
+        count++;
+      });
+    } else {
+      errors = await forEachConcurrent(group.downloadIds, async (id) => {
+        const erased = await browser.downloads.erase({ id });
+        count += erased.length;
+      });
     }
+    // One error-log entry per failing group, not one per item — the error
+    // log is capped at 50 and a dead container would flood it otherwise.
+    if (errors.length > 0) recordError(context, errors[0]);
     removed += count;
     if (group.kind === 'cookies') {
       cookieLog.push({ domain: group.registrableDomain, storeId: group.storeId, count });

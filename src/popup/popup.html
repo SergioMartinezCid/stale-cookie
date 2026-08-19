@@ -9,9 +9,20 @@
         /* rem width: the popup grows with the user's font-size preference
            instead of cramming bigger text into a fixed 380px. */
         width: 24rem;
+        box-sizing: border-box;
         margin: 0;
         padding: var(--space-3);
         font-size: var(--font-md);
+        /* Single scrollbar: browsers cap the popup panel around 600px, and
+           a document taller than that grows a second, near-useless outer
+           scrollbar alongside the results list's own. Keep the document
+           under the cap and let the results list absorb the overflow. */
+        max-height: 560px;
+        display: flex;
+        flex-direction: column;
+      }
+      body > * {
+        flex-shrink: 0; /* only the results list gives way */
       }
       header {
         display: flex;
@@ -69,7 +80,8 @@
         gap: var(--space-2);
       }
       #results {
-        max-height: 420px;
+        flex-shrink: 1;
+        min-height: 0;
         overflow-y: auto;
         overflow-x: hidden;
       }
@@ -145,6 +157,11 @@
       }
       #confirm[hidden] {
         display: none;
+      }
+      #clear-results {
+        margin-left: auto;
+        font-size: var(--font-sm);
+        color: var(--text-muted);
       }
       #confirm-text {
         flex-basis: 100%;
@@ -263,6 +280,7 @@
         ></button>
         <button id="confirm-cancel" data-i18n="popupCancel"></button>
       </div>
+      <button id="clear-results" class="quiet" data-i18n="popupClearButton"></button>
     </div>
     <script src="popup.js"></script>
   </body>

@@ -53,6 +53,10 @@
     "message": "Scanning…",
     "description": "Status shown while a scan is in progress."
   },
+  "popupDeleting": {
+    "message": "Deleting…",
+    "description": "Status shown while a confirmed deletion runs in the background — large deletions take a while."
+  },
   "sectionStale": {
     "message": "Stale ($COUNT$)",
     "description": "Heading of the list of stale sites; $COUNT$ is the number of sites.",
@@ -237,6 +241,10 @@
   "popupCancel": {
     "message": "Cancel",
     "description": "Button that dismisses the pending deletion confirmation."
+  },
+  "popupClearButton": {
+    "message": "Clear results",
+    "description": "Quiet footer button that dismisses the current scan preview (and its session cache) without deleting anything."
   },
   "popupFailed": {
     "message": "Something went wrong. Details are in the error log (Settings → Logs).",

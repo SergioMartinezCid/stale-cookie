@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- The scan preview survives closing the popup: reopening within 15 minutes
+  restores the results and any hand-tuned checkbox choices. The cached
+  preview lives in session storage only (never written to disk) and is
+  dropped by any deletion, undo, or settings change.
+- "Clear results" button in the popup to dismiss the preview without
+  deleting anything.
+- The popup shows a "Deleting…" indicator while a confirmed deletion runs.
+
+### Fixed
+
+- With many results the popup no longer grows a second, useless outer
+  scrollbar — the results list is the only thing that scrolls.
+- Large deletions are much faster: items are removed concurrently instead
+  of strictly one at a time.
+
 ## [1.0.0] - 2026-08-15
 
 First published version, for Firefox and Chrome.

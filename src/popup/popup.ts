@@ -9,6 +9,7 @@ import {
 } from '../ext/settings';
 import { reminderDue, resetReminderTimer } from '../ext/reminder';
 import { getSnapshot, restoreSnapshot, SNAPSHOT_TTL_MS } from '../ext/snapshot';
+import { clearScanCache, getScanCache, saveScanCache } from '../ext/scanCache';
 import { installErrorCapture, recordError } from '../ext/errorLog';
 import { applyTheme } from '../ui/theme';
 import { shouldPreselectUnknown, type ClassifiedGroup } from '../core/classify';
@@ -24,6 +25,7 @@ const scanButton = el<HTMLButtonElement>('scan');
 const skipButton = el<HTMLButtonElement>('skip');
 const undoButton = el<HTMLButtonElement>('undo');
 const deleteButton = el<HTMLButtonElement>('delete');
+const clearButton = el<HTMLButtonElement>('clear-results');
 const confirmBox = el<HTMLDivElement>('confirm');
 const confirmText = el<HTMLSpanElement>('confirm-text');
 const confirmDelete = el<HTMLButtonElement>('confirm-delete');
@@ -281,8 +283,11 @@ function renderResults(): void {
   updateMaster('stale');
   updateMaster('unknown');
 
+  el('empty-hero').hidden = true;
   results.hidden = false;
-  footer.hidden = !hasRows;
+  // The footer stays up even when all clean — it carries the Clear button
+  // that dismisses the preview. Only Delete itself follows the rows.
+  footer.hidden = false;
   status.className = '';
   if (outcome.groups.length === 0) {
     status.textContent = msg('emptyState');
@@ -296,6 +301,8 @@ function renderResults(): void {
     ]);
   }
   updateDeleteButton();
+  // After updateDeleteButton — its closeConfirm() unhides the button.
+  deleteButton.hidden = !hasRows;
 }
 
 function selectedDeletable(): ClassifiedGroup[] {
@@ -311,6 +318,17 @@ function updateDeleteButton(): void {
     msgCount('siteCount', chosen.length),
   ]);
   deleteButton.disabled = count === 0;
+  persistScan(); // every render and selection change funnels through here
+}
+
+/**
+ * Mirror the rendered preview (outcome + hand-tuned checkboxes) into
+ * storage.session, so the click outside the popup that tears this page
+ * down doesn't throw the scan away. See scanCache.ts for the bounds.
+ */
+function persistScan(): void {
+  if (!outcome) return;
+  void saveScanCache({ outcome, overrides: Object.fromEntries(overrides) });
 }
 
 function closeConfirm(): void {
@@ -388,6 +406,26 @@ scanButton.addEventListener('click', () => {
   void runScan();
 });
 
+// Dismiss the preview (and its cached copy) without deleting anything —
+// back to the idle state, as if no scan had run.
+clearButton.addEventListener('click', () => {
+  void clearScanCache();
+  outcome = undefined;
+  rows = [];
+  selected.clear();
+  overrides.clear();
+  rowCheckboxes.stale.clear();
+  rowCheckboxes.unknown.clear();
+  closeConfirm();
+  clearToast();
+  results.hidden = true;
+  footer.hidden = true;
+  el('empty-hero').hidden = false;
+  status.className = 'idle';
+  status.textContent = msg('popupNoScanYet');
+  scanButton.focus(); // the dismissed preview leaves Scan as the next action
+});
+
 skipButton.addEventListener('click', async () => {
   await resetReminderTimer();
   skipButton.hidden = true;
@@ -440,6 +478,10 @@ undoButton.addEventListener('click', async () => {
 
 confirmDelete.addEventListener('click', async () => {
   confirmDelete.disabled = true;
+  // A large deletion takes a while even though it runs in the background —
+  // thousands of per-item API calls. Say so, or the popup looks frozen.
+  status.className = 'scanning';
+  status.textContent = msg('popupDeleting');
   try {
     // The background executes the deletion (and resets the reminder cycle
     // on success) — it outlives this popup, which the browser tears down
@@ -449,6 +491,8 @@ confirmDelete.addEventListener('click', async () => {
     showToast(msgCount('deletedToast', removed), 'success');
   } catch (error) {
     recordError('popup', error);
+    status.className = '';
+    status.textContent = '';
     showToast(msg('popupFailed'), 'error');
     closeConfirm();
     return; // a failed clean is no clean — leave the reminder cycle alone
@@ -468,6 +512,15 @@ confirmDelete.addEventListener('click', async () => {
 void loadSettings().then(async (loaded) => {
   settings = loaded;
   applyTheme(loaded.theme);
+  // A preview cached by a previous popup instance (clicking outside the
+  // popup tears the page down). Its hand-tuned checkboxes carry over even
+  // into the reminder's fresh scan below.
+  const cached = await getScanCache();
+  if (cached) {
+    for (const [domain, checked] of Object.entries(cached.overrides)) {
+      overrides.set(domain, checked);
+    }
+  }
   const due = await reminderDue(loaded);
   skipButton.hidden = !due;
   if (due) {
@@ -475,6 +528,12 @@ void loadSettings().then(async (loaded) => {
     reminderBanner.textContent = msg('popupReminderBanner', [String(loaded.reminderDays)]);
     reminderBanner.hidden = false;
     await runScan();
+  } else if (cached) {
+    // Restore the preview the user was looking at instead of demanding a
+    // rescan. Deletions, undo and settings writes all clear the cache, so
+    // a restored preview is at worst SCAN_CACHE_TTL_MS out of date.
+    outcome = cached.outcome;
+    renderResults();
   }
 });
 

@@ -5,6 +5,7 @@ import { getRegistrableDomain, normalizeCookieDomain } from '../core/domain';
 import type { ErrorContext } from '../core/logs';
 import { appendActionLog } from './actionLog';
 import { recordError } from './errorLog';
+import { clearScanCache } from './scanCache';
 
 /**
  * Undo snapshot: the cookies of the most recent deletion (manual or
@@ -100,6 +101,9 @@ export async function restoreSnapshot(): Promise<number> {
   }
 
   await clearSnapshot();
+  // Restored cookies aren't in a cached preview — drop it so a reopened
+  // popup rescans instead of showing the pre-restore world.
+  await clearScanCache();
   if (restored > 0) {
     await appendActionLog({
       at: Date.now(),

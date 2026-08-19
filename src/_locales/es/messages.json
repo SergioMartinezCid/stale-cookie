@@ -42,6 +42,9 @@
   "popupScanning": {
     "message": "Analizando…"
   },
+  "popupDeleting": {
+    "message": "Eliminando…"
+  },
   "sectionStale": {
     "message": "Obsoletos ($COUNT$)",
     "placeholders": {
@@ -200,6 +203,9 @@
   },
   "popupCancel": {
     "message": "Cancelar"
+  },
+  "popupClearButton": {
+    "message": "Limpiar resultados"
   },
   "popupFailed": {
     "message": "Algo ha salido mal. Los detalles están en el registro de errores (Ajustes → Registros)."

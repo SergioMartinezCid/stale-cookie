@@ -254,4 +254,39 @@ describe('cleaning flow', () => {
       'restored cookies did not reappear in the rescan',
     );
   });
+
+  it('keeps the preview and hand-tuned selections across popup teardown', async () => {
+    // Uncheck stale-forum by hand, then reload the page — the same teardown
+    // a click outside the popup causes.
+    await driver.executeScript(
+      `const row = Array.from(document.querySelectorAll('#stale-list li'))
+         .find((li) => li.querySelector('.domain').textContent === 'stale-forum.example');
+       row.querySelector('input[type=checkbox]').click();`,
+    );
+    await driver.navigate().refresh();
+    await driver.wait(
+      async () => (await readRows(driver, 'stale-list')).length > 0,
+      20_000,
+      'preview was not restored after reopening the popup',
+    );
+    const forum = (await readRows(driver, 'stale-list')).find(
+      (r) => r.domain === 'stale-forum.example',
+    );
+    expect(forum?.checked).toBe(false); // the hand-tuned choice survived
+  });
+
+  it('dismisses the preview and its cache with Clear results', async () => {
+    await driver.findElement(By.id('clear-results')).click();
+    await driver.wait(
+      async () => !(await driver.findElement(By.id('results')).isDisplayed()),
+      5_000,
+      'results did not hide after Clear',
+    );
+    // The cache is gone too — deterministic check, no reopen race.
+    const cached = await inExtensionPage<unknown>(
+      driver,
+      `return (await browser.storage.session.get('scanCache')).scanCache ?? null;`,
+    );
+    expect(cached).toBeNull();
+  });
 });
