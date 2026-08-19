@@ -30,6 +30,12 @@ jobs:
             p="$(command -v "$d" || true)"
             [ -n "$p" ] && sudo rm -f "$p" || true
           done
+      # Selenium Manager accepts the preinstalled branded Chrome as
+      # satisfying browserVersion 'stable' — but branded Chrome 137+
+      # silently ignores --load-extension. Remove it so Chrome for
+      # Testing gets provisioned instead.
+      - name: Remove branded Chrome
+        run: sudo apt-get -qq remove -y google-chrome-stable 2>/dev/null || sudo rm -rf /usr/bin/google-chrome /opt/google/chrome
       - run: npm ci
       - run: npm run build
       # Separate steps per browser so a failure names the culprit at a
