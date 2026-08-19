@@ -1,6 +1,6 @@
 # Stale Cookie
 
-Browser extension that clears stale browser data — data belonging to sites not visited recently — while preserving data for recently-visited sites. Single MV3 codebase for Firefox and Chrome. At v1.0.0, heading for publication on AMO (Chrome Web Store later).
+Browser extension that clears stale browser data — data belonging to sites not visited recently — while preserving data for recently-visited sites. Single MV3 codebase for Firefox and Chrome. v1.0.0 is published on AMO (https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/); Chrome Web Store publication is deferred until the project has traction (Chrome users load `dist-chrome/` unpacked).
 
 This file holds the working rules only. Dated decision history, rationale, review records, verification logs, and implementation detail live in `NOTES.md`.
 
