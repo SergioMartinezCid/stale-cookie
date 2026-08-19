@@ -35,6 +35,18 @@ Historical record: dated decisions, rationale, verification logs, review records
 
 - **Published on AMO** (2026-08-15): https://addons.mozilla.org/en-US/firefox/addon/stale-cookie/ — v1.0.0, submission commit 4e94d42 (tag v1.0.0), approved same day. **Chrome Web Store deferred** (user decision, 2026-08-15): personal project, the $5 developer registration waits for traction; all CWS collateral is prepared (`assets/store/cws-listing.md` + upload zip recipe) and Chrome remains fully supported via unpacked `dist-chrome/`.
 
+## Release process
+
+For every release after v1.0.0:
+
+1. Bump the version in `src/manifest.json` and `package.json` (they must match).
+2. Add a `CHANGELOG.md` entry (Keep a Changelog format, dated).
+3. Commit, then tag `vX.Y.Z` (annotated) at that commit and push the tag.
+4. Rebuild from the tag and package: `npm run build`, then `npx web-ext build --source-dir dist` for the AMO upload zip; produce the source zip with `git archive` from the tag.
+5. Repeat the byte-identical dry run before uploading: unpack the source zip into a clean directory, `npm ci && npm run build` (Node per `.nvmrc`), and `diff -r` the result against the upload zip's contents — AMO reviewers rebuild from the source zip, so this must match exactly.
+6. Upload to AMO (extension zip + source zip). Expect the one ACCEPTED lint warning (Android `data_collection_permissions`, see CLAUDE.md). Version strings burn on failed uploads — a redo needs a new version number.
+7. Paste release notes synced with the CHANGELOG entry; if the listing copy changed, update the live listing and keep `assets/store/amo-listing.md` in sync with it.
+
 ## Reviews
 
 - **Final pre-publication review** (2026-08-14): 5-lens multi-agent pass (correctness/security, privacy compliance, AMO readiness, i18n/copy, build reproducibility) with adversarial verification — 10 confirmed majors + 12 minors, all fixed the same day. Highlights: options-page settings sync, deletion resilience (per-group try/catch, partial counts always logged, auto-clean rescheduled in `finally`), deletion moved to the background, plural handling via `msgCount` + `<key>One` variants, anonymizer gaps (Chrome extension ids, punycode TLDs), README/toolchain pinning. Remaining publishing collateral at the time: privacy policy text, AMO screenshots (light + dark).
