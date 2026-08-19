@@ -31,7 +31,14 @@ jobs:
             [ -n "$p" ] && sudo rm -f "$p" || true
           done
       - run: npm ci
-      - run: npm run test:integration
+      - run: npm run build
+      # Separate steps per browser so a failure names the culprit at a
+      # glance; the Chrome step still runs when the Firefox one fails.
+      - name: Firefox suite
+        run: npx vitest run --config vitest.integration.config.ts tests/integration/cleaning-flow.test.ts
+      - name: Chrome suite
+        if: success() || failure()
+        run: npx vitest run --config vitest.integration.config.ts tests/integration/chrome-cleaning-flow.test.ts
 
   # The published strict_min_version is 140.0 — keep the Firefox suite
   # passing against that exact floor, not just current stable.
