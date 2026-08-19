@@ -6,6 +6,13 @@ name: Integration
 on:
   push:
     branches: [main]
+  # Monthly safety net: browsers update on their own schedule, so a quiet
+  # repo can still break. Note GitHub suspends cron schedules after ~60
+  # days without repo activity and emails only the workflow author on
+  # failure. Runs on the 3rd, 08:17 UTC — round-hour crons get delayed or
+  # dropped under GitHub's shared-queue load spikes.
+  schedule:
+    - cron: '17 8 3 * *'
   workflow_dispatch:
 
 jobs:
