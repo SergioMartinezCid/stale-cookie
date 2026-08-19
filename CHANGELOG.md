@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-08-19
 
 ### Added
 
@@ -50,4 +50,5 @@ First published version, for Firefox and Chrome.
   Spanish.
 - Privacy: no network requests, ever — see PRIVACY.md.
 
+[1.1.0]: https://github.com/SergioMartinezCid/stale-cookie/releases/tag/v1.1.0
 [1.0.0]: https://github.com/SergioMartinezCid/stale-cookie/releases/tag/v1.0.0
