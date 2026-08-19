@@ -94,8 +94,12 @@ export async function launchChromeWithExtension(): Promise<{
   const options = new chromium.Options();
   // --headless=new is the unified headless that supports extensions and
   // service workers. --load-extension was removed from branded Chrome in
-  // 137 but kept in Chrome for Testing, which Selenium Manager provisions.
+  // 137 but kept in Chrome for Testing — so the suite must never run
+  // against a system Chrome. Requesting an explicit browserVersion makes
+  // Selenium Manager provision (and cache) Chrome for Testing even when a
+  // branded Chrome is installed, as on CI runners.
   // --disable-dev-shm-usage: /dev/shm is tiny under WSL/containers.
+  options.setBrowserVersion('stable');
   options.addArguments(
     '--headless=new',
     `--load-extension=${DIST_CHROME}`,

@@ -1,0 +1,73 @@
+# Full browser tier: drives the built extension in headless Firefox and
+# Chrome for Testing with throwaway profiles. Runs on pushes to main —
+# pull requests keep the fast tier in ci.yml — plus on demand.
+name: Integration
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  integration:
+    name: Firefox stable + Chrome for Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # The runner image ships chromedriver/geckodriver on PATH, and
+      # selenium-webdriver prefers a PATH driver over Selenium Manager.
+      # Remove them so Selenium Manager provisions matching browser+driver
+      # pairs instead — the harness needs Chrome for Testing (branded
+      # Chrome 137+ dropped --load-extension) and a geckodriver >= 0.36
+      # (for --allow-system-access).
+      - name: Remove preinstalled Selenium drivers
+        run: |
+          for d in chromedriver geckodriver; do
+            p="$(command -v "$d" || true)"
+            [ -n "$p" ] && sudo rm -f "$p" || true
+          done
+      - run: npm ci
+      - run: npm run test:integration
+
+  # The published strict_min_version is 140.0 — keep the Firefox suite
+  # passing against that exact floor, not just current stable.
+  integration-esr:
+    name: Firefox ESR 140 (strict_min_version floor)
+    runs-on: ubuntu-latest
+    env:
+      ESR_VERSION: 140.0esr
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Remove preinstalled Selenium drivers
+        run: |
+          for d in chromedriver geckodriver; do
+            p="$(command -v "$d" || true)"
+            [ -n "$p" ] && sudo rm -f "$p" || true
+          done
+      - name: Cache Firefox ESR
+        id: esr-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/firefox-esr
+          key: firefox-${{ env.ESR_VERSION }}-linux-x86_64
+      - name: Download Firefox ESR
+        if: steps.esr-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/firefox-esr
+          curl -fsSL "https://ftp.mozilla.org/pub/firefox/releases/${ESR_VERSION}/linux-x86_64/en-US/firefox-${ESR_VERSION}.tar.xz" \
+            | tar -xJ -C ~/firefox-esr
+      - run: npm ci
+      - run: npm run build
+      - name: Run the Firefox suite against ESR
+        run: >
+          FIREFOX_BIN="$HOME/firefox-esr/firefox/firefox"
+          npx vitest run --config vitest.integration.config.ts
+          tests/integration/cleaning-flow.test.ts

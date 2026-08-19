@@ -1,5 +1,5 @@
 # Fast checks only: no real browsers here. The integration suite
-# (headless Firefox + Chrome) stays a local/pre-release step for now.
+# (headless Firefox + Chrome) runs in integration.yml on pushes to main.
 name: CI
 
 on:
