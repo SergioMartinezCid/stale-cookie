@@ -12,6 +12,8 @@ jobs:
   integration:
     name: Firefox stable + Chrome for Testing
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # TEMPORARY: ci-debug branch push on failure
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -44,7 +46,29 @@ jobs:
         run: npx vitest run --config vitest.integration.config.ts tests/integration/cleaning-flow.test.ts
       - name: Chrome suite
         if: success() || failure()
-        run: npx vitest run --config vitest.integration.config.ts tests/integration/chrome-cleaning-flow.test.ts
+        shell: bash
+        run: |
+          {
+            echo "--- environment ---"
+            command -v google-chrome || echo "no google-chrome on PATH"
+            ls /opt/google 2>&1 || true
+            command -v chromedriver || echo "no chromedriver on PATH"
+            echo "--- vitest ---"
+          } > chrome-suite.log
+          npx vitest run --config vitest.integration.config.ts tests/integration/chrome-cleaning-flow.test.ts 2>&1 | tee -a chrome-suite.log
+          exit "${PIPESTATUS[0]}"
+      # TEMPORARY diagnostics: Actions logs need auth to download, so on
+      # failure park the suite output on a throwaway branch instead.
+      - name: Publish debug log
+        if: failure()
+        run: |
+          git config user.name ci-debug
+          git config user.email ci-debug@invalid
+          git checkout --orphan ci-debug
+          git reset
+          git add -f chrome-suite.log
+          git commit -q -m "chrome suite debug log"
+          git push -f origin ci-debug
 
   # The published strict_min_version is 140.0 — keep the Firefox suite
   # passing against that exact floor, not just current stable.
