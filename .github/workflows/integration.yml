@@ -80,7 +80,7 @@ jobs:
           done
       - name: Cache Firefox ESR
         id: esr-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/firefox-esr
           key: firefox-${{ env.ESR_VERSION }}-linux-x86_64
