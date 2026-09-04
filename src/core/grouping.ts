@@ -1,4 +1,4 @@
-import { getRegistrableDomain, hostnameOf, normalizeCookieDomain } from './domain';
+import { getRegistrableDomain, hostnameOf, isExtensionUrl, normalizeCookieDomain } from './domain';
 
 /**
  * Structural subset of cookies.Cookie that the core logic needs — keeps this
@@ -104,12 +104,13 @@ export function groupCookies(cookies: readonly ScannableCookie[]): CookieGroup[]
 
 /**
  * Group history items (one per URL) by eTLD+1. Items without a URL or a
- * visit time carry no signal and are skipped.
+ * visit time carry no signal and are skipped; extension pages are not sites
+ * and are skipped too (see isExtensionUrl).
  */
 export function groupHistory(items: readonly ScannableHistoryItem[]): HistoryGroup[] {
   const map = new Map<string, HistoryGroup>();
   for (const item of items) {
-    if (!item.url || item.lastVisitTime === undefined) continue;
+    if (!item.url || item.lastVisitTime === undefined || isExtensionUrl(item.url)) continue;
     const host = hostnameOf(item.url);
     if (!host) continue;
     const domain = getRegistrableDomain(host);
@@ -131,11 +132,14 @@ export function groupHistory(items: readonly ScannableHistoryItem[]): HistoryGro
   return [...map.values()];
 }
 
-/** Group download history items by the eTLD+1 of the download URL. */
+/**
+ * Group download history items by the eTLD+1 of the download URL. Downloads
+ * served from an extension page are skipped like extension history entries.
+ */
 export function groupDownloads(downloads: readonly ScannableDownload[]): DownloadGroup[] {
   const map = new Map<string, DownloadGroup>();
   for (const download of downloads) {
-    if (!download.url) continue;
+    if (!download.url || isExtensionUrl(download.url)) continue;
     const host = hostnameOf(download.url);
     if (!host) continue;
     const domain = getRegistrableDomain(host);

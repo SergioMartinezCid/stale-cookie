@@ -78,6 +78,15 @@ describe('groupHistory', () => {
     ]);
     expect(groups).toHaveLength(0);
   });
+
+  it('skips extension pages — their hostname is an extension id, not a site', () => {
+    const groups = groupHistory([
+      { url: 'chrome-extension://khijcamdgmekcnplimaampjgdfeiopja/popup/popup.html', lastVisitTime: 100 },
+      { url: 'moz-extension://4b6f2a91-93c9-4f0e-8a5e-0d1e2f3a4b5c/options/options.html', lastVisitTime: 100 },
+      { url: 'https://example.com/', lastVisitTime: 100 },
+    ]);
+    expect(groups.map((g) => g.registrableDomain)).toEqual(['example.com']);
+  });
 });
 
 describe('groupDownloads', () => {
@@ -93,5 +102,13 @@ describe('groupDownloads', () => {
     expect(example?.latestTime).toBe(Date.parse('2026-03-04T00:00:00.000Z'));
     const other = groups.find((g) => g.registrableDomain === 'other.org');
     expect(other?.latestTime).toBeUndefined();
+  });
+
+  it('skips downloads served from extension pages', () => {
+    const groups = groupDownloads([
+      { id: 1, url: 'chrome-extension://khijcamdgmekcnplimaampjgdfeiopja/export.json' },
+      { id: 2, url: 'https://example.com/b.pdf' },
+    ]);
+    expect(groups.map((g) => g.registrableDomain)).toEqual(['example.com']);
   });
 });

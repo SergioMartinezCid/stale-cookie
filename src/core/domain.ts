@@ -25,3 +25,16 @@ export function hostnameOf(url: string): string | undefined {
     return undefined;
   }
 }
+
+/**
+ * True for extension-page URLs (chrome-extension://, moz-extension://).
+ * Their "hostname" is an extension id, not a site — Chrome records visited
+ * extension pages (this extension's own popup included) in browsing history,
+ * and without this check they surface in the preview as gibberish domain
+ * rows. Extension schemes are the one non-web case with a hostname; other
+ * non-web schemes (about:, data:, file:) have none and already fall out of
+ * grouping on that, so they are left alone for now.
+ */
+export function isExtensionUrl(url: string): boolean {
+  return /^(?:chrome|moz)-extension:/i.test(url);
+}
