@@ -99,14 +99,18 @@ export async function launchChromeWithExtension(): Promise<{
   // Selenium Manager provision (and cache) Chrome for Testing even when a
   // branded Chrome is installed, as on CI runners.
   // --disable-dev-shm-usage: /dev/shm is tiny under WSL/containers.
-  // CHROME_VERSION pins an exact Chrome for Testing build (e.g. to
+  // CFT_CHROME_VERSION pins an exact Chrome for Testing build (e.g. to
   // reproduce the version a CI run reported), like FIREFOX_BIN above.
-  // CHROME_BIN pins an exact browser binary (skips version resolution
-  // entirely — needed alongside CHROMEDRIVER_BIN, which bypasses Selenium
-  // Manager and with it the browser provisioning).
-  const chromeBin = process.env['CHROME_BIN'];
+  // CFT_CHROME_BIN pins an exact browser binary (skips version resolution
+  // entirely — needed alongside CFT_CHROMEDRIVER_BIN, which bypasses
+  // Selenium Manager and with it the browser provisioning). The knobs are
+  // CFT_-prefixed because GitHub's runner image predefines
+  // CHROME_BIN=/usr/bin/google-chrome — a bare name would pin every CI run
+  // to branded Chrome (dangling after the workflow removes it; silently
+  // ignoring --load-extension if it didn't).
+  const chromeBin = process.env['CFT_CHROME_BIN'];
   if (chromeBin) options.setChromeBinaryPath(chromeBin);
-  else options.setBrowserVersion(process.env['CHROME_VERSION'] ?? 'stable');
+  else options.setBrowserVersion(process.env['CFT_CHROME_VERSION'] ?? 'stable');
   options.addArguments(
     '--headless=new',
     `--load-extension=${DIST_CHROME}`,
@@ -123,9 +127,9 @@ export async function launchChromeWithExtension(): Promise<{
   );
 
   const builder = new Builder().forBrowser(Browser.CHROME).setChromeOptions(options);
-  // CHROMEDRIVER_BIN pins an exact chromedriver binary (Selenium Manager
-  // otherwise picks one matching the resolved browser).
-  const chromedriverBin = process.env['CHROMEDRIVER_BIN'];
+  // CFT_CHROMEDRIVER_BIN pins an exact chromedriver binary (Selenium
+  // Manager otherwise picks one matching the resolved browser).
+  const chromedriverBin = process.env['CFT_CHROMEDRIVER_BIN'];
   if (chromedriverBin) builder.setChromeService(new chromium.ServiceBuilder(chromedriverBin));
   const driver = await builder.build();
   try {
