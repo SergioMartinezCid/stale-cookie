@@ -62,6 +62,32 @@ async function actionLogTypes(): Promise<string[]> {
   );
 }
 
+async function reminderBase(): Promise<number> {
+  return inExtensionPage<number>(
+    driver,
+    `return (await browser.storage.local.get('reminderBase')).reminderBase;`,
+  );
+}
+
+async function badgeText(): Promise<string> {
+  return inExtensionPage<string>(driver, `return browser.action.getBadgeText({});`);
+}
+
+/**
+ * Reopen the popup (the same teardown an outside click causes) and wait for
+ * the scan a due reminder starts.
+ */
+async function reopenForReminderScan(): Promise<void> {
+  await driver.navigate().refresh();
+  await driver.wait(
+    async () =>
+      (await driver.findElement(By.id('results')).isDisplayed()) &&
+      (await driver.findElement(By.id('scan')).isEnabled()),
+    20_000,
+    'reminder scan did not finish',
+  );
+}
+
 beforeAll(async () => {
   driver = await launchWithExtension();
   await driver.get(extensionPage('popup/popup.html'));
@@ -331,5 +357,57 @@ describe('cleaning flow', () => {
       `return (await browser.storage.session.get('scanCache')).scanCache ?? null;`,
     );
     expect(cached).toBeNull();
+  });
+
+  it('keeps a due reminder up while rows still await a decision', async () => {
+    // Backdate the cycle past the 30-day default: the popup then opens with
+    // the banner and scans. The seeded world still has stale rows.
+    const base = Date.now() - 31 * DAY_MS;
+    await inExtensionPage(driver, `await browser.storage.local.set({ reminderBase: ${base} });`);
+    await reopenForReminderScan();
+
+    expect((await readRows(driver, 'stale-list')).length).toBeGreaterThan(0);
+    expect(await driver.findElement(By.id('reminder-banner')).isDisplayed()).toBe(true);
+    expect(await driver.findElement(By.id('skip')).isDisplayed()).toBe(true);
+    expect(await reminderBase()).toBe(base);
+  });
+
+  it('ends a due reminder whose scan finds nothing to delete', async () => {
+    // Protect every remaining row so the next scan is all clean. The
+    // settings write also makes the background re-evaluate the (still
+    // overdue) reminder and raise the badge, as the alarm would — wait for
+    // it before reopening, or its setBadgeText could land after the popup's
+    // reset.
+    const pending = [
+      ...(await readRows(driver, 'stale-list')),
+      ...(await readRows(driver, 'unknown-list')),
+    ].map((r) => r.domain);
+    const overdueBase = await reminderBase();
+    await inExtensionPage(
+      driver,
+      `const { settings } = await browser.storage.local.get('settings');
+       settings.whitelist = [...settings.whitelist, ...${JSON.stringify(pending)}];
+       await browser.storage.local.set({ settings });`,
+    );
+    await driver.wait(async () => (await badgeText()) === '!', 5_000, 'reminder badge never rose');
+
+    await reopenForReminderScan();
+
+    const allClean = await inExtensionPage<string>(
+      driver,
+      `return browser.i18n.getMessage('allClean');`,
+    );
+    expect(await driver.findElement(By.id('status')).getText()).toBe(allClean);
+    expect(await driver.findElement(By.id('reminder-banner')).isDisplayed()).toBe(false);
+    expect(await driver.findElement(By.id('skip')).isDisplayed()).toBe(false);
+    // A new cycle: base reset, badge cleared, next alarm a full interval out.
+    expect(await reminderBase()).toBeGreaterThan(overdueBase);
+    expect(await badgeText()).toBe('');
+    const nextAlarm = await inExtensionPage<number | null>(
+      driver,
+      `const alarm = await browser.alarms.get('stale-cookie-reminder');
+       return alarm ? alarm.scheduledTime : null;`,
+    );
+    expect(nextAlarm).toBeGreaterThan(Date.now() + 29 * DAY_MS);
   });
 });

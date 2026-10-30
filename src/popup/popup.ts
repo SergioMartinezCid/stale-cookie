@@ -400,6 +400,25 @@ async function updateUndoButton(): Promise<void> {
   }
 }
 
+/** The due reminder was answered: cleaned, skipped, or nothing to clean. */
+function hideReminder(): void {
+  skipButton.hidden = true;
+  reminderBanner.hidden = true;
+}
+
+/**
+ * A due reminder whose scan finds nothing to delete has done its job —
+ * start a new cycle instead of leaving "Time to clean" over "all clean",
+ * with Skip (the "not cleaning this time" action) the only way to clear the
+ * badge. Rows still awaiting a decision, including never-visited ones left
+ * unchecked, keep the reminder up.
+ */
+async function settleReminderIfNothingToDelete(): Promise<void> {
+  if (reminderBanner.hidden || rows.some((r) => r.verdict !== 'fresh')) return;
+  await resetReminderTimer();
+  hideReminder();
+}
+
 async function runScan(): Promise<void> {
   scanButton.disabled = true;
   el('empty-hero').hidden = true;
@@ -409,6 +428,7 @@ async function runScan(): Promise<void> {
     settings = await loadSettings();
     outcome = await scan(settings);
     renderResults();
+    await settleReminderIfNothingToDelete();
   } catch (error) {
     // A stuck "Scanning…" is unreportable — log it and say something failed.
     recordError('popup', error);
@@ -458,8 +478,7 @@ clearButton.addEventListener('click', () => {
 
 skipButton.addEventListener('click', async () => {
   await resetReminderTimer();
-  skipButton.hidden = true;
-  reminderBanner.hidden = true;
+  hideReminder();
   const days = (settings ?? (await loadSettings())).reminderDays;
   showToast(msg('popupReminderSkipped', [String(days)]), 'success');
   restoreFocus(); // the hidden Skip button was the focused element
@@ -531,8 +550,7 @@ confirmDelete.addEventListener('click', async () => {
   }
   closeConfirm();
   await updateUndoButton();
-  skipButton.hidden = true;
-  reminderBanner.hidden = true;
+  hideReminder();
   await runScan();
 });
 
