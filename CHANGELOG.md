@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-10-30
+
+### Fixed
+
+- A cleaning reminder with nothing to clean now ends on its own: when the
+  popup's scan finds nothing stale, the "Time to clean" banner and the
+  toolbar badge clear and the next reminder is scheduled. Before, they
+  stayed until "Skip this reminder" was clicked.
+- Browser extension pages recorded in history (on Chrome, this extension's
+  own popup included) no longer show up in the preview as rows named after
+  an extension id.
+
 ## [1.1.0] - 2026-08-19
 
 ### Added
@@ -50,5 +62,6 @@ First published version, for Firefox and Chrome.
   Spanish.
 - Privacy: no network requests, ever — see PRIVACY.md.
 
+[1.1.1]: https://github.com/SergioMartinezCid/stale-cookie/releases/tag/v1.1.1
 [1.1.0]: https://github.com/SergioMartinezCid/stale-cookie/releases/tag/v1.1.0
 [1.0.0]: https://github.com/SergioMartinezCid/stale-cookie/releases/tag/v1.0.0
